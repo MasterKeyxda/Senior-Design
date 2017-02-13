@@ -4,7 +4,7 @@ clc;
 close all;
 
 %% File META 
-
+a =1;
 % File that contains initial approximations for aircraft design. Includes
 % approximations for weight of aircraft, and an overview of requirements.
 % Below contains documented updates through each meeting.
