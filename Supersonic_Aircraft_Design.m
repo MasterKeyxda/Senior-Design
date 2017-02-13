@@ -3,6 +3,7 @@ clear;
 clc;
 close all;
 
+<<<<<<< HEAD
 %% File META 
 a =1;
 % File that contains initial approximations for aircraft design. Includes
@@ -43,17 +44,35 @@ a =1;
     % This is also true for fuel tank volume
     % Fuel consumption and fuel weight?
     % Redefine altitude?
+=======
+%% File META - Preliminary Design Elements
+
+% Requirements: 
+    % Sonic Boom: 70-75 PLdB
+    % Payload: 6-20 Passengers
+    % Airport Noise: ICAO Ch.14 w/ margin
+    % Equivalent emissions to current subsonic aircraft
+    % Cruise Speed: Mach 1.6-1.8 
+    % Range 4000 nmi
+    % Fuel_Efficiency = 1; % passenger-miles/lb of fuel
+
+% Atmosphere/Flight Conditions
+    % Altitude: 40 kft
+    
+% Weight
+    % number of passengers: 8
+    % number of crew: 2
+
+% Wings
+    % Initial Wing Area - 1166 ft^2
+>>>>>>> refs/remotes/origin/master
 
 %% Supersonic Business Jet
 
-% Requirements: 
-% Sonic Boom: 70-75 PLdB
-% Payload: 6-20 Passengers
-% Airport Noise: ICAO Ch.14 w/ margin
-% Equivalent emissions to current subsonic aircraft
-% Cruise Speed: Mach 1.6-1.8 
-% Range 4000 nmi
-% Fuel_Efficiency = 1; % passenger-miles/lb of fuel
+atm.alt = 40;
+S_w = 1166; % Ft^2
+fprintf('Alt: %0.2fkft\n', atm.alt);
+fprintf('Wing Area: %0.2f ft^2 \n', S_w);
 
 req.sb_vol = 75; % PLdB
 req.pld_pass = [6 20]; % [min max] number of passengers
@@ -78,7 +97,7 @@ Wt.fuel.w3_2 = 0.97; % climb weight ratio
 
 % Cruise Fuel Consumption
 Wt.fuel.sfc_cr = 0.8/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
-[~,~,~,Wt.fuel.a_snd] = AltTable(50,'h'); % speed of sound ratio
+[~,~,~,Wt.fuel.a_snd] = AltTable(atm.alt,'h'); % speed of sound ratio
 Wt.fuel.V_max_cr = Wt.fuel.a_snd * req.cr_M0(1) * 1116; % ft/s
 Wt.fuel.LD_ratio = 7; % based on past, real aircraft (e.g. concorde)
 Wt.fuel.w4_3 = exp(-req.range * 6076.12 * Wt.fuel.sfc_cr/(0.866*Wt.fuel.V_max_cr * Wt.fuel.LD_ratio));
@@ -138,29 +157,85 @@ fprintf('WTO: %0.2f lb\n',WTO)
 
 %% Iterate to Get WTO
 % Solve for Wt.oew.me with Empirical Model 4.26 Saedray
-a = 1.59; b = -0.1; % From table 4.8
-WTO_1 = WTO;
-WE_TO = a*WTO_1^b;
-WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
-res = (WTO_2 - WTO_1);
-ii = 1;
-fprintf('Iteration Started\n');
-while abs(res) >= 1
-    WTO_1 = WTO_2;
-    WE_TO = a*WTO_1^b;
-    WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
-    res = (WTO_2 - WTO_1);
+% a = 1.59; b = -0.1; % From table 4.8
+% WTO_1 = WTO;
+% WE_TO = a*WTO_1^b;
+% WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
+% res = (WTO_2 - WTO_1);
+% ii = 1;
+% fprintf('Iteration Started\n');
+% while abs(res) >= 1
+%     WTO_1 = WTO_2;
+%     WE_TO = a*WTO_1^b;
+%     WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
+%     res = (WTO_2 - WTO_1);
+% 
+%     ii = ii + 1;
+%     if ii > 1e6
+%        fprintf('Warning: Iteration Broken\n');
+%        break;
+%     end
+% end
+% 
+% fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
+% fprintf('Number of Iterations: %i \n', ii);
 
-    ii = ii + 1;
-    if ii > 1e6
-       fprintf('Warning: Iteration Broken\n');
-       break;
-    end
-end
+%% Wing Calculations
+fprintf('\nWing Prelim Design\n');
 
-fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
-fprintf('Number of Iterations: %i \n', ii);
+% Define Sweep Angle
+WING.M0_angle = asin(1./req.cr_M0)*180/pi;
+WING.sweep_angle = 1.2*(90-WING.M0_angle);
+fprintf('Mach Angles:\nMin: %0.3f\tMax: %0.3f\n', WING.M0_angle(1), WING.M0_angle(2));
+fprintf('Sweep Angles:\nMin: %0.3f\tMax: %0.3f\n', WING.sweep_angle(1), WING.sweep_angle(2));
 
+% Define Area 
+WING.S_area = 1166; % ft^2
+
+% Number of Wings
+WING.no = 1;
+WING.vert_loc = 'low';
+WING.config = 'swept_tapered';
+
+WING.wt_avg = 0.5*WTO*(1 + 1- Wt.fuel.Wf_Wto);
+[~,~,sig_rho,~] = AltTable(atm.alt, 'h');
+WING.CL_cr = 2*WING.wt_avg/(sig_rho * 0.002378 * Wt.fuel.V_max_cr^2 * WING.S_area);
+
+WING.CL_max = 2.4; 
+WING.V_TO = 1.2*sqrt(2*WTO / (0.002378 * WING.CL_max * WING.S_area)); % ft/s
+WING.CL_TO = 0.85 * 2 * WTO / (0.002378 * WING.V_TO^2 * WING.S_area);
+
+% Heavy Lift Devices
+WING.dCL_flaps = [1 1.3]; % fowler flaps -> Sadraey
+
+% Determine airfoil design
+
+
+% Select the dihedral angle
+
+
+% Select AR, taper ratio, twist angle
+
+
+% Get lift distribution and determine elliptic behavior
+
+
+% calculate actual winglift at cruise and iterate with necessary cruise
+% coefficient
+
+
+% check winglift coefficient at takeoff
+
+
+% Calculate wing drag and optimize
+
+
+% calculate pitching moment
+
+
+% optimize
+
+<<<<<<< HEAD
 
 %% WTO and WE/WTO Calculation
 clc
@@ -180,3 +255,6 @@ WTO = y(index);
 
 fprintf('WE_WTO: %0.3f \n',WE_WTO);
 fprintf('W_TO: %.2f lbs \n',WTO);
+=======
+% Taper Ratio
+>>>>>>> refs/remotes/origin/master
