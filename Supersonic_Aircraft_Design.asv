@@ -187,5 +187,5 @@ WING.config = 'swept_tapered';
 
 WING.wt_avg = 0.5*WTO*(1 + 1- Wt.fuel.Wf_Wto);
 [~,~,sig_rho,~] = AltTable(atm.alt, 'h');
-WING.CL_cr = 2*WING.wt_avg/(sig_rho * 0.002378 * Wt.fuel.V_max_cr^2 * S_w);
+WING.CL_cr = 2*WING.wt_avg/(sig_rho * * Wt.fuel.V_max_cr^2 * S_w);
 % Taper Ratio
