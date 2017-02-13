@@ -137,3 +137,22 @@ fprintf('WTO: %0.2f lb\n',WTO)
 % fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
 % fprintf('Number of Iterations: %i \n', ii);
 
+
+%% WTO and WE/WTO Calculation
+clc
+WF_TO = .47948; % taken from main code loiter 0.75%
+% Trainer Jet Raymer Table 3.1 pg 31 
+A = 1.59;
+C = -0.1;
+% Solve for WTO with Eq 3.4 and empirical Table 3.1 Eq
+y = linspace(80000,170000,1000);
+x1 = A*y.^C;
+x2 = 1- WF_TO - 1960./y;
+plot(y,x1,y,x2) 
+dif = abs(x1 - x2);
+index = find(dif == min(abs(x1 - x2)));
+WE_WTO = x1(index);
+WTO = y(index);
+
+fprintf('WE_WTO: %0.3f \n',WE_WTO);
+fprintf('W_TO: %.2f lbs \n',WTO);
