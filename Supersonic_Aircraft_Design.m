@@ -113,7 +113,36 @@ end
 fprintf('WTO: %0.2f lb\n',WTO)
 
 %% WTO and WE/WTO Calculation
+<<<<<<< HEAD
 clc
+=======
+
+% Solve for Wt.oew.me with Empirical Model 4.26 Saedray
+% a = 1.59; b = -0.1; % From table 4.8
+% WTO_1 = WTO;
+% WE_TO = a*WTO_1^b;
+% WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
+% res = (WTO_2 - WTO_1);
+% ii = 1;
+% fprintf('Iteration Started\n');
+% while abs(res) >= 1
+%     WTO_1 = WTO_2;
+%     WE_TO = a*WTO_1^b;
+%     WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
+%     res = (WTO_2 - WTO_1);
+% 
+%     ii = ii + 1;
+%     if ii > 1e6
+%        fprintf('Warning: Iteration Broken\n');
+%        break;
+%     end
+% end
+% 
+% fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
+% fprintf('Number of Iterations: %i \n', ii);
+
+% clc
+>>>>>>> refs/remotes/origin/master
 WF_TO = .47948; % taken from main code loiter 0.75%
 % Trainer Jet Raymer Table 3.1 pg 31 
 A = 1.59;
