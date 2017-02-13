@@ -137,3 +137,6 @@ fprintf('WTO: %0.2f lb\n',WTO)
 % fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
 % fprintf('Number of Iterations: %i \n', ii);
 
+%% Wing Calculations
+
+WINGS;
