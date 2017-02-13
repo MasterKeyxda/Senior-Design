@@ -3,6 +3,47 @@ clear;
 clc;
 close all;
 
+%% File META 
+a =1;
+% File that contains initial approximations for aircraft design. Includes
+% approximations for weight of aircraft, and an overview of requirements.
+% Below contains documented updates through each meeting.
+
+% 2/8/2017:
+    % Added Fuel Mass Ratio Calculations
+    % Weight
+    % Wing Loading (90 lb/ft^2)
+    % Design Wing
+        % pick AR
+        % pick Cl for flight (between 0.1 - 0.3)
+    % Design Tail
+        % L-opt -> search in Sadrey
+    % Verify if CG is between 30-35% MAC (aim for 35) -> prelim stability
+    % done
+    % Design fuselage shape
+    % Check volume... make sure payload CG matches aircraft CG
+    % Iterate to meet fuel requirments
+
+% 2/6/2017:
+    % Determine Empty Weight,Fuel Weight and MTOW (Max Takeoff Weight)
+    % Changes made:
+    % Changed number of crew members from 3 to 2.
+    % Will assume that crew members have the same luggage weight
+    % Number of passengers changed to 8
+    % Current avg weight of passengers 200 lbf and 45 lbf luggage
+    % Found out for airworthyness that excess fuel must be at least 20% for FAR
+    % Searched for possible low bypass turbofan engines
+
+% 2/2/2017:
+    % File Created
+    % Want to carry 20 people - burn 20 lbs/miles
+    % Currently assume crew members not part of passengers, but part of vehicle
+    % system
+    % Keep in mind that geometry (specifically volume) drives aerodynamic performance
+    % This is also true for fuel tank volume
+    % Fuel consumption and fuel weight?
+    % Redefine altitude?
+=======
 %% File META - Preliminary Design Elements
 
 % Requirements: 
@@ -23,6 +64,7 @@ close all;
 
 % Wings
     % Initial Wing Area - 1166 ft^2
+>>>>>>> origin/master
 
 %% Supersonic Business Jet
 
@@ -137,22 +179,3 @@ fprintf('WTO: %0.2f lb\n',WTO)
 % fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
 % fprintf('Number of Iterations: %i \n', ii);
 
-
-%% WTO and WE/WTO Calculation
-clc
-WF_TO = .47948; % taken from main code loiter 0.75%
-% Trainer Jet Raymer Table 3.1 pg 31 
-A = 1.59;
-C = -0.1;
-% Solve for WTO with Eq 3.4 and empirical Table 3.1 Eq
-y = linspace(80000,170000,1000);
-x1 = A*y.^C;
-x2 = 1- WF_TO - 1960./y;
-plot(y,x1,y,x2) 
-dif = abs(x1 - x2);
-index = find(dif == min(abs(x1 - x2)));
-WE_WTO = x1(index);
-WTO = y(index);
-
-fprintf('WE_WTO: %0.3f \n',WE_WTO);
-fprintf('W_TO: %.2f lbs \n',WTO);
