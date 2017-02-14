@@ -14,7 +14,7 @@ wingLoading = 50:0.5:250; % wing loading parameter (lb/ft^2)
 
 %% Stall Speed Curve (4.3.2 Sadraey)
 
-Vstall = 120; % stall speed (knots)
+Vstall = 125; % stall speed (knots)
 Vstall = Vstall * 1.688; % convert stall speed to ft/s
 rhoSeaLevel = 0.002378; % density (slug/ft^3)
 CLMax = 2.2; % Roskam Part I, p.91; CLmax range = 1.2 - 1.8
@@ -49,7 +49,8 @@ K = 1 / (pi*e*AR);
 CD_0 = 0.020; % from CD_0 Estimate.xlsx or see Table 4.12 in Sadraey
 
 % Sadraey Eqn 4.47 (T/W) 
-maxSpeedCurve = (rhoSeaLevel .* (Vmax.^2) .* CD_0 .* (1 ./ (2 .* wingLoading))) + (((2.*K) ./ (rhoSeaLevel .* sigma .* (Vmax.^2))) .* (wingLoading)); 
+% maxSpeedCurve = (rhoSeaLevel .* (Vmax.^2) .* CD_0 .* (1 ./ (2 .* wingLoading))) + (((2.*K) ./ (rhoSeaLevel .* sigma .* (Vmax.^2))) .* (wingLoading)); 
+maxSpeedCurve = (rhoSeaLevel.*(Vmax.^2).*CD_0)./(2.*wingLoading) + (2.*K.*wingLoading)./(rhoSeaLevel.*sigma.*(Vmax.^2));
 %% Take-off Run (S_TO) Curve (Section 4.3.4 Sadraey)
 
 takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
@@ -80,7 +81,9 @@ CLR = CLMax / 1.21;
 % Eqn 4.67a
 CDG = dragCoeff_TakeOff - (frictionCoeff * liftCoeff_TakeOff);
 
-takeOffRunCurve = (frictionCoeff - (frictionCoeff + (CDG ./ CLR) .* (exp(0.6 .* rhoCruise .* g .* takeoffRun .* (1 ./ wingLoading))))) ./ (1 - (exp(0.6 .*rhoCruise .*g .* takeoffRun .* (1 ./ wingLoading))));
+takeOffRunCurve = (frictionCoeff - (frictionCoeff + (CDG ./ CLR)) .*...
+    (exp(0.6 .* rhoCruise .* g .* takeoffRun .* (1 ./ wingLoading)))) ...
+    ./ (1 - (exp(0.6 .*rhoCruise .*g .* takeoffRun .* (1 ./ wingLoading)))); % Missing CDg term
 
 %% Rate of Climb (ROC) Curve (4.3.5 Sadraey)
 
@@ -88,16 +91,18 @@ liftDragRatioMax = 7; % max lift to drag ratio
 ROC = 10000;  % rate of climb (ft/min)
 ROC = ROC / 60; % convert ROC to ft/s
 % Rate of Climb Curve
- ROCCurve = (ROC ./ sqrt((2 ./ (rhoCruise .* sqrt(CD_0 ./ K))) .* wingLoading)) + (1 ./ liftDragRatioMax);
+ ROCCurve = (ROC ./ sqrt((2 ./ (rhoCruise .* sqrt(CD_0 ./ K))) .* wingLoading))...
+     + (1 ./ liftDragRatioMax);
 %% Ceiling Curve(4.3.6 Sadraey)
-
+%Keyur Edit - None.
 % Curve based on service ceiling
 altService = 42; % kft
 [~,~,sigmaService,aSoundRatio] = AltTable(altService, 'h'); % height input of kft
 rhoService = sigmaService * rhoSeaLevel; 
 ROC_Service = 100; % rate of climb at service ceiling (ft/min)
 ROC_Service = ROC_Service / 60; % convert ROC to ft/s
-ceilingCurve = (ROC_Service ./ (sigmaService .* sqrt((2 ./ (rhoService .* sqrt(CD_0 ./ K))) .* wingLoading))) + (1 ./ (sigmaService .* liftDragRatioMax));
+ceilingCurve = (ROC_Service ./ (sigmaService .* sqrt((2 ./ (rhoService .* sqrt(CD_0 ./ K)))...
+    .* wingLoading))) + (1 ./ (sigmaService .* liftDragRatioMax));
 %% Plot Curves
 
 figure(1)
@@ -121,9 +126,9 @@ legend('V_{stall}','V_{max}', 'Take-off', 'Rate of Climb', 'Ceiling')
 %% Wing Area and Engine Thrust
 
 WTO = 102000; % gross takeoff weight lbf
-
+[x,y] = ginput(1);
 % Design point manually identified from contraint plot 
-designPoint = [107.5, 0.658]; % [Wing Loading (W/S), Thrust-to-Weight Ratio (T/W)]
+designPoint = [x, y]; % [Wing Loading (W/S), Thrust-to-Weight Ratio (T/W)]
 
 fprintf('The wing area, S is: %0.2f ft^2 \n', WTO / designPoint(1))
 fprintf('The thrust, T is: %0.2f lbf \n', designPoint(2) * WTO)
