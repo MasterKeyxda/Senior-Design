@@ -112,7 +112,8 @@ for i = 1:numel(wt_types)
 end
 fprintf('WTO: %0.2f lb\n',WTO)
 
-%% Iterate to Get WTO
+%% WTO and WE/WTO Calculation
+
 % Solve for Wt.oew.me with Empirical Model 4.26 Saedray
 % a = 1.59; b = -0.1; % From table 4.8
 % WTO_1 = WTO;
@@ -137,9 +138,7 @@ fprintf('WTO: %0.2f lb\n',WTO)
 % fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
 % fprintf('Number of Iterations: %i \n', ii);
 
-
-%% WTO and WE/WTO Calculation
-clc
+% clc
 WF_TO = .47948; % taken from main code loiter 0.75%
 % Trainer Jet Raymer Table 3.1 pg 31 
 A = 1.59;
@@ -156,3 +155,7 @@ WTO = y(index);
 
 fprintf('WE_WTO: %0.3f \n',WE_WTO);
 fprintf('W_TO: %.2f lbs \n',WTO);
+
+%% Wing Calculations
+
+WINGS;
