@@ -65,15 +65,15 @@ Headroom = 66.912; %ft for first class
 % Depends on volume and will most likely be beneath passenger cabin
 %% Nose Design
 % Look at supersonic design and weight and balance
-L_n = 20; % arbitrary length of nose ft
+L_n = 25; % arbitrary length of nose ft
 % Looking at the SEARS-HACK Body Equation from WIKIPEDIA
 x = linspace(0,0.5,100); % range
-R_max = 2.5; % arbitrary maximum nose radius ft
+R_max = 2; % arbitrary maximum nose radius ft
 V_n = (3*pi^2/16 * R_max^2*L_n)/2; % Volume of nose
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);% nose radius
-FigHandle = figure('Position', [250, 250, L_n*100, R_max*100]);
-figure(1)
+FigHandle = figure('Position', [250, 250, L_n*40, R_max*40]);
+figure(3)
 plot(2*x*L_n,r_x,'r',2*x*L_n,-r_x,'r')
 title('Sears-Hack Body Nose Design')
 % Based on Wave Drag Equation, wave drag is reduced by increasing length
