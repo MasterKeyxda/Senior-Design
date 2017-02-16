@@ -107,6 +107,7 @@ ceilingCurve = (ROC_Service ./ (sigmaService .* sqrt((2 ./ (rhoService .* sqrt(C
 
 figure(1)
 hold on; 
+title('Wing Area (S) and Engine Thrust (T) Constraint Plot')
 xlabel('Wing Loading, W/S (lbf / ft^2)')
 ylabel('Thrust-to-Weight Ratio, T/W (lbf/lbf)')
 % Stall Speed Curve 
