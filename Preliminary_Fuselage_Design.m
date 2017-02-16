@@ -73,12 +73,14 @@ V_n = (3*pi^2/16 * R_max^2*L_n)/2; % Volume of nose
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);% nose radius
 FigHandle = figure('Position', [250, 250, L_n*40, R_max*40]);
-figure(3)
+figure(1)
 plot(2*x*L_n,r_x,'r',2*x*L_n,-r_x,'r')
 title('Sears-Hack Body Nose Design')
 % Based on Wave Drag Equation, wave drag is reduced by increasing length
 % and decreasing volume
-
+% Theta = 16.4223 degrees
+% Beta = 58.471 degrees
+% Oblique Shock Ma2 = 1.06
 %% Rear Section
 % Will Include Tail and Wing as well for supersonic aircraft.
 L_R = 50; % arbitrary length of rear section ft
