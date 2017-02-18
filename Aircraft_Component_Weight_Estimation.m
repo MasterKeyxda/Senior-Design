@@ -24,12 +24,12 @@ clear;
 % Eqn(s) 10.3, 10.4
 
 % Equation Parameters
-Sw = 890; % wing planform area (ft^2)
-MACw = 6; % mean aerodynamic chord (ft)
+Sw = 930; % wing planform area (ft^2)
+MACw = 15.25; % mean aerodynamic chord (ft)
 thickToChordRatioWing = 0.12; % max thickness to chord ratio
-densityWing = 0.1015; % density of wing material (lb/in^3)
-AR_Wing = 3; % aspect ratio
-sweepQuarterWing = 15; % 1/4 chord sweep angle (degrees)
+densityWing = 0.1015; % density of wing material (lb/in^3), 
+AR_Wing = 4; % aspect ratio
+sweepQuarterWing = 30; % 1/4 chord sweep angle (degrees)
 taperRatioWing = 2; % taper ratio
 g = 32.17; % gravitational constant (32.17 ft/s^2)
 KpWing = 0.0025; % wing density factor (Table 10.8)
