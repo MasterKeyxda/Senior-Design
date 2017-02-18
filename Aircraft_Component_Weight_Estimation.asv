@@ -182,24 +182,7 @@ X_cgEW = xWing*WtWing + xHtail*WtHorizontalTail + xVtail*WtVerticalTail ...
     + xFuselage*WtFuselage + xLandingGear*WtLandingGear + xInstalledEngine ...
     + xFuelSys*WtFuelSystem + xEquipment*WtEquipment;
 
-%% Passenger Loading Distribution
-% FAA Weight Handbook, Section 9-13
-
-% Weights
-crew = 
-passenger = 170; % lbs
-baggage = 
-% passenger moment arm
-P_xrow1 = 
-P_xrow2 = 
-P_xrow3 = 
-P_xrow4 = 
-% baggage moment arm
-B_xrow1 = 
-B_xrow2 =
-B_xrow3 =
-B_xrow4 =
-% center of gravity of passengers/crew
+%% Passenger Loading
 
 
 %% ------------------------ MATLAB --> Excel --------------------------- %%
