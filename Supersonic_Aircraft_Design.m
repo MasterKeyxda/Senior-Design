@@ -26,7 +26,7 @@ close all;
 
 %% Supersonic Business Jet
 
-atm.alt = 40;
+atm.alt = 42;
 S_w = 1166; % Ft^2
 fprintf('Alt: %0.2fkft\n', atm.alt);
 fprintf('Wing Area: %0.2f ft^2 \n', S_w);
@@ -158,4 +158,19 @@ fprintf('W_TO: %.2f lbs \n',WTO);
 
 %% Wing Calculations
 
+fprintf('\n WING CALCULATIONS: \n');
 WINGS;
+
+%% Preliminary Fuselage Design
+fprintf('\n FUSELAGE CALCULATIONS: \n');
+Preliminary_Fuselage_Design;
+
+%% Tail Calculations
+
+fprintf('\n TAIL CALCULATIONS: \n');
+% Sample Tail Params
+Kc = 1.2; % tail calculation correction factor?
+Vh = 0.4; % horizontal tail volumen coefficient
+Vv = 0.03; % vertical tail volumen coefficient
+
+TAIL = TailCalc(0, Vh, Vv, WTO, sig_rho * 0.002378, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf);
