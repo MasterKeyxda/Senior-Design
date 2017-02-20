@@ -3,8 +3,10 @@ fprintf('\nWing Prelim Design\n');
 addpath([pwd '\aero_tools\']);
 addpath([pwd '\ANSYS_results\']);
 addpath([pwd '\VSP_results\']);
-% Define Area 
+
+% Define Initial Wing Characteristics
 WING.S_area = 930.25; % ft^2
+WING.AR = 4;
 
 %% STEP 1-3: Number of Wings & Vertical Location & Configuration
 WING.no = 1;
@@ -50,7 +52,6 @@ WING.dihedral = 6; % degrees
 
 % 2/15/2017 - efficiency based on Raymer's approximations with pre-defined aspect
 % ratio
-WING.AR = 4;
 
 % Determine Span & MAC
 WING.span = sqrt(S_w * WING.AR);
@@ -94,33 +95,37 @@ cd_data = dlmread('cd-history', ' ', 2, 0);
 cl_data = dlmread('cl-history', ' ', 2, 0);
 cm_data = dlmread('cm-history', ' ', 2, 0);
 iter = find(cd_data(:,1) == 1);
-WING.supersonic.alpha = 0:1:length(iter)-1;
-for i = 1:length(iter)
+alpha = 0:1:length(iter)-1;
+i = 1;
+ii = 1;
+while i <= length(iter)
     if i < length(iter)
-        WING.supersonic.Cd(i) = cd_data(iter(i+1)-1,end);
-        WING.supersonic.Cl(i) = cl_data(iter(i+1)-1,end);
-        WING.supersonic.Cm(i) = cm_data(iter(i+1)-1,end);
+        if cd_data(iter(i+1)-1,1) ~= 5000
+            WING.supersonic.Cd(ii) = cd_data(iter(i+1)-1,end);
+            WING.supersonic.Cl(ii) = cl_data(iter(i+1)-1,end);
+            WING.supersonic.Cm(ii) = cm_data(iter(i+1)-1,end);
+            WING.supersonic.alpha(ii) = alpha(i);
+            ii = ii + 1;
+        end
     else
-        WING.supersonic.Cd(i) = cd_data(end,end);
-        WING.supersonic.Cl(i) = cl_data(end,end);
-        WING.supersonic.Cm(i) = cm_data(end,end);
+        if cd_data(end,1) ~= 5000
+            WING.supersonic.Cd(ii) = cd_data(end,end);
+            WING.supersonic.Cl(ii) = cl_data(end,end);
+            WING.supersonic.Cm(ii) = cm_data(end,end);
+            WING.supersonic.alpha(ii) = alpha(i);
+        end
     end
+    i = i + 1;
 end
-% dx = 0.01;
-% WING.supersonic.coords = [[1:-dx:0, dx:dx:1]', 2.*WING.supersonic.t_c.*[(1-(1:-dx:0)).*(1:-dx:0),-(1-(dx:dx:1)).*(dx:dx:1)]'];
-% figure();
-% plot(WING.supersonic.coords(:,1), WING.supersonic.coords(:,2));
-% close(gcf);
-% if exist(sprintf('%s.dat', WING.supersonic.name)) ~= 2 % generate .dat file if not found
-%     fid = fopen(sprintf('%s.dat', WING.supersonic.name), 'w');
-%     fprintf(fid, '%s Supersonic Airfoil\n\n', WING.supersonic.name);
-%     fprintf(fid, '%12.7f  %12.7f\n', WING.supersonic.coords);
-%     fclose(fid);
-% end
-% [WING.supersonic.polar_inv, WING.supersonic.foil] = xfoil(WING.supersonic.coords, [-2:19], 10e6, 0.0, 'oper/iter 10000');
 
-
-figure(); plot(WING.supersonic.alpha, WING.supersonic.Cl);
+% cl_fit = polyfit(WING.supersonic.alpha, WING.supersonic.Cl,2);
+% f1 = fit(WING.supersonic.alpha', WING.supersonic.Cl','gauss2', 'Exclude', WING.supersonic.Cl<0);
+% figure(); plot(f1, WING.supersonic.alpha, WING.supersonic.Cl, WING.supersonic.Cl<0);
+% hold on;
+figure(); plot(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),'o');
+hold on;
+cl_fit = polyfit(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),3);
+plot(polyval(cl_fit, WING.supersonic.alpha));
 ylabel('C_l');
 xlabel('\alpha');
 title('Bi-convex Lift-Curve Polar');
@@ -154,6 +159,8 @@ WING.m1_8.CD_tot = [raw1_8{cells+10}];
 WING.m1_8.CM_y = [raw1_8{cells+16}];
 WING.m1_8.E = [raw1_8{cells+19}];
 WING.m1_8.i_w = spline(WING.m1_8.CL, WING.m1_8.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
+
+WING.Cmwf = spline(WING.m1_8.alpha, WING.m1_8.CM_y, WING.m1_8.i_w);
 
 fprintf('Incidence Angles: %0.5f (M 1.6), %0.5f (M 1.8)\n', WING.m1_6.i_w, WING.m1_8.i_w);
 
@@ -197,9 +204,9 @@ ylabel('E');
 title('Oswald Efficiency');
 legend('Mach 1.6', 'Mach 1.8');
 
+%% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
 % coefficient
-% WING.L_cr = 0.5*(sig_rho * 0.002378 * Wt.fuel.V_max_cr^2 * WING.S_area)*;
 
 % check winglift coefficient at takeoff
 
