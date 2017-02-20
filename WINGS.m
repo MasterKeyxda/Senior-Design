@@ -1,6 +1,7 @@
 %% Wing Calculations - Preliminary
 fprintf('\nWing Prelim Design\n');
 addpath([pwd '\aero_tools\']);
+addpath([pwd '\ANSYS_results\']);
 addpath([pwd '\VSP_results\']);
 % Define Area 
 WING.S_area = 930.25; % ft^2
@@ -83,11 +84,28 @@ WING.swept.name = 'BACNLF';
 figure(); plot(WING.swept.polar_inv.alpha, WING.swept.polar_inv.CL);
 ylabel('C_l');
 xlabel('\alpha');
+title('Boeing HSNLF Lift-Curve Polar');
 % WING.swept.i_w = spline(WING.swept.polar_inv.CL, WING.swept.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
 
 % Supersonic Airfoil Characteristics
-% WING.supersonic.name = 'biconvex';
-% WING.supersonic.t_c = 0.12; % thickness ratio
+WING.supersonic.name = 'biconvex';
+WING.supersonic.t_c = 0.12; % thickness ratio
+cd_data = dlmread('cd-history', ' ', 2, 0);
+cl_data = dlmread('cl-history', ' ', 2, 0);
+cm_data = dlmread('cm-history', ' ', 2, 0);
+iter = find(cd_data(:,1) == 1);
+WING.supersonic.alpha = 0:1:length(iter)-1;
+for i = 1:length(iter)
+    if i < length(iter)
+        WING.supersonic.Cd(i) = cd_data(iter(i+1)-1,end);
+        WING.supersonic.Cl(i) = cl_data(iter(i+1)-1,end);
+        WING.supersonic.Cm(i) = cm_data(iter(i+1)-1,end);
+    else
+        WING.supersonic.Cd(i) = cd_data(end,end);
+        WING.supersonic.Cl(i) = cl_data(end,end);
+        WING.supersonic.Cm(i) = cm_data(end,end);
+    end
+end
 % dx = 0.01;
 % WING.supersonic.coords = [[1:-dx:0, dx:dx:1]', 2.*WING.supersonic.t_c.*[(1-(1:-dx:0)).*(1:-dx:0),-(1-(dx:dx:1)).*(dx:dx:1)]'];
 % figure();
@@ -99,11 +117,13 @@ xlabel('\alpha');
 %     fprintf(fid, '%12.7f  %12.7f\n', WING.supersonic.coords);
 %     fclose(fid);
 % end
-% % [WING.supersonic.polar_inv, WING.supersonic.foil] = xfoil(WING.supersonic.coords, [-2:19], 10e6, 0.0, 'oper/iter 10000');
-% 
-% figure(); plot(WING.supersonic.polar_inv.alpha, WING.supersonic.polar_inv.CL);
-% ylabel('C_l');
-% xlabel('\alpha');
+% [WING.supersonic.polar_inv, WING.supersonic.foil] = xfoil(WING.supersonic.coords, [-2:19], 10e6, 0.0, 'oper/iter 10000');
+
+
+figure(); plot(WING.supersonic.alpha, WING.supersonic.Cl);
+ylabel('C_l');
+xlabel('\alpha');
+title('Bi-convex Lift-Curve Polar');
 % WING.supersonic.i_w = spline(WING.supersonic.polar_inv.CL, WING.supersonic.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
 
 %% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
@@ -179,7 +199,7 @@ legend('Mach 1.6', 'Mach 1.8');
 
 % calculate actual winglift at cruise and iterate with necessary cruise
 % coefficient
-
+% WING.L_cr = 0.5*(sig_rho * 0.002378 * Wt.fuel.V_max_cr^2 * WING.S_area)*;
 
 % check winglift coefficient at takeoff
 

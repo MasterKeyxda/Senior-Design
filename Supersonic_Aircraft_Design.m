@@ -26,7 +26,7 @@ close all;
 
 %% Supersonic Business Jet
 
-atm.alt = 40;
+atm.alt = 42;
 S_w = 1166; % Ft^2
 fprintf('Alt: %0.2fkft\n', atm.alt);
 fprintf('Wing Area: %0.2f ft^2 \n', S_w);
