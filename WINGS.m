@@ -1,8 +1,8 @@
 %% Wing Calculations - Preliminary
 fprintf('\nWing Prelim Design\n');
-addpath([pwd '\aero_tools\']);
-addpath([pwd '\ANSYS_results\']);
-addpath([pwd '\VSP_results\']);
+addpath([pwd '/aero_tools/']);
+addpath([pwd '/ANSYS_results/']);
+addpath([pwd '/VSP_results/']);
 
 % Define Initial Wing Characteristics
 WING.S_area = 930.25; % ft^2

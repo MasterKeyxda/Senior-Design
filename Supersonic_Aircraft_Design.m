@@ -172,5 +172,6 @@ fprintf('\n TAIL CALCULATIONS: \n');
 Kc = 1.2; % tail calculation correction factor?
 Vh = 0.6; % horizontal tail volumen coefficient
 Vv = 0.05; % vertical tail volumen coefficient
-
-TAIL = TailCalc(0, Vh, Vv, WTO, sig_rho * 0.002378, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf);
+sweepWing = 30; % wing sweep degrees
+taperh = 0.6; % horizontal tail taper ratio
+TAIL = TailCalc(0, Vh, Vv, WTO, sig_rho * 0.002378, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh);
