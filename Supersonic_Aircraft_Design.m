@@ -22,12 +22,12 @@ close all;
     % number of crew: 2
 
 % Wings
-    % Initial Wing Area - 1166 ft^2
+    % Initial Wing Area - 930 ft^2
 
 %% Supersonic Business Jet
 
 atm.alt = 42;
-S_w = 1166; % Ft^2
+S_w = 930; % Ft^2
 fprintf('Alt: %0.2fkft\n', atm.alt);
 fprintf('Wing Area: %0.2f ft^2 \n', S_w);
 
@@ -170,7 +170,7 @@ Preliminary_Fuselage_Design;
 fprintf('\n TAIL CALCULATIONS: \n');
 % Sample Tail Params
 Kc = 1.2; % tail calculation correction factor?
-Vh = 0.4; % horizontal tail volumen coefficient
-Vv = 0.03; % vertical tail volumen coefficient
+Vh = 0.6; % horizontal tail volumen coefficient
+Vv = 0.05; % vertical tail volumen coefficient
 
 TAIL = TailCalc(0, Vh, Vv, WTO, sig_rho * 0.002378, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf);
