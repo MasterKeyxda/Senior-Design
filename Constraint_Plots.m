@@ -95,7 +95,7 @@ ROC = ROC / 60; % convert ROC to ft/s
      + (1 ./ liftDragRatioMax);
 %% Ceiling Curve(4.3.6 Sadraey)
 %Keyur Edit - None.
-% Curve based on service ceiling
+% Curve based on cruise ceiling
 altService = 42; % kft
 [~,~,sigmaService,aSoundRatio] = AltTable(altService, 'h'); % height input of kft
 rhoService = sigmaService * rhoSeaLevel; 
