@@ -28,3 +28,19 @@ y4 = -2*(t/c).*x4.*(1-x4);
 
 plot([x1,x2,x3,x4],[y1,y2,y3,y4])
 ylim([-.2 .2])
+hold on
+camber = [y1(1:end-1),y2(1:end-1),y3]+y4;
+plot(x4,camber)
+%% Two Biconvex
+
+t = 0.07;
+
+x5 = 0:dx:1;
+y5 = 2*((t-0.5*t)/c).*x5.*(1-x5);
+figure
+
+plot(x4,y4)
+hold on
+plot(x5,y5)
+ylim([-.2 .2])
+plot(x4,y4+y5)
