@@ -3,7 +3,7 @@
 % close all
 %% FILE META
 % File is now updated from AMAT calculation script into function calculations for senior design
-function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh)
+function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, Lfuselage, taperh)
     %% Inputs:
 %     alpha = 0; % deg AOA
 %     Vh = 0.4; % horizontal tail volumen coefficient
@@ -49,6 +49,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     bh = Sh/ch;
     cRooth = Sh / (bh * (1 + taperh)); % root chord of horizontal tail
     cTiph = taperh * cRooth; % tip chord of horizontal tail
+    
     effh = 0.9; % tail efficiency
     Cm_alpha = CL_alphaw*(Xcgbar - 0.25) - CL_alphah*effh*(Sh/S)*(Lopt/cbar - Xcgbar)*(1-deps);
 
@@ -85,8 +86,6 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     fprintf('Tail Moment Arm = %f ft\n', Lopt);
     fprintf('Horizontal Tail Area = %f \n',Sh);
     fprintf('Horizontal Tail Chord = %f ft \n', ch);
-    fprintf('Horizontal Tail Root Chord = %f \n', cRooth); 
-    fprintf('Horizontal Tail Tip Chord = %f \n', cTiph); 
     fprintf('Horizontal Tail Span = %f ft \n', bh);
     fprintf('Cm_alpha = %f  \n', Cm_alpha);
     fprintf('Vertical Tail Area = %f ft^2 \n',Sv)
