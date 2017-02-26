@@ -39,6 +39,7 @@ fprintf('Cockpit Length is %0.2f ft \n',L_CP)
 v_b = 5.156; % average bag/luggage size ft^3
 v_btotal = n_p * v_b; %ft^3
 
+
 %% L/D length to diameter ratio
 % Table 7.7
 % L/D for Concorde is 23.
@@ -48,13 +49,13 @@ v_btotal = n_p * v_b; %ft^3
 W_s = 25/12 ; % seat width ft
 % Table 7.3
 W_a = 23/12; % aisle distance ft
-% Equation 7.2
 W_C = 2*W_s + W_a; % Interior Cabin Width ft
 % Equation 7.9
 D_C = W_C + 2*T_w; % Cabin Diameter ft
 
 % Calculate Cabin Length
 P_s = 40/12; % seat pitch or distance between seats (ft)
+
 n_r = n_p/2; % number of rows
 % Equation 7.1
 L_C = n_r*P_s+8; % Cabin Length
@@ -94,6 +95,15 @@ L_R = 89; % arbitrary length of rear section ft
 L_F = L_CP + L_C + L_n + L_R; % Total Fuselage Length
 fprintf('The fuselage length is %0.2f ft \n',L_F)
 %% Length to Diameter Ratio Fineness Ratio
+L_N = 20; % arbitrary length of nose ft
+%% Rear Section
+% Will Include Tail and Wing as well for supersonic aircraft.
+L_R = 70; % arbitrary length of rear section ft
+%% Length of Fuselage
+% Equation 7.10 
+L_F = L_CP + L_C + L_N + L_R; % Total Fuselage Length
+fprintf('The fuselage length is %0.2f ft \n',L_F)
+%% Length to Diameter Ratio
 LF_DF = L_F/D_C; 
 fprintf('The L/D ratio for the fuselage is %0.2f  \n',LF_DF)
 %% Fuel Tanks
@@ -137,3 +147,4 @@ title('Haack Body Fuselage Design')
 % set(gca,'zdir','reverse')
 % colormap hsv
 % axis equal
+
