@@ -83,16 +83,16 @@ ROC = ROC / 60; % convert ROC to ft/s
 %% Ceiling Curve(4.3.6 Sadraey)
 %Keyur Edit - None.
 % Curve based on cruise ceiling
-altService = 52; % kft -> changed to 52 (Andrew)
+altService = 42; % kft
 [~,~,sigmaService,aSoundRatio] = AltTable(altService, 'h'); % height input of kft
 rhoService = sigmaService * atm.rho_sl; 
-ROC_Service = 100; % rate of climb at service ceiling (ft/min)
+ROC_Service = 300; % rate of climb at service ceiling (ft/min) % FAR numbers
 ROC_Service = ROC_Service / 60; % convert ROC to ft/s
 ceilingCurve = (ROC_Service ./ (sigmaService .* sqrt((2 ./ (rhoService .* sqrt(CD_0 ./ K)))...
     .* constraints.wingLoading))) + (1 ./ (sigmaService .* liftDragRatioMax));
 %% Plot Curves
 
-figure(1)
+figure();
 hold on; 
 title('Wing Area (S) and Engine Thrust (T) Constraint Plot')
 xlabel('Wing Loading, W/S (lbf / ft^2)')
