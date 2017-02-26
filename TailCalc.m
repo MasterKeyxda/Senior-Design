@@ -3,7 +3,7 @@
 % close all
 %% FILE META
 % File is now updated from AMAT calculation script into function calculations for senior design
-function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh)
+function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh, cglocAC)
     %% Inputs:
 %     alpha = 0; % deg AOA
 %     Vh = 0.4; % horizontal tail volumen coefficient
@@ -19,6 +19,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
 %     AR = b^2/S; % aspect ratio wing
 %     Cmaf = -0.181; % CM - 0.305
 %     sweepWing = 6; % wing sweep angle (degrees)
+%     cglocAC = -(3/8)/12; % ft cg location in front or behind AC Wing
     
     
     Lopt = Kc*((4*cbar*S*Vh)/(pi*Df))^0.5; % ft optimum tail moment arm
@@ -27,7 +28,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     Sh = (cbar*S*Vh)/Lopt; % ft^2 horizontal tail area
     CL = (2*Wt)/(rho*vel^2*S); % coefficient of lift
     Cm0wf = Cmaf*((AR*cosd(sweepWing)^2) / (AR + 2*cosd(sweepWing))); % CM wing and fuselage
-    cglocAC = -(3/8)/12; % ft cg location in front or behind AC Wing
+    
     Xcg = 0.25*cbar - cglocAC; % cg location from leading edge
     Xcgbar = Xcg / cbar; % nondimensional cg
     CLh = (Cm0wf + CL*(Xcgbar - 0.25))/Vh; % CL horizontal tail
