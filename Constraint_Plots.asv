@@ -11,12 +11,7 @@
 % corresponding wing loading (W/S) and thrust loading (T/W)
 
 % allows running of script independently of main script
-if ~exist('Wt', 'var')
-   clc;
-   clear;
-   close all;
-   load('aircraft_vars.mat'); 
-end
+if ~exist(
 
 constraints.wingLoading = 50:0.5:250; % wing loading parameter (lb/ft^2)
 
