@@ -40,8 +40,6 @@ req.f_eff = 1.0; % passenger-miles/lb of fuel (min)
 req.takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
 % on FAR 25, aircraft must clear imaginary 35 ft obstacle
 
-
-
 %% Payload Weight (pld)
 
 % Total Payload Weight = Weight of passengers + weight of luggage + weight of fuel + weight crew*

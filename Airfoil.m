@@ -1,3 +1,8 @@
+clear;
+clc;
+close all;
+
+
 t = 0.07;
 c = 1;
 dx = 0.001;
@@ -41,6 +46,6 @@ figure
 
 plot(x4,y4)
 hold on
-plot(x5,y5)
+plot(x5,y5, '--')
 ylim([-.2 .2])
-plot(x4,y4+y5)
+plot(x4,y4+y5, 'o')
