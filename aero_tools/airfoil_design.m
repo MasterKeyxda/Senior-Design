@@ -1,4 +1,4 @@
-function airfoil_design(fname, ftype, dx, t_c, wt, sim_type)
+function airfoil_design(fname, ftype, dx, c_r, t_c, wt, sim_type)
 
 %% Define domain
 
@@ -37,11 +37,11 @@ elseif strcmp(sim_type, 'ansys')
 %            ((1-dx):-dx:0)', 2.*t_c.*(-(1-((1-dx):-dx:0)).*((1-dx):-dx:0))']; % bottom of airfoil
     top = (0:dx:1);
     bott = ((1-dx):-dx:0);
-    coords = [top', 2.*((1-wt)*t_c).*((1-top).*top)'; % top of airfoil
+    coords = [top', 2.*(t_c).*((1-top).*top)'; % top of airfoil
        bott', 2.*t_c.*(-(1-bott).*bott)']; % bottom of airfoil
        
     fprintf(fid, '\t\t#Supersonic Airfoil\n\n');
-    fprintf(fid, '#group	#point	#x_cord	#y_cord	#z_cord\n');
+    fprintf(fid, '#group\t#point\t#x_cord\t#y_cord\t#z_cord\n');
     for i = 1:length(coords)-1
     %     fprintf(fid, '%s Supersonic Airfoil\n\n', WING.supersonic.name);
         fprintf(fid, '%i\t%i\t%12.7f\t%12.7f\t%12.7f\n', 1, i, coords(i,1), coords(i,2), 0.0000);
@@ -63,6 +63,20 @@ elseif strcmp(sim_type, 'Selig')
         end
     end
     fclose(fid);
+    
+elseif strcmp(sim_type, 'solidworks')
+    top = 1:-dx:0;
+    bott = dx:dx:1;
+    coords = [top', 2.*((1-wt)*t_c).*((1-top).*top)'; % top of airfoil
+       bott', 2.*t_c.*(-(1-bott).*bott)']; % bottom of airfoil
+       
+    fprintf(fid, [fname ' Supersonic Airfoil\n']);
+    for i = 1:length(coords)
+        fprintf(fid, '%3.7f\t%4.7f\t%i\n', c_r*coords(i,1), c_r*coords(i,2), 0.0);
+        if i == 0.5*length(coords(:,1))
+            fprintf(fid, '\n');
+        end
+    end
     
 end
 
