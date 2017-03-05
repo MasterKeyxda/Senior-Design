@@ -33,11 +33,13 @@ WING.CL_TO = 0.85 * 2 * WTO / (0.002378 * WING.V_TO^2 * WING.S_area);
 WING.dCL_flaps = [1 1.3]; % fowler flaps -> Sadraey
 
 %% STEP 11: Determine Subsonic Taper Angles and Dihedral Angle
-WING.M0_angle = asin(1./req.cr_M0)*180/pi;
-nose_angle = 13.24; % degrees
-WING.sweep_angle = 1.2*(90-WING.M0_angle);
+WING.M0_angle = asin(1./req.cr_M0); % radians
+nose_angle = 13.24 * pi / 180; % degrees -> radians
+WING.M_LE = 0.8;
+WING.M_cone = (1./(sin(WING.M0_angle - nose_angle))).*sqrt((2/(1.4-1)+(req.cr_M0.*sin(WING.M0_angle)).^2)./((2*1.4/(1.4-1)).*(req.cr_M0.*sin(WING.M0_angle)).^2 - 1.0));
+WING.sweep_LE = acosd(WING.M_LE./WING.M_cone);
 fprintf('Mach Angles:\nMin: %0.3f\tMax: %0.3f\n', WING.M0_angle(1), WING.M0_angle(2));
-fprintf('Sweep Angles:\nMin: %0.3f\tMax: %0.3f\n', WING.sweep_angle(1), WING.sweep_angle(2));
+fprintf('Sweep Angles:\nMin: %0.3f\tMax: %0.3f\n', WING.sweep_LE(1), WING.sweep_LE(2));
 
 % Select the dihedral angle
 WING.dihedral = 6; % degrees
@@ -65,12 +67,12 @@ WING.CD0 = 0.02;
 WING.df_b = 6.5 / WING.span;
 WING.eff_planform = 1;
 % Subsonic Wing
-WING.supersonic.eff = oswaldfactor(WING.AR, WING.sweep_angle(2), 'Raymer', WING.CD0, WING.df_b, WING.eff_planform);
+% WING.supersonic.eff = oswaldfactor(WING.AR, WING.sweep_angle(2), 'Raymer', WING.CD0, WING.df_b, WING.eff_planform);
 
 % Supersonic wing
 % WING.supersonic.eff = 1.78*(1-0.045*WING.supersonic.AR^0.68)-0.64;
-WING.supersonic.eff = oswaldfactor(WING.AR, 0, 'Raymer', WING.CD0, WING.df_b, WING.eff_planform);
-disp(WING.supersonic.eff);
+% WING.supersonic.eff = oswaldfactor(WING.AR, 0, 'Raymer', WING.CD0, WING.df_b, WING.eff_planform);
+% disp(WING.supersonic.eff);
 
 fprintf('Aspect Ratio: %0.2f\n', WING.AR);
 fprintf('Span: %0.3f\n', WING.span);
@@ -122,14 +124,22 @@ end
 % f1 = fit(WING.supersonic.alpha', WING.supersonic.Cl','gauss2', 'Exclude', WING.supersonic.Cl<0);
 % figure(); plot(f1, WING.supersonic.alpha, WING.supersonic.Cl, WING.supersonic.Cl<0);
 % hold on;
-figure(); plot(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),'o');
-hold on;
-cl_fit = polyfit(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),3);
-plot(polyval(cl_fit, WING.supersonic.alpha));
+figure(); plot(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),'o-');
+% hold on;
+% cl_fit = polyfit(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),3);
+% plot(polyval(cl_fit, WING.supersonic.alpha));
 ylabel('C_l');
 xlabel('\alpha');
 title('Bi-convex Lift-Curve Polar');
 % WING.supersonic.i_w = spline(WING.supersonic.polar_inv.CL, WING.supersonic.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
+
+figure(); plot(WING.supersonic.Cl(WING.supersonic.Cl>=0), WING.supersonic.Cd(WING.supersonic.Cl>=0),'o-');
+% hold on;
+% cd_fit = polyfit(WING.supersonic.Cl(WING.supersonic.Cl>=0), WING.supersonic.Cd(WING.supersonic.Cl>=0),3);
+% plot(polyval(cd_fit, WING.supersonic.Cl));
+ylabel('C_d');
+xlabel('C_l');
+title('Bi-convex Drag Polar');
 
 %% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
 
