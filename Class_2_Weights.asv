@@ -13,7 +13,7 @@ WF = Wt.fuel.w_tot; % weight of fuel (lbs)
 Wmzf = WTO - WF; % max zero fuel weight (lbs)'
 sweepSemiChord = WING.sweep_LE(1); % VERIFY Sweep at wing semi-chord
 b = WING.span; % wing span (ft)
-nUlt = 3.75; % ultimate load factor from V-n diagram % GET FROM ANOTHER SCRIPT
+nUlt = 3.75; % ultimate load factor from V-n diagram 
 tr = 0.05; % max thickness of wing (ft); FIX VALUE
 Wt.Struc.Wing = 0.0017*Wmzf*((b/cosd(sweepSemiChord))^0.75)*((1 + (6.3*cosd(sweepSemiChord)/b)^0.5))*(nUlt^0.55)*((b*S_w) / (tr*Wmzf*cosd(sweepSemiChord))^0.30);
 
@@ -23,10 +23,7 @@ Wt.Struc.Wing = 0.0017*Wmzf*((b/cosd(sweepSemiChord))^0.75)*((1 + (6.3*cosd(swee
 
 % Fuselage 
 
-% Nacelles
-
-% Landing Gear
-
+%
 %% Powerplant Weight
 
 % Powerplane weight includes the weight of the engines, fuel system,
