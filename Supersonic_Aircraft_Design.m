@@ -40,8 +40,6 @@ req.f_eff = 1.0; % passenger-miles/lb of fuel (min)
 req.takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
 % on FAR 25, aircraft must clear imaginary 35 ft obstacle
 
-
-
 %% Payload Weight (pld)
 
 % Total Payload Weight = Weight of passengers + weight of luggage + weight of fuel + weight crew*
@@ -185,3 +183,11 @@ sweepWing = 30; % wing sweep degrees
 taperh = 0.6; % horizontal tail taper ratio
 cglocAC = -13; % ft cg location in front or behind AC Wing
 TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC);
+
+%% Get run-time meta info for future reference
+
+% save meta information about current script run
+meta.date = datetime('today');
+
+% save variables to .mat file
+save('aircraft_vars.mat'); 

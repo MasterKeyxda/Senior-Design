@@ -126,7 +126,7 @@ R_max = D_C/2; % arbitrary maximum nose radius ft
 V_n = (3*pi^2/16 * R_max^2*L_F2)/2; % Volume of nose
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);
-FigHandle = figure('Position', [250, 250, L_F2*40, R_max*40]);
+figure('Position', [250, 250, L_F2*40, R_max*40]); % DON'T DEFINE FIGURES WITH VARIABLES UNLESS YOU REALLY WANT TO SAVE IT
 % figure();
 x_CP = L_n+L_CP;
 x_C = x_CP + L_C;
