@@ -41,6 +41,8 @@ end
 
 % Ultimate Load Factor
 nUlt = nlimPos * 1.5; 
+fprintf('The max limit load factor is %0.2f', nlimPos)
+fprintf('The max ultimate load factor is % 0.2f', nUlt)
 
 % Positive stall curve for load factor ranging from n = 0 to nlimPos
 nPos = 0:0.05:nlimPos; % positive load factor range
@@ -71,7 +73,7 @@ figure()
 ylim([min(nNeg)-0.5, nlimPos+0.5])
 xlabel('Speed, V (KEAS)')
 ylabel('Load factor, n')
-title('V-n Diagram (Maneuver and Gust)')
+title('Maneuver V-n Diagram')
 hold on; 
 % Plot positive stall speed curve
 plot(Vspos, nPos,'b') 
