@@ -186,6 +186,7 @@ TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C,
 
 %% V-n diagram
 V_n_diagram;
+
 %% Get run-time meta info for future reference
 
 % save meta information about current script run
