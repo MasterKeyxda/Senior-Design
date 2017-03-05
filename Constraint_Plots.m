@@ -92,7 +92,7 @@ ROC = 10000 / 60;  % rate of climb (ft/min) -> ft/s
 %% Ceiling Curve(4.3.6 Sadraey)
 %Keyur Edit - None.
 % Curve based on cruise ceiling (Eq. 4.95, Sadraey)
-% altService = 42; % kft -> modified for absolute ceiling
+% altService = 42; % kft
 % [~,~,sigmaService,aSoundRatio] = AltTable(altService, 'h'); % height input of kft
 rhoService = atm.sig_rho * atm.rho_sl; 
 ROC_cr = 300; % rate of climb at service ceiling (ft/min) (FAR numbers)
