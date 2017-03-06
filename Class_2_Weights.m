@@ -20,6 +20,7 @@ Wt.Struc.Wing = 0.0017*Wmzf*((b/cosd(sweepSemiChord))^0.75)*((1 + (6.3*cosd(swee
 semiChordSweepHT = 5; % semi chord sweep angle (degrees)
 Kh = 1.1; % constant for variable incidence stabilizers (HT)
 %Wt.Struc.HT = Kh*Sh*(3.81*(((Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepHT))))-0.287); 
+Wt.Struc.HT = 949; % placeholder (lbs)
 
 % Vertical Tail
 % Torenbeek Method, Eqn(s) 5.20 & 5.21, p.74
@@ -27,6 +28,7 @@ semiChordSweepVT = 5; % VT semi chord sweep angle (degrees)
 zh = 10; % distance from VT root to HT mounting location (ft)
 %Kv = 1 + (0.15*((Sh*zh) / (Sv*bv))); 
 %Wt.Struc.VT = Kv*Sv*(3.81*(((Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
+Wt.Struc.VT = 920; % placeholder (lbs)
 
 % Fuselage 
 Kinl = 1.25; % for airplanes with inlets in or on fuselage
@@ -66,7 +68,9 @@ CgMain = 0.021;
 Wt.Struc.MainGear = Kgr*(AgMain + (BgMain*(WTO^0.75)) + CgMain*WTO);
 
 % Total Weight
-Wt.Struc.Total = Wt.Struc.Nacelle + Wt.Struc.NoseGear + Wt.Struc.MainGear;
+Wt.Struc.Total = Wt.Struc.Wing + Wt.Struc.HT + Wt.Struc.VT + ...
+    Wt.Struc.FuselageGD + Wt.Struc.Nacelle + Wt.Struc.NoseGear + ... 
+    Wt.Struc.MainGear;
 %% Powerplant Weight
 
 % Powerplane weight includes the weight of the engines, fuel system,
@@ -194,3 +198,37 @@ Wt.Feq.Paint = 0.003*WTO; % ranges from 0.003 to 0.006WTO
 Wt.Feq.Total = Wt.Feq.FCsysToren + Wt.Feq.Hydraulic + Wt.Feq.Iae + ...
     Wt.Feq.ElecSys + Wt.Feq.Api + Wt.Feq.OxygenGD + Wt.Feq.Apu + ... 
     Wt.Feq.Furn + Wt.Feq.CargoEquip + Wt.Feq.Oper + Wt.Feq.Paint; 
+
+
+%% Export to Excel
+StrucLabels = {'Wing';'Horizontal Tail';'Vertical Tail';'Fuselage';...
+    'Nacelles';'Nose Gear';'Main Gear';'Landing Gear';'Total Structural Weight'};
+PwrLabels = {'Engines'; 'Fuel System'; 'Propulsion System'; 'Total Powerplant Weight'};
+FeqLabels = {'Flight Control System'; 'Hydraulic Systems'; ...
+    'Instrumentation, Avionics, Electronics';'Electical System'; ...
+    'Air-conditioning, pressurization, de-icing systems';'Oxygen System'; ...
+    'Auxiliary Power Unit (APU)'; 'Furnishings'; ... 
+    'Baggage and Cargo Handling Equipment'; 'Operational Items'; 'Paint'; ...
+    'Total Fixed Equipment Weight'}; 
+
+% Structural Weight Array
+StrucWT = [Wt.Struc.Wing; Wt.Struc.HT; Wt.Struc.VT; ...
+    Wt.Struc.FuselageGD; Wt.Struc.Nacelle; Wt.Struc.NoseGear; ...
+    Wt.Struc.MainGear; Wt.Struc.Total];
+
+% Powerplant Weight Array
+PwrWT = [Wt.Pwr.Engine; Wt.Pwr.FuelSystem; Wt.Pwr.Propulsion; Wt.Pwr.Total];
+
+% Fixed Equipment Weight Array
+FeqWT = [Wt.Feq.FCsysToren; Wt.Feq.Hydraulic; Wt.Feq.Iae; Wt.Feq.ElecSys; ...
+    Wt.Feq.Api; Wt.Feq.OxygenGD; Wt.Feq.Apu; Wt.Feq.Furn; Wt.Feq.CargoEquip; ... 
+    Wt.Feq.Oper; Wt.Feq.Paint];
+
+% Total Weight
+WTTotal = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;
+
+% Concatenate arrays
+WTArray = [StrucWT;PwrWT;FeqWT;WTTotal];
+%Labels = {StrucLabels(:); PwrLabels; FeqLabels}
+
+xlswrite('Aircraft_Weight.xlsx',WTArray, 'B3:B27')
