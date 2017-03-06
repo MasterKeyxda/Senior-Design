@@ -47,7 +47,5 @@ fprintf('The load percentage on the main gear is %0.2f percent \n',PercentFm)
 % Rear Fuselage: 1.14 ft, Wing: 2.46 ft
 x_upsweep = 120.83; % distance from nose to upsweep rear fuselage
 alpha_TO = 10; % takeoff angle degrees
-alpha_c = 10 +.3; % clearance angle
+alpha_c = 10 +.3; % 
 AB = x_upsweep - x_MainGear; % distance from aft landing gear to upsweep (ft)
-Hf = AB*tand(alpha_c); % distance between landing gear and fuselage
-fprintf('The landing gear height is Hf %0.2f ft \n',Hf) 
