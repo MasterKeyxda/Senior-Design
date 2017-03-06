@@ -1,3 +1,11 @@
+if ~exist('Wt', 'var')
+   clc;
+   clear;
+   load('aircraft_vars.mat'); 
+   close all;
+end
+
+
 %% Wing Calculations - Preliminary
 fprintf('\nWing Prelim Design\n');
 addpath([pwd '/aero_tools/']);
@@ -145,7 +153,6 @@ fprintf('Aerodynamic Center: %0.5f\n', WING.x_AC);
 WING.m1_6.alpha = -5:19;
 cells = linspace(0,(length(WING.m1_6.alpha)-1)*78, length(WING.m1_6.alpha));
 [~, ~, raw1_6] = xlsread('mach_1.6.csv', 'mach_1.6', sprintf('F%i:F%i',1,length(WING.m1_6.alpha)*78));
-[~, ~, raw1_8] = xlsread('mach_1.8.csv', 'mach_1.8', sprintf('F%i:F%i',1,length(WING.m1_6.alpha)*78));
 
 WING.m1_8.alpha = WING.m1_6.alpha;
 
@@ -156,56 +163,49 @@ WING.m1_6.CM_y = [raw1_6{cells+16}];
 WING.m1_6.E = [raw1_6{cells+19}];
 WING.m1_6.i_w = spline(WING.m1_6.CL, WING.m1_6.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
 
-% Mach 1.8
-WING.m1_8.CL = [raw1_8{cells+14}];
-WING.m1_8.CD_tot = [raw1_8{cells+10}];
-WING.m1_8.CM_y = [raw1_8{cells+16}];
-WING.m1_8.E = [raw1_8{cells+19}];
-WING.m1_8.i_w = spline(WING.m1_8.CL, WING.m1_8.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
+WING.Cmwf = -0.0085; % given from vsp  spline(WING.m1_6.alpha, WING.m1_6.CM_y, WING.m1_6.i_w);
 
-WING.Cmwf = spline(WING.m1_8.alpha, WING.m1_8.CM_y, WING.m1_8.i_w);
-
-fprintf('Incidence Angles: %0.5f (M 1.6), %0.5f (M 1.8)\n', WING.m1_6.i_w, WING.m1_8.i_w);
+fprintf('Incidence Angles: %0.5f (M 1.6)\n', WING.m1_6.i_w);
 
 % Plot CL's
 figure();
 plot(WING.m1_6.alpha, WING.m1_6.CL);
 hold on;
-plot(WING.m1_8.alpha, WING.m1_8.CL);
+% plot(WING.m1_8.alpha, WING.m1_8.CL);
 xlabel('\alpha');
 ylabel('C_L');
 title('Wing Lift Coefficient');
-legend('Mach 1.6', 'Mach 1.8');
+legend('Mach 1.6');
 
 % Plot CD's
 figure();
 plot(WING.m1_6.alpha, WING.m1_6.CD_tot);
 hold on;
-plot(WING.m1_8.alpha, WING.m1_8.CD_tot);
+% plot(WING.m1_8.alpha, WING.m1_8.CD_tot);
 xlabel('\alpha');
 ylabel('C_{D_{tot}}');
 title('Drag Coefficient');
-legend('Mach 1.6', 'Mach 1.8');
+legend('Mach 1.6');
 
-% Plot CM_y
-figure();
-plot(WING.m1_6.alpha, WING.m1_6.CM_y);
-hold on;
-plot(WING.m1_8.alpha, WING.m1_8.CM_y);
-xlabel('\alpha');
-ylabel('C_{M_{y}}');
-title('Pitch Moment Coefficient');
-legend('Mach 1.6', 'Mach 1.8');
-
-% Plot E
-figure();
-plot(WING.m1_6.alpha, WING.m1_6.E);
-hold on;
-plot(WING.m1_8.alpha, WING.m1_8.E);
-xlabel('\alpha');
-ylabel('E');
-title('Oswald Efficiency');
-legend('Mach 1.6', 'Mach 1.8');
+% % Plot CM_y
+% figure();
+% plot(WING.m1_6.alpha, WING.m1_6.CM_y);
+% hold on;
+% plot(WING.m1_8.alpha, WING.m1_8.CM_y);
+% xlabel('\alpha');
+% ylabel('C_{M_{y}}');
+% title('Pitch Moment Coefficient');
+% legend('Mach 1.6', 'Mach 1.8');
+% 
+% % Plot E
+% figure();
+% plot(WING.m1_6.alpha, WING.m1_6.E);
+% hold on;
+% plot(WING.m1_8.alpha, WING.m1_8.E);
+% xlabel('\alpha');
+% ylabel('E');
+% title('Oswald Efficiency');
+% legend('Mach 1.6', 'Mach 1.8');
 
 %% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
