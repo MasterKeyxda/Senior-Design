@@ -89,11 +89,12 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     fprintf('Horizontal Tail Root Chord = %0.3f \n', cRooth); 
     fprintf('Horizontal Tail Tip Chord = %0.3f \n', cTiph); 
     fprintf('Horizontal Tail Span = %0.3f ft \n', bh);
+    fprintf('Horizontal Tail Angle = %0.3f deg \n',ih);
     fprintf('Cm_alpha = %0.3f  \n', Cm_alpha);
     fprintf('Vertical Tail Area = %0.3f ft^2 \n',Sv)
     fprintf('Vertical Tail Chord = %0.3f ft \n', cv);
     fprintf('Verical Tail Span = %0.3f ft \n', bv);
-    fprintf('Total Tail Area = %0.3f ft^2\n',(Sh+Sv))
+    fprintf('Total Tail Area = %0.3f ft^2\n',(Sh+Sv));
     if strcmp(vtail, 'yes')
         fprintf('One arm of V Tail')
         fprintf('V Tail Span = %.2f ft \n', vbone);
@@ -124,4 +125,5 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     TAIL.Xcg = Xcg;
     TAIL.SM = SM;
     TAIL.Xcgbar = Xcgbar;
+    TAIL.hAngle = ih;
 end
