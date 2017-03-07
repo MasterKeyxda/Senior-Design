@@ -45,7 +45,7 @@ CD_0 = 0.0200; % from CD_0 Estimate.xlsx or see Table 4.12 in Sadraey
 
 % Sadraey Eqn 4.47 (T/W) 
 % maxSpeedCurve = (rhoSeaLevel .* (Vmax.^2) .* CD_0 .* (1 ./ (2 .* wingLoading))) + (((2.*K) ./ (rhoSeaLevel .* sigma .* (Vmax.^2))) .* (wingLoading)); 
-constraints.maxSpeedCurve = (atm.rho_sl.*(constraints.Vmax.^2).*CD_0)./(2.*constraints.wingLoading) + (2.*K.*constraints.wingLoading)./(atm.rho_sl.*atm.sig_rho^2.*(constraints.Vmax.^2));
+constraints.maxSpeedCurve = (atm.rho_sl.*(constraints.Vmax.^2).*CD_0)./(2.*constraints.wingLoading) + (2.*K.*constraints.wingLoading)./(atm.rho_sl.*atm.sig_rho.*(constraints.Vmax.^2));
 
 %% Take-off Run (S_TO) Curve (Section 4.3.4 Sadraey)
 

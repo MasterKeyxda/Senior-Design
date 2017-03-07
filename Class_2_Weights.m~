@@ -24,7 +24,7 @@ trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic w
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
 bSub = percentSub * b; % subsonic wing span (ft)
 % Subsonic wing weight (lbs)
-Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
+Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*((bSub*Sw) / (trSub*Wmzf*cosd(sweepSemiChordSub))^0.30);
 
 % Supersonic portion of wing
 cRootSuper = 19.364; % root chord supersonic wing
@@ -33,7 +33,7 @@ trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; su
 sweepSemiChordSuper = 20; % wing semi-chord sweep angle (degrees)
 bSuper = percentSuper * b; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
-Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
+Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*((bSuper*Sw) / (trSuper*Wmzf*cosd(sweepSemiChordSuper))^0.30);
 
 % Add Subsonic + Supersonic Wings together
 Wt.Struc.Wing = Wt.Struc.WingSub + Wt.Struc.WingSuper; 
