@@ -252,3 +252,8 @@ WTArray = [StrucWT;PwrWT;FeqWT;WTTotal];
 %Labels = {StrucLabels(:); PwrLabels; FeqLabels}
 
 xlswrite('Aircraft_Weight.xlsx',WTArray, 'B3:B27')
+
+%% XCG Location
+
+% Distance to component xCGs from nose of aircraft (ft)
+% XCG.Wing
