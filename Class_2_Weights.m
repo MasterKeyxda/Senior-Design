@@ -62,7 +62,7 @@ VD = VD * 1.68781; % convert KTAS to ft/s
 qD = 0.5*rho_cr*(VD^2); % design dive dynamic pressure (lbs/ft^2)
 % lf and hf from Fuselage Design script 
 lf = L_F; % length of fuselage (ft)
-hf = 8.33; % max diameter / height of fuselage (ft)
+hf = Dmax; % max diameter / height of fuselage (ft)
 Wt.Struc.FuselageGD = 2*10.43*(Kinl^1.42)*((qD/100)^0.283)*((WTO/1000)^0.95)*((lf/hf)^0.71); % eqn seems inaccurate
 
 % Nacelles
