@@ -45,7 +45,7 @@ CD_0 = 0.0200; % from CD_0 Estimate.xlsx or see Table 4.12 in Sadraey
 
 % Sadraey Eqn 4.47 (T/W) 
 % maxSpeedCurve = (rhoSeaLevel .* (Vmax.^2) .* CD_0 .* (1 ./ (2 .* wingLoading))) + (((2.*K) ./ (rhoSeaLevel .* sigma .* (Vmax.^2))) .* (wingLoading)); 
-constraints.maxSpeedCurve = (atm.rho_sl.*(constraints.Vmax.^2).*CD_0)./(2.*constraints.wingLoading) + (2.*K.*constraints.wingLoading)./(atm.rho_sl.*atm.sig_rho^2.*(constraints.Vmax.^2));
+constraints.maxSpeedCurve = (atm.rho_sl.*(constraints.Vmax.^2).*CD_0)./(2.*constraints.wingLoading) + (2.*K.*constraints.wingLoading)./(atm.rho_sl.*atm.sig_rho.*(constraints.Vmax.^2));
 
 %% Take-off Run (S_TO) Curve (Section 4.3.4 Sadraey)
 
@@ -92,7 +92,7 @@ ROC = 10000 / 60;  % rate of climb (ft/min) -> ft/s
 %% Ceiling Curve(4.3.6 Sadraey)
 %Keyur Edit - None.
 % Curve based on cruise ceiling (Eq. 4.95, Sadraey)
-% altService = 42; % kft -> modified for absolute ceiling
+% altService = 42; % kft
 % [~,~,sigmaService,aSoundRatio] = AltTable(altService, 'h'); % height input of kft
 rhoService = atm.sig_rho * atm.rho_sl; 
 ROC_cr = 300; % rate of climb at service ceiling (ft/min) (FAR numbers)
@@ -134,4 +134,4 @@ fprintf('The wing area, S is: %0.2f ft^2 \n', WTO / designPoint)
 fprintf('The thrust, T is: %0.2f lbf \n', ceilCurve_avg * WTO)
 
 S_w = WTO/designPoint;
-contstraints.req_Thr = ceilCurve_avg * WTO;
+constraints.req_Thr = ceilCurve_avg * WTO;

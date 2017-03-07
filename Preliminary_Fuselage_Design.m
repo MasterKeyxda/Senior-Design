@@ -90,15 +90,9 @@ L_n = 25; % arbitrary length of nose ft
 %% Rear Section
 % Will Include Tail and Wing as well for supersonic aircraft.
 L_R = 89; % arbitrary length of rear section ft
-%% Length of Fuselage
-% Equation 7.10 
-L_F = L_CP + L_C + L_n + L_R; % Total Fuselage Length
-fprintf('The fuselage length is %0.2f ft \n',L_F)
+
 %% Length to Diameter Ratio Fineness Ratio
-L_N = 20; % arbitrary length of nose ft
-%% Rear Section
-% Will Include Tail and Wing as well for supersonic aircraft.
-L_R = 70; % arbitrary length of rear section ft
+L_N = 25; % arbitrary length of nose ft
 %% Length of Fuselage
 % Equation 7.10 
 L_F = L_CP + L_C + L_N + L_R; % Total Fuselage Length
@@ -107,7 +101,7 @@ fprintf('The fuselage length is %0.2f ft \n',L_F)
 LF_DF = L_F/D_C; 
 fprintf('The L/D ratio for the fuselage is %0.2f  \n',LF_DF)
 %% Fuel Tanks
-m_f = 177928.86/9.81; % kg of fuel
+m_f = 213514/9.81; % kg of fuel
 % Table 7.8 for fuel types and density
 rho_f = 840; % kg/m^3
 V_f = m_f/rho_f; % m^3
@@ -122,20 +116,22 @@ fprintf('The bottom volume for the fuselage is %0.2f ft^3 \n',V_bot)
 L_F2 = L_F; % arbitrary length of nose ft
 % Looking at the SEARS-HACK Body Equation from WIKIPEDIA
 x = linspace(0,1,100); % range
+x_2 = linspace(0,140*12,100);
 R_max = D_C/2; % arbitrary maximum nose radius ft
-V_n = (3*pi^2/16 * R_max^2*L_F2)/2; % Volume of nose
+V_n = (3*pi^2/16 * R_max^2*L_F2)/2;
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);
-figure('Position', [250, 250, L_F2*40, R_max*40]); % DON'T DEFINE FIGURES WITH VARIABLES UNLESS YOU REALLY WANT TO SAVE IT
-% figure();
+r_x2 = ((1/(12.*L_F2)).*(4.*x_2.*(12.*L_F2-x_2)).^.75)/12; % Solidworks
+%FigHandle = figure('Position', [250, 250, L_F2*40, R_max*40]);
+%figure(1)
 x_CP = L_n+L_CP;
 x_C = x_CP + L_C;
-plot(x*L_F2,r_x,'r',x*L_F2,-r_x,'r')
-line([L_n L_n], [-3.25 3.25]);
-line([x_CP x_CP], [-3.25 3.25]);
-line([x_C x_C], [-3.25 3.25]);
+%plot(x*L_F2,r_x2,'r',x*L_F2,-r_x2,'r')
+%line([L_n L_n], [-3.25 3.25]);
+%line([x_CP x_CP], [-3.25 3.25]);
+%line([x_C x_C], [-3.25 3.25]);
 
-title('Haack Body Fuselage Design')
+%title('Haack Body Fuselage Design')
 %%
 % z = L_F*x;
 % Z = meshgrid(z,z);
