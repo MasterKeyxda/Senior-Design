@@ -7,13 +7,36 @@ load('aircraft_vars.mat')
 
 % Wing
 % Torenbeek Method, Eqn 5.7, p.69
+Sw = 953.93; % wing area (ft^2) % GET FROM ANOTHER SCRIPT
+b = sqrt(AR*Sw); % wing span (ft)
 WF = Wt.fuel.w_tot; % weight of fuel (lbs)
-Wmzf = WTO - WF; % max zero fuel weight (lbs)'
-sweepSemiChord = WING.sweep_LE(1); % VERIFY Sweep at wing semi-chord
-b = WING.span; % wing span (ft)
+Wmzf = WTO - WF; % max zero fuel weight (lbs)
 nUlt = 3.75; % ultimate load factor from V-n diagram % GET FROM ANOTHER SCRIPT
-tr = 0.05; % max thickness of wing (ft); FIX VALUE
-Wt.Struc.Wing = 0.0017*Wmzf*((b/cosd(sweepSemiChord))^0.75)*((1 + (6.3*cosd(sweepSemiChord)/b)^0.5))*(nUlt^0.55)*((b*S_w) / (tr*Wmzf*cosd(sweepSemiChord))^0.30);
+percentSub = 0.20; % percentage of subsonic portion of wing
+percentSuper = 0.80; % percentage of supersonic portion of wing
+SwSub = Sw * percentSub; % subsonic wing area (ft^2) 
+SwSuper = Sw * percentSuper; % supersonic wing area (ft^2)
+
+% Subsonic portion of wing
+cRootSub = 23.475; % root chord length (ft)
+thickToChordSub = 0.10; % thickness to chord ratio subsonic wing
+trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic wing (ft)
+sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
+bSub = percentSub * b; % subsonic wing span (ft)
+% Subsonic wing weight (lbs)
+Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
+
+% Supersonic portion of wing
+cRootSuper = 19.364; % root chord supersonic wing
+thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
+trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
+sweepSemiChordSuper = 20; % wing semi-chord sweep angle (degrees)
+bSuper = percentSuper * b; % supersonic wing span (ft)
+% Supersonic wing weight (lbs)
+Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
+
+% Add Subsonic + Supersonic Wings together
+Wt.Struc.Wing = Wt.Struc.WingSub + Wt.Struc.WingSuper; 
 
 % Horizontal Tail
 % Torenbeek Method, Eqn 5.19, p.74
@@ -45,10 +68,6 @@ Wt.Struc.FuselageGD = 2*10.43*(Kinl^1.42)*((qD/100)^0.283)*((WTO/1000)^0.95)*((l
 % Torenbeek Method, Eqn 5.36, p.80
 % For turbojet engine; based on req. take-off thrust
 Wt.Struc.Nacelle = 0.055*constraints.req_Thr; 
-
-% Landing Gear
-% GD Method, Eqn 5.41, p.81
-% Wt.Struc.LG = 62.61*((WTO/1000)^0.84);
 
 % Torenbeek Method, Eqn 5.42, p.82
 % Applies to business jets with main gear mounted to wing and nose gear on
