@@ -1,7 +1,7 @@
 %% Fuselage Preliminary Design % Sadraey %
 % Meta
 % FUSELAGE DESIGN CHANGED TO SEARS-HAACK BODY
-% Total Length Extended to 150ft
+% Total Length Extended to 140ft
 %%
 % Test Change in GITHUB
 % Design Requirements 
@@ -89,9 +89,7 @@ L_n = 25; % arbitrary length of nose ft
 % Oblique Shock Ma2 = 1.06
 %% Rear Section
 % Will Include Tail and Wing as well for supersonic aircraft.
-
-L_R = 99; % arbitrary length of rear section ft
-
+L_R = 89; % arbitrary length of rear section ft
 
 %% Length to Diameter Ratio Fineness Ratio
 L_N = 25; % arbitrary length of nose ft
@@ -100,13 +98,12 @@ L_N = 25; % arbitrary length of nose ft
 L_F = L_CP + L_C + L_N + L_R; % Total Fuselage Length
 fprintf('The fuselage length is %0.2f ft \n',L_F)
 %% Length to Diameter Ratio
-Dmax = 100/12;
-LF_DF = L_F/Dmax; 
+LF_DF = L_F/D_C; 
 fprintf('The L/D ratio for the fuselage is %0.2f  \n',LF_DF)
 %% Fuel Tanks
-m_f = 213514/9.81; % kg of fuel
+m_f = 177928.86/9.81; % kg of fuel
 % Table 7.8 for fuel types and density
-rho_f = 840; % kg/m^3
+rho_f = ; % kg/m^3
 V_f = m_f/rho_f; % m^3
 V_f = V_f * 35.31; % ft^3
 fprintf('The fuel tank volume is %0.2f ft^3 \n',V_f)
