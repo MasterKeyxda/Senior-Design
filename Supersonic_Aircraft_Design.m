@@ -182,7 +182,7 @@ Vv = 0.05; % vertical tail volumen coefficient
 sweepWing = 28; % wing sweep degrees
 taperh = 0.6; % horizontal tail taper ratio
 cglocAC = -12; % ft cg location in front or behind AC Wing
-TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '');
+TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
 %<<<<<<< HEAD
 %=======
 
