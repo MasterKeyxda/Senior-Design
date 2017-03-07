@@ -193,6 +193,9 @@ V_n_diagram;
 %% V-n diagram
 V_n_diagram;
 
+%% V-n diagram
+V_n_diagram;
+
 %% Get run-time meta info for future reference
 
 % save meta information about current script run
