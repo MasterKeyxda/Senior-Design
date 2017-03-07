@@ -40,18 +40,19 @@ Wt.Struc.Wing = Wt.Struc.WingSub + Wt.Struc.WingSuper;
 
 % Horizontal Tail
 % Torenbeek Method, Eqn 5.19, p.74
-semiChordSweepHT = 5; % semi chord sweep angle (degrees)
+semiChordSweepHT = 10; % semi chord sweep angle (degrees); per Keyur
 Kh = 1.1; % constant for variable incidence stabilizers (HT)
-%Wt.Struc.HT = Kh*Sh*(3.81*(((Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepHT))))-0.287); 
-Wt.Struc.HT = 949; % placeholder (lbs)
+Wt.Struc.HT = Kh*Sh*(3.81*(((Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepHT))))-0.287); 
+% Wt.Struc.HT = 949; % placeholder (lbs)
 
 % Vertical Tail
 % Torenbeek Method, Eqn(s) 5.20 & 5.21, p.74
-semiChordSweepVT = 5; % VT semi chord sweep angle (degrees)
-zh = 10; % distance from VT root to HT mounting location (ft)
-%Kv = 1 + (0.15*((Sh*zh) / (Sv*bv))); 
-%Wt.Struc.VT = Kv*Sv*(3.81*(((Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
-Wt.Struc.VT = 920; % placeholder (lbs)
+semiChordSweepVT = 10; % VT semi chord sweep angle (degrees); per Keyur
+zh = bv; % distance from VT root to HT mounting location (ft);
+% assume tail mounted at top of VT
+Kv = 1 + (0.15*((Sh*zh) / (Sv*bv))); 
+Wt.Struc.VT = Kv*Sv*(3.81*(((Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
+% Wt.Struc.VT = 920; % placeholder (lbs)
 
 % Fuselage 
 Kinl = 1.25; % for airplanes with inlets in or on fuselage
@@ -61,13 +62,13 @@ VD = VD * 1.68781; % convert KTAS to ft/s
 qD = 0.5*rho_cr*(VD^2); % design dive dynamic pressure (lbs/ft^2)
 % lf and hf from Fuselage Design script 
 lf = L_F; % length of fuselage (ft)
-hf = D_C; % max diameter / height of fuselage (ft)
+hf = 8.33; % max diameter / height of fuselage (ft)
 Wt.Struc.FuselageGD = 2*10.43*(Kinl^1.42)*((qD/100)^0.283)*((WTO/1000)^0.95)*((lf/hf)^0.71); % eqn seems inaccurate
 
 % Nacelles
 % Torenbeek Method, Eqn 5.36, p.80
 % For turbojet engine; based on req. take-off thrust
-Wt.Struc.Nacelle = 0.055*constraints.req_Thr; 
+Wt.Struc.Nacelle = 0.055*contstraints.req_Thr; 
 
 % Torenbeek Method, Eqn 5.42, p.82
 % Applies to business jets with main gear mounted to wing and nose gear on

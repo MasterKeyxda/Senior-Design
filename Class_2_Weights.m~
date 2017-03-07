@@ -24,7 +24,7 @@ trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic w
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
 bSub = percentSub * b; % subsonic wing span (ft)
 % Subsonic wing weight (lbs)
-Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*((bSub*Sw) / (trSub*Wmzf*cosd(sweepSemiChordSub))^0.30);
+Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
 
 % Supersonic portion of wing
 cRootSuper = 19.364; % root chord supersonic wing
@@ -33,24 +33,25 @@ trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; su
 sweepSemiChordSuper = 20; % wing semi-chord sweep angle (degrees)
 bSuper = percentSuper * b; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
-Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*((bSuper*Sw) / (trSuper*Wmzf*cosd(sweepSemiChordSuper))^0.30);
+Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
 
 % Add Subsonic + Supersonic Wings together
 Wt.Struc.Wing = Wt.Struc.WingSub + Wt.Struc.WingSuper; 
 
 % Horizontal Tail
 % Torenbeek Method, Eqn 5.19, p.74
-semiChordSweepHT = 5; % semi chord sweep angle (degrees)
+semiChordSweepHT = 10; % semi chord sweep angle (degrees); per Keyur
 Kh = 1.1; % constant for variable incidence stabilizers (HT)
 %Wt.Struc.HT = Kh*Sh*(3.81*(((Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepHT))))-0.287); 
 Wt.Struc.HT = 949; % placeholder (lbs)
 
 % Vertical Tail
 % Torenbeek Method, Eqn(s) 5.20 & 5.21, p.74
-semiChordSweepVT = 5; % VT semi chord sweep angle (degrees)
-zh = 10; % distance from VT root to HT mounting location (ft)
-%Kv = 1 + (0.15*((Sh*zh) / (Sv*bv))); 
-%Wt.Struc.VT = Kv*Sv*(3.81*(((Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
+semiChordSweepVT = 10; % VT semi chord sweep angle (degrees); per Keyur
+zh = bv % distance from VT root to HT mounting location (ft);
+% assume tail mounted at top of VT
+Kv = 1 + (0.15*((Sh*zh) / (Sv*bv))); 
+Wt.Struc.VT = Kv*Sv*(3.81*(((Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
 Wt.Struc.VT = 920; % placeholder (lbs)
 
 % Fuselage 
@@ -67,7 +68,7 @@ Wt.Struc.FuselageGD = 2*10.43*(Kinl^1.42)*((qD/100)^0.283)*((WTO/1000)^0.95)*((l
 % Nacelles
 % Torenbeek Method, Eqn 5.36, p.80
 % For turbojet engine; based on req. take-off thrust
-Wt.Struc.Nacelle = 0.055*constraints.req_Thr; 
+Wt.Struc.Nacelle = 0.055*contstraints.req_Thr; 
 
 % Torenbeek Method, Eqn 5.42, p.82
 % Applies to business jets with main gear mounted to wing and nose gear on
