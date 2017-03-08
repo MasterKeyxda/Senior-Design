@@ -269,7 +269,13 @@ end
 
 
 %% XCG Location
-
-% Distance to component xCGs from nose of aircraft (ft)
+xRef = 20; % ereference location to the left of the nose of airplane (ft)
+% Distance to component xCGs from xref distance from nose of aircraft (ft)
 % Structural Components
-% XCG.Wing
+% Xcg.Wing
+% Xcg.HT
+% Xcg.VT
+Xcg.Fuselage = xRef + 0.45*L_F; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
+% Xcg.Nacelles
+% Xcg.NoseGear
+% Xcg.MainGear

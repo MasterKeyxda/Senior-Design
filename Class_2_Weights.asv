@@ -101,10 +101,11 @@ Wt.Pwr.Engine = Ne*3960; % Pegasus 11-61 dry engine weight (lbs)
 
 
 % Fuel System
-Kfsp = 6.71; % Jet-A, specific weight of fuel, lbs/gal
+Kfsp = 6.71; % Jet-A, specific weight of fuel, lbs/gal (Table 7.9 Sadraey)
 % GD Method, Eqn 6.20 and 6.22, p.92
 % For wing with self-sealing bladder cells
 Wt.Pwr.FuelSystem = (41.6*(((WF/Kfsp)/100)^0.818)) + 7.91*(((WF/Kfsp)/100)^0.854);
+
 % For wing with integral fuel tanks and wet wing
 % Torenbeek Method, Eqn 6.24, p.92
 % Nt = 3; % number of fuel tanks
@@ -268,7 +269,13 @@ end
 
 
 %% XCG Location
-
-% Distance to component xCGs from nose of aircraft (ft)
+xref = 20; % ereference locft to the left of the nose of airplane
+% Distance to component xCGs from xref distance from nose of aircraft (ft)
 % Structural Components
-% XCG.Wing
+% Xcg.Wing
+% Xcg.HT
+% Xcg.VT
+% Xcg.Fuselage
+% Xcg.Nacelles
+% Xcg.NoseGear
+% Xcg.MainGear
