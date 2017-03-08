@@ -182,40 +182,10 @@ Vv = 0.05; % vertical tail volumen coefficient
 sweepWing = 28; % wing sweep degrees
 taperh = 0.6; % horizontal tail taper ratio
 cglocAC = -12; % ft cg location in front or behind AC Wing
-<<<<<<< HEAD
-TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '');
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '');
-=======
-=======
-%<<<<<<< HEAD
->>>>>>> refs/remotes/origin/Keyur
 TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
-%<<<<<<< HEAD
-%=======
 
 %% V-n diagram
-V_n_diagram;
-%>>>>>>> Matt
->>>>>>> refs/remotes/origin/master
-
-%% V-n diagram
-<<<<<<< HEAD
-V_n_diagram;
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/Keyur
-=======
-%V_n_diagram;
-%=======
-TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '');
-%>>>>>>> refs/remotes/origin/master
->>>>>>> refs/remotes/origin/Keyur
->>>>>>> refs/remotes/origin/master
-
-%% V-n diagram
+fprintf('\n V-n DIAGRAM: \n'); 
 V_n_diagram;
 
 %% Get run-time meta info for future reference

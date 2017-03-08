@@ -7,31 +7,29 @@ load('aircraft_vars.mat')
 
 % Wing
 % Torenbeek Method, Eqn 5.7, p.69
-Sw = 953.93; % wing area (ft^2) % GET FROM ANOTHER SCRIPT
-b = sqrt(AR*Sw); % wing span (ft)
 WF = Wt.fuel.w_tot; % weight of fuel (lbs)
 Wmzf = WTO - WF; % max zero fuel weight (lbs)
 nUlt = 3.75; % ultimate load factor from V-n diagram % GET FROM ANOTHER SCRIPT
 percentSub = 0.20; % percentage of subsonic portion of wing
 percentSuper = 0.80; % percentage of supersonic portion of wing
-SwSub = Sw * percentSub; % subsonic wing area (ft^2) 
-SwSuper = Sw * percentSuper; % supersonic wing area (ft^2)
+SwSub = S_w * percentSub; % subsonic wing area (ft^2) 
+SwSuper = S_w * percentSuper; % supersonic wing area (ft^2)
 
-% Subsonic portion of wing
-cRootSub = 23.475; % root chord length (ft)
+% Subsonic portion of wing (dim from Solidworks model Wing.v2)
+cRootSub = 23.475; % root chord length (ft); from Solidworks model
 thickToChordSub = 0.10; % thickness to chord ratio subsonic wing
 trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic wing (ft)
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
-bSub = percentSub * b; % subsonic wing span (ft)
+bSub = percentSub * WING.span; % subsonic wing span (ft)
 % Subsonic wing weight (lbs)
 Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
 
-% Supersonic portion of wing
-cRootSuper = 19.364; % root chord supersonic wing
+% Supersonic portion of wing (dim from Solidworks model Wing.v2)
+cRootSuper = 19.364; % root chord supersonic wing; 
 thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
 trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
 sweepSemiChordSuper = 20; % wing semi-chord sweep angle (degrees)
-bSuper = percentSuper * b; % supersonic wing span (ft)
+bSuper = percentSuper * WING.span; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
 Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
 
@@ -42,28 +40,23 @@ Wt.Struc.Wing = Wt.Struc.WingSub + Wt.Struc.WingSuper;
 % Torenbeek Method, Eqn 5.19, p.74
 semiChordSweepHT = 10; % semi chord sweep angle (degrees); per Keyur
 Kh = 1.1; % constant for variable incidence stabilizers (HT)
-Wt.Struc.HT = Kh*Sh*(3.81*(((Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepHT))))-0.287); 
-% Wt.Struc.HT = 949; % placeholder (lbs)
+Wt.Struc.HT = Kh*TAIL.Sh*(3.81*(((TAIL.Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepHT))))-0.287); 
 
 % Vertical Tail
 % Torenbeek Method, Eqn(s) 5.20 & 5.21, p.74
 semiChordSweepVT = 10; % VT semi chord sweep angle (degrees); per Keyur
+bv = 9.3846; % tail span; % WON'T UPDATE FROM TAIL.m
 zh = bv; % distance from VT root to HT mounting location (ft);
 % assume tail mounted at top of VT
-Kv = 1 + (0.15*((Sh*zh) / (Sv*bv))); 
-Wt.Struc.VT = Kv*Sv*(3.81*(((Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
-% Wt.Struc.VT = 920; % placeholder (lbs)
+Kv = 1 + (0.15*((TAIL.Sh*zh) / (TAIL.Sv*bv))); 
+Wt.Struc.VT = Kv*TAIL.Sv*(3.81*(((TAIL.Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
 
-% Fuselage 
-Kinl = 1.25; % for airplanes with inlets in or on fuselage
-VD = 543.6; % design dive speed (KEAS), from V-n diagram
-VD = VD * sqrt(atm.rho_sl / rho_cr); % convert to KTAS; 
-VD = VD * 1.68781; % convert KTAS to ft/s
-qD = 0.5*rho_cr*(VD^2); % design dive dynamic pressure (lbs/ft^2)
-% lf and hf from Fuselage Design script 
-lf = L_F; % length of fuselage (ft)
-hf = Dmax; % max diameter / height of fuselage (ft)
-Wt.Struc.FuselageGD = 2*10.43*(Kinl^1.42)*((qD/100)^0.283)*((WTO/1000)^0.95)*((lf/hf)^0.71); % eqn seems inaccurate
+% Fuselage
+% Sadraey, Eqn 10.7 p. 562
+kpf = 0.0025; % Table 10.11 fuselage density factor, transport
+densFuse = 2711 * 0.062428; % Table 10.6 density of aerospace aluminum; (lb/ft^3)
+Kinlet = 1.25; % constant for inlets on fuselage; 1 if elsewhere
+Wt.Struc.Fuselage = L_F * (Dmax^2) * densFuse * kpf * (nUlt^0.25) * Kinlet; 
 
 % Nacelles
 % Torenbeek Method, Eqn 5.36, p.80
@@ -89,7 +82,7 @@ Wt.Struc.MainGear = Kgr*(AgMain + (BgMain*(WTO^0.75)) + CgMain*WTO);
 
 % Total Weight
 Wt.Struc.Total = Wt.Struc.Wing + Wt.Struc.HT + Wt.Struc.VT + ...
-    Wt.Struc.FuselageGD + Wt.Struc.Nacelle + Wt.Struc.NoseGear + ... 
+    Wt.Struc.Fuselage + Wt.Struc.Nacelle + Wt.Struc.NoseGear + ... 
     Wt.Struc.MainGear;
 %% Powerplant Weight
 
@@ -233,7 +226,7 @@ FeqLabels = {'Flight Control System'; 'Hydraulic Systems'; ...
 
 % Structural Weight Array
 StrucWT = [Wt.Struc.Wing; Wt.Struc.HT; Wt.Struc.VT; ...
-    Wt.Struc.FuselageGD; Wt.Struc.Nacelle; Wt.Struc.NoseGear; ...
+    Wt.Struc.Fuselage; Wt.Struc.Nacelle; Wt.Struc.NoseGear; ...
     Wt.Struc.MainGear; Wt.Struc.Total];
 
 % Powerplant Weight Array
@@ -256,4 +249,5 @@ xlswrite('Aircraft_Weight.xlsx',WTArray, 'B3:B27')
 %% XCG Location
 
 % Distance to component xCGs from nose of aircraft (ft)
+% Structural Components
 % XCG.Wing
