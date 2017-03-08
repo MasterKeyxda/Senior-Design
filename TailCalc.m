@@ -3,7 +3,7 @@
 % close all
 %% FILE META
 % File is now updated from AMAT calculation script into function calculations for senior design
-function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh, cglocAC, vtail)
+function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh, cglocAC, vtail, M)
     %% Inputs:
 %     alpha = 0; % deg AOA
 %     Vh = 0.4; % horizontal tail volumen coefficient
@@ -34,7 +34,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     CLh = (Cm0wf + CL*(Xcgbar - 0.25))/Vh; % CL horizontal tail
     ARh = 2/3 * AR; % horizontal tail aspect ratio
     % ARh = 4;
-    CL_alphah = 6.7; % horizontal tail Cl_alpha (per radian)
+    CL_alphah = 4/sqrt(M^2-1); % horizontal tail Cl_alpha (per radian) #Linearized Supersonic Flow
     CL_alpha = CL_alphah / ( 1 + (CL_alphah / (pi*ARh))); % tail lift curve slope
     Alphah = CLh/CL_alphah; % Horizontal Tail Alpha
     Alphah = Alphah*57.3;
