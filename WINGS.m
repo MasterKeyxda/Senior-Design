@@ -94,7 +94,17 @@ fprintf('Wing Area: %0.5f\n', WING.S_area);
 
 % Subsonic HSNLF Characteristics
 WING.swept.name = 'BACNLF';
-[WING.swept.polar_inv, WING.swept.foil_inv] = xfoil([WING.swept.name '.dat'], [-2:19], 10e6, 0.0, 'oper/iter 10000');
+if ~exist('boeing_polars.mat', 'file')
+    [swept.polar_inv, swept.foil_inv] = xfoil([WING.swept.name '.dat'], [-2:19], 10e6, 0.0, 'oper/iter 10000');
+    WING.swept.polar_inv = swept.polar_inv;
+    WING.swept.foil_inv = swept.foil_inv;
+else
+    load('boeing_polars.mat');
+    WING.swept.polar_inv = swept.polar_inv;
+    WING.swept.foil_inv = swept.foil_inv;
+    clear swept;
+end
+
 figure(); plot(WING.swept.polar_inv.alpha, WING.swept.polar_inv.CL);
 ylabel('C_l');
 xlabel('\alpha');
