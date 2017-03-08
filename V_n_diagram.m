@@ -41,8 +41,8 @@ end
 
 % Ultimate Load Factor
 nUlt = nlimPos * 1.5; 
-fprintf('The max limit load factor is %0.2f', nlimPos)
-fprintf('The max ultimate load factor is % 0.2f', nUlt)
+fprintf('The max limit load factor is %0.2f \n', nlimPos)
+fprintf('The max ultimate load factor is % 0.2f \n', nUlt)
 
 % Positive stall curve for load factor ranging from n = 0 to nlimPos
 nPos = 0:0.05:nlimPos; % positive load factor range
@@ -57,8 +57,8 @@ M = req.cr_M0(1); % cruise Mach Number
 [~,~,sigma,aRatio] = AltTable(atm.alt,'h'); % speed of sound ratio
 aSound = 1116.5 * aRatio; % speed of sound at cruise alt, ft/s
 Vtrue = M * aSound; % cruise speed (TAS), ft/s
-VC = sqrt(sigma) * Vtrue; % cruise speed (EAS), ft/s
-VC = VC * 0.592484; % convert to knots (KEAS)
+Vtrue = Vtrue * 0.592484; % convert true airspeed to knots (KTAS)
+VC = sqrt(sigma) * Vtrue; % cruise speed (KEAS)
 
 % Design Diving Speed, VD
 VD = 1.25*VC; % knots (KEAS)
