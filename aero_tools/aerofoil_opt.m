@@ -12,13 +12,13 @@ clearvars -except WING
 
 %% Airfoil Setup Controls
 
-t_c = 0.07; % global thickness ratio
+t_c = 0.0525; % global thickness ratio
 taper = 0.45;
 fname = 'biconvex';
 ftype = 'dat';
 dx = 1/50;
 
-wt = 0.5;
+wt = 0;
 sim_type = 'ansys';
 
 % chord_len
