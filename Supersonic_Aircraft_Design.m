@@ -92,7 +92,8 @@ WTO = Wt.fuel.w_tot/Wt.fuel.Wf_Wto; % Total Takeoff Weight
 
 % Crew Weight
 Wt.oew.n_crew = 2; % Number of Crew Members
-Wt.oew.crew = Wt.oew.n_crew*Wt.pld.apw; %lbf
+Wt.oew.baggage = 30; % crew has 30 lbs baggage
+Wt.oew.crew = Wt.oew.n_crew*(Wt.pld.apw+Wt.oew.baggage); %lb
 
 % Manufacturer's empty weight - empty airframe
 
@@ -156,9 +157,12 @@ index = find(dif == min(abs(x1 - x2)));
 WE_WTO = x1(index);
 WTO = y(index);
 
+% Empty weight (lbs)
+WE = WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew; 
+
 fprintf('WE_WTO: %0.3f \n',WE_WTO);
 fprintf('W_TO: %.2f lbs \n',WTO);
-
+fprintf('WE: %0.2f lbs \n',WE); 
 %% Constraints Plots
 fprintf('\n CONSTRAINT PLOTS: \n');
 Constraint_Plots;
@@ -182,9 +186,10 @@ Vv = 0.05; % vertical tail volumen coefficient
 sweepWing = 28; % wing sweep degrees
 taperh = 0.6; % horizontal tail taper ratio
 cglocAC = -12; % ft cg location in front or behind AC Wing
-TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '');
+TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
 
 %% V-n diagram
+fprintf('\n V-n DIAGRAM: \n'); 
 V_n_diagram;
 
 %% Get run-time meta info for future reference

@@ -9,6 +9,14 @@
 % Secondary: Must accomodate crew, landing gear, fuel, systems, empennage
 % Optimization: Low Drag, Positive Lift generation, low weight, comfort,
 % structural flight, external symmetry, low wetted area
+%% Load Aircraft Variables
+if ~exist('Wt', 'var')
+   clc;
+   clear;
+   load('aircraft_vars.mat'); 
+   close all;
+end
+
 %% Determine Number of Passengers and Crew
 n_p = 8; % number of passengers
 n_c = 2; % number of crew members
@@ -89,7 +97,9 @@ L_n = 25; % arbitrary length of nose ft
 % Oblique Shock Ma2 = 1.06
 %% Rear Section
 % Will Include Tail and Wing as well for supersonic aircraft.
+
 L_R = 99; % arbitrary length of rear section ft
+
 
 %% Length to Diameter Ratio Fineness Ratio
 L_N = 25; % arbitrary length of nose ft
@@ -102,7 +112,7 @@ Dmax = 100/12;
 LF_DF = L_F/Dmax; 
 fprintf('The L/D ratio for the fuselage is %0.2f  \n',LF_DF)
 %% Fuel Tanks
-m_f = 177928.86/9.81; % kg of fuel
+m_f = 213514/9.81; % kg of fuel
 % Table 7.8 for fuel types and density
 rho_f = 840; % kg/m^3
 V_f = m_f/rho_f; % m^3
