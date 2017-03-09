@@ -288,6 +288,14 @@ Xcg.HT = xRef + Xarm.HT + (0.35*TAIL.ch); % 30-40 % HT MAC (Sadraey Table 11.2)
 Xarm.VT = 140; 
 Xcg.VT = xRef + Xarm.VT + (0.35*TAIL.cv); % Is TAIL.cv the MAC? 30-40 % VT MAC (Sadraey Table 11.2)
 Xcg.Fuselage = xRef + 0.45*L_F; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
+% Nacelle Length
+% http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
+nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % ft
+nacDMax = 1.0827*(constraints.req_Thr^0.4134)/12;
+% JT8D-219 Specs (http://pw.utc.com/Content/Press_Kits/pdf/me_jt8d-219_pCard.pdf)
+% Take-off thrust = 21,000 lbs
+% Length = 154 inches (12.83 ft)
+% Fan-tip diameter = 49.2 inches (4.1 ft)
 % Xcg.Nacelles
 Xarm.NoseGear = 40;
 Xcg.NoseGear = xRef + Xarm.NoseGear; 
