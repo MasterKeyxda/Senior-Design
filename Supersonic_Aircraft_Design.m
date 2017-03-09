@@ -90,7 +90,8 @@ fprintf('Maximum Fuel Weight Allowed: %0.2f lb\n', Wt.fuel.w_max);
 
 % Crew Weight
 Wt.oew.n_crew = 2; % Number of Crew Members
-Wt.oew.crew = Wt.oew.n_crew*Wt.pld.apw; %lbf
+Wt.oew.baggage = 30; % crew has 30 lbs baggage
+Wt.oew.crew = Wt.oew.n_crew*(Wt.pld.apw+Wt.oew.baggage); %lb
 
 % Manufacturer's empty weight - empty airframe
 
@@ -135,6 +136,13 @@ fprintf('W_TO: %.2f lbs \n',Wt.WTO);
 
 % Clear out other variables except for Wt
 clearvars -except Wt atm req
+
+% Empty weight (lbs)
+Wt.WE = Wt.WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew; 
+
+fprintf('WE_WTO: %0.3f \n', Wt.WE_WTO);
+fprintf('W_TO: %.2f lbs \n', Wt.WTO);
+fprintf('WE: %0.2f lbs \n', Wt.WE); 
 
 %% Constraints Plots
 fprintf('\n CONSTRAINT PLOTS: \n');
