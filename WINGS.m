@@ -81,65 +81,105 @@ WING.dihedral = 6; % degrees
 %% STEP 9-10: Select Airfoil and determine wing incidence angle
 
 % Subsonic HSNLF Characteristics
-WING.swept.name = 'BACNLF';
+WING.hsnlf.name = 'BACNLF';
 if ~exist('boeing_polars.mat', 'file')
     [swept.polar_inv, swept.foil_inv] = xfoil([WING.swept.name '.dat'], [-2:19], 10e6, 0.0, 'oper/iter 10000');
-    WING.swept.polar_inv = swept.polar_inv;
-    WING.swept.foil_inv = swept.foil_inv;
+    WING.hsnlf.polar_inv = swept.polar_inv;
+    WING.hsnlf.foil_inv = swept.foil_inv;
 else
     load('boeing_polars.mat');
-    WING.swept.polar_inv = swept.polar_inv;
-    WING.swept.foil_inv = swept.foil_inv;
+    WING.hsnlf.polar_inv = swept.polar_inv;
+    WING.hsnlf.foil_inv = swept.foil_inv;
     clear swept;
 end
 
-figure(); plot(WING.swept.polar_inv.alpha, WING.swept.polar_inv.CL);
+figure(); plot(WING.hsnlf.polar_inv.alpha, WING.hsnlf.polar_inv.CL);
 ylabel('C_l');
 xlabel('\alpha');
 title('Boeing HSNLF Lift-Curve Polar');
 % WING.swept.i_w = spline(WING.swept.polar_inv.CL, WING.swept.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
 
 % Supersonic Airfoil Characteristics
-WING.supersonic.name = 'biconvex';
-WING.supersonic.t_c = 0.12; % thickness ratio
-cd_data = dlmread('cd-history', ' ', 2, 0);
-cl_data = dlmread('cl-history', ' ', 2, 0);
-cm_data = dlmread('cm-history', ' ', 2, 0);
-iter = find(cd_data(:,1) == 1);
-alpha = 0:1:length(iter)-1;
-i = 1;
-ii = 1;
-while i <= length(iter)
-    if i < length(iter)
-        if cd_data(iter(i+1)-1,1) ~= 5000
-            WING.supersonic.Cd(ii) = cd_data(iter(i+1)-1,end);
-            WING.supersonic.Cl(ii) = cl_data(iter(i+1)-1,end);
-            WING.supersonic.Cm(ii) = cm_data(iter(i+1)-1,end);
-            WING.supersonic.alpha(ii) = alpha(i);
-            ii = ii + 1;
-        end
-    else
-        if cd_data(end,1) ~= 5000
-            WING.supersonic.Cd(ii) = cd_data(end,end);
-            WING.supersonic.Cl(ii) = cl_data(end,end);
-            WING.supersonic.Cm(ii) = cm_data(end,end);
-            WING.supersonic.alpha(ii) = alpha(i);
-        end
-    end
-    i = i + 1;
-end
+% WING.supersonic.name = 'biconvex';
+% WING.supersonic.t_c = 0.12; % thickness ratio
+% cd_data = dlmread('cd-history', ' ', 2, 0);
+% cl_data = dlmread('cl-history', ' ', 2, 0);
+% cm_data = dlmread('cm-history', ' ', 2, 0);
+% iter = find(cd_data(:,1) == 1);
+% alpha = 0:1:length(iter)-1;
+% i = 1;
+% ii = 1;
+% while i <= length(iter)
+%     if i < length(iter)
+%         if cd_data(iter(i+1)-1,1) ~= 5000
+%             WING.supersonic.Cd(ii) = cd_data(iter(i+1)-1,end);
+%             WING.supersonic.Cl(ii) = cl_data(iter(i+1)-1,end);
+%             WING.supersonic.Cm(ii) = cm_data(iter(i+1)-1,end);
+%             WING.supersonic.alpha(ii) = alpha(i);
+%             ii = ii + 1;
+%         end
+%     else
+%         if cd_data(end,1) ~= 5000
+%             WING.supersonic.Cd(ii) = cd_data(end,end);
+%             WING.supersonic.Cl(ii) = cl_data(end,end);
+%             WING.supersonic.Cm(ii) = cm_data(end,end);
+%             WING.supersonic.alpha(ii) = alpha(i);
+%         end
+%     end
+%     i = i + 1;
+% end
+% 
+% figure(); plot(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),'o-');
+% 
+% ylabel('C_l');
+% xlabel('\alpha');
+% title('Bi-convex Lift-Curve Polar');
+% 
+% figure(); plot(WING.supersonic.Cl(WING.supersonic.Cl>=0), WING.supersonic.Cd(WING.supersonic.Cl>=0),'o-');
+% ylabel('C_d');
+% xlabel('C_l');
+% title('Bi-convex Drag Polar');
 
-figure(); plot(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),'o-');
+% Flat Plate Formulas in Supersonic flow
 
-ylabel('C_l');
-xlabel('\alpha');
-title('Bi-convex Lift-Curve Polar');
+% Symmetric Biconvex
+WING.biconvex.alpha = (0:20).*pi ./ 180;
+WING.biconvex.tc_u = 0.03*0.5; % 5.25 percent chord thickness
+WING.biconvex.tc_l = WING.biconvex.tc_u;
+WING.biconvex.chord = 1.0;
+WING.biconvex.Cl = 4.* WING.biconvex.alpha ./ sqrt(req.cr_M0(1)^2 - 1); % section lift coefficient
+WING.biconvex.Cd = WING.biconvex.Cl .* WING.biconvex.alpha + (2*WING.biconvex.tc_u^2 * pi^2 / (WING.biconvex.chord^2 * sqrt(req.cr_M0(1)^2 - 1))) + WING.CD0;
+WING.biconvex.L_D = WING.biconvex.Cl ./WING.biconvex.Cd;
 
-figure(); plot(WING.supersonic.Cl(WING.supersonic.Cl>=0), WING.supersonic.Cd(WING.supersonic.Cl>=0),'o-');
-ylabel('C_d');
-xlabel('C_l');
-title('Bi-convex Drag Polar');
+% Bottom Biased Modified Biconvex
+WING.biconvex(2).alpha = WING.biconvex(1).alpha;
+WING.biconvex(2).tc_u = 0.03*0.25; % 5.25 percent chord thickness
+WING.biconvex(2).tc_l = 0.03*0.75;
+WING.biconvex(2).chord = 1.0;
+WING.biconvex(2).Cl = 4.* WING.biconvex(2).alpha ./ sqrt(req.cr_M0(1)^2 - 1); % section lift coefficient
+WING.biconvex(2).Cd = WING.biconvex(2).Cl .* WING.biconvex(2).alpha + ((WING.biconvex(2).tc_u^2 + WING.biconvex(2).tc_l^2) * pi^2 / (WING.biconvex(2).chord^2 * sqrt(req.cr_M0(1)^2 - 1))) + WING.CD0;
+WING.biconvex(2).L_D = WING.biconvex(2).Cl ./WING.biconvex(2).Cd;
 
+figure(); % lift polars
+plot(WING.biconvex(1).alpha, WING.biconvex(1).Cl);
+hold on;
+plot(WING.biconvex(2).alpha, WING.biconvex(2).Cl, 'o');
+legend('Symmetric', 'Modified');
+title('Lift Polars');
+
+figure(); % drag polars
+plot(WING.biconvex(1).Cl, WING.biconvex(1).Cd);
+hold on;
+plot(WING.biconvex(2).Cl, WING.biconvex(2).Cd, 'o');
+legend('Symmetric', 'Modified');
+title('Drag Polars');
+
+figure(); % L/D polars
+plot(WING.biconvex(1).alpha, WING.biconvex(1).L_D);
+hold on;
+plot(WING.biconvex(2).alpha, WING.biconvex(2).L_D, 'o');
+legend('Symmetric', 'Modified');
+title('Lift over Drag');
 %% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
 
 % Plot Results from ANSYS analysis of the lift and drag polars
