@@ -37,7 +37,7 @@ elseif strcmp(sim_type, 'ansys')
 %            ((1-dx):-dx:0)', 2.*t_c.*(-(1-((1-dx):-dx:0)).*((1-dx):-dx:0))']; % bottom of airfoil
     top = (0:dx:1);
     bott = ((1-dx):-dx:0);
-    coords = [top', 2.*(t_c).*((1-top).*top)'; % top of airfoil
+    coords = [top', 2.*((1-wt)*t_c).*((1-top).*top)'; % top of airfoil
        bott', 2.*t_c.*(-(1-bott).*bott)']; % bottom of airfoil
        
     fprintf(fid, '\t\t#Supersonic Airfoil\n\n');

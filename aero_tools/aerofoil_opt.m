@@ -12,20 +12,20 @@ clearvars -except WING
 
 %% Airfoil Setup Controls
 
-t_c = 0.07; % global thickness ratio
+t_c = 0.0525; % global thickness ratio
 taper = 0.45;
 fname = 'biconvex';
 ftype = 'dat';
 dx = 1/50;
 
-wt = 0.5;
-sim_type = 'Selig';
+wt = 0;
+sim_type = 'ansys';
 
 % chord_len
 chord = 21.84 * 12; % ft -> in
 
 %% Modify the Biconvex
-airfoil_design(fname, ftype, dx, t_c, wt, sim_type);
+airfoil_design(fname, ftype, dx, 1.0, t_c, wt, sim_type);
 
 %% Modify the HSNLF
 fid = fopen('BACNLF.dat', 'r');

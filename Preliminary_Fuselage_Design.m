@@ -9,6 +9,14 @@
 % Secondary: Must accomodate crew, landing gear, fuel, systems, empennage
 % Optimization: Low Drag, Positive Lift generation, low weight, comfort,
 % structural flight, external symmetry, low wetted area
+%% Load Aircraft Variables
+if ~exist('Wt', 'var')
+   clc;
+   clear;
+   load('aircraft_vars.mat'); 
+   close all;
+end
+
 %% Determine Number of Passengers and Crew
 n_p = 8; % number of passengers
 n_c = 2; % number of crew members

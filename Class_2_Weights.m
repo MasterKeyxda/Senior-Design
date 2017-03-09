@@ -55,6 +55,7 @@ zh = bv; % distance from VT root to HT mounting location (ft);
 Kv = 1 + (0.15*((TAIL.Sh*zh) / (TAIL.Sv*bv))); 
 % Wt.Struc.VT = Kv*TAIL.Sv*(3.81*(((TAIL.Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
 Wt.Struc.VT = 900; % TEMPORARY
+
 % Fuselage
 % Sadraey, Eqn 10.7 p. 562
 kpf = 0.0025; % Table 10.11 fuselage density factor, transport
@@ -118,8 +119,7 @@ Wt.Pwr.FuelSystem = (41.6*(((WF/Kfsp)/100)^0.818)) + 7.91*(((WF/Kfsp)/100)^0.854
 % GD Method, eqn 6.23, p.93
 % Fuselage/wing-root mounted jet engines, 
 Kec = 0.686; % non-afterburning engines
-lf = 140.8; % length of fuselage ft
-Wt.Pwr.EngineControls = Kec * ((lf * Ne)^0.792); 
+Wt.Pwr.EngineControls = Kec * ((L_F * Ne)^0.792); 
 
 % Engine Starting System
 % GD Method, Eqn(s) 6.27 & 6.28, p.94
@@ -258,14 +258,19 @@ WEnew = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;
 WTOnew = WEnew + WF + Wt.pld.w_tot + Wt.oew.crew; 
 
 % Percent difference between new and prelminary WTO
-WeightDiff = (abs((WTOnew - WTO)) / WTO) * 100;
-
+WeightDiff = (abs((WTOnew - WTO)) / WTO) * 100; 
 fprintf('The discrepancy between the preliminary WTO and the new WTO is: %0.2f percent \n', WeightDiff)
 if WeightDiff > 5
     fprintf('Iteration required. \n')
+    WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
 else
     fprint('No iteration required. \n')
 end
+
+%% Constraint Plots
+
+% Obtain new wing area and take-off thrust
+Constraint_Plots;
 
 
 %% XCG Location
