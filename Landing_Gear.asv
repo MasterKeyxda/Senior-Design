@@ -108,8 +108,8 @@ LG.crit.Lat_Tip = 55; % lateral tip-over criteria, max angle (degrees)
 
 % Longitudinal Ground Clearance Criterion
 LG.geom.tail = 15; % dist from ground to tail at end of fuselage (ft)
-LG.geom.x_MGaft = L_F - LG.geom.B - LG.geom.x_Nose; % dist from main gear to end of fuselage (ft)
-LG.crit.LT_Ground = LG.geom.alpha_TO; % takeoff angle 
+LG.geom.x_MGaft = L_F - LG.geom.B - LG.geom.x_NoseG; % dist from main gear to end of fuselage (ft)
+LG.crit.LT_Ground = alpha_TO; % takeoff angle 
 LG.geom.theta = atand(LG.geom.tail / LG.geom.x_MGaft); % tail clearance angle (degrees)
 % Check if criterion is satisfied
 fprintf('GROUND CLEARANCE CRITERIA \n')
@@ -119,7 +119,7 @@ if LG.geom.theta > LG.crit.LT_Ground;
 else 
     fprintf('The longitudinal ground clearance criterion is NOT satisfied. \n')
 end
-fprintf('\n')
+
 % Lateral Ground Clearance Criterion
 
 %% Tire Selection
@@ -133,20 +133,11 @@ LG.load.noseT = LG.load.FnMax / LG.geom.noseTire;
 LG.load.mainT = LG.load.FmMax / LG.geom.mainTire; 
 
 % Tire Sizing
-% Table 11.1 Raymer (dimensions in inches)
+% Table 11.1 Raymer
 % Constants for Business Twin
 LG.diam.A = 2.69;
 LG.diam.B = 0.251; 
-
-% Nose Gear Wheel Diameter
-LG.geom.noseDiam = LG.diam.A * (LG.load.noseT^LG.diam.B);
-LG.geom.noseDiam = LG.geom.noseDiam / 12; % convert to ft
-
-% Nose Gear Wheel Width
-
-% Main Gear Wheel Diameter
-
-% Main Gear Wheel Width
+LG.geom.noseDiam = LG.diam.A * (LG.load.noseT^LG.diam.B
 
 fprintf('TIRE SELECTION \n')
 fprintf('The number of tires on the nose gear assembly is %0.0f \n', LG.geom.noseTire)
