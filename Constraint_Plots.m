@@ -24,7 +24,7 @@ constraints.wingLoading = 50:0.5:250; % wing loading parameter (lb/ft^2)
 
 constraints.Vstall = 125 * 1.688; % stall speed, knots -> ft/s
 % constraints.rho_sl = 0.002378; % density (slug/ft^3)
-constraints.CLMax = 2.2; % Roskam Part I, p.91; CLmax range = 1.2 - 1.8
+constraints.CLMax = 2.0; % Roskam Part I, p.91; CLmax range = 1.2 - 1.8
 
 % Generate stall speed curve
 constraints.Vstall_Curve = 0.5*atm.rho_sl*(constraints.Vstall^2)*constraints.CLMax * ones(1, length(constraints.wingLoading)); % for plotting purposes
@@ -127,11 +127,23 @@ legend('V_{stall}','V_{max}', 'Take-off', 'Rate of Climb', 'Ceiling')
 % [x,y] = ginput(1);
 % Design point manually identified from contraint plot 
 % designPoint = [x, y]; % [Wing Loading (W/S), Thrust-to-Weight Ratio (T/W)]
-ceilCurve_avg = mean(ceilingCurve);
-designPoint = spline(constraints.maxSpeedCurve, constraints.wingLoading, ceilCurve_avg);
+test1 = [constraints.Vstall_Curve(1), spline(constraints.wingLoading, ceilingCurve, constraints.Vstall_Curve(1))];
+% test2 -> where vstall and vmax curve intersect
+test2 = [constraints.Vstall_Curve(1), spline(constraints.wingLoading, constraints.maxSpeedCurve, constraints.Vstall_Curve(1))];
 
-fprintf('The wing area, S is: %0.2f ft^2 \n', Wt.WTO / designPoint)
+% test3 -> intersection between Ceiling & Vmax curve
+ceilCurve_avg = mean(ceilingCurve);
+test3 = [spline(constraints.maxSpeedCurve, constraints.wingLoading, ceilCurve_avg), ceilCurve_avg];
+
+if test3(1) <= test2(1)
+    designPoint = test3;
+else
+    designPoint = test2;
+end
+fprintf('TW Ratio: %0.5f\n', designPoint(2));
+fprintf('Wing Loading: %0.5f\n', designPoint(1));
+fprintf('The wing area, S is: %0.2f ft^2 \n', Wt.WTO / designPoint(1))
 fprintf('The thrust, T is: %0.2f lbf \n', ceilCurve_avg * Wt.WTO)
 
-S_w = Wt.WTO/designPoint;
+S_w = Wt.WTO/designPoint(1);
 constraints.req_Thr = ceilCurve_avg * Wt.WTO;
