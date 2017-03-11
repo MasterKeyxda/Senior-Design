@@ -19,7 +19,7 @@ end
 % Info pulled from other scripts
 % MTOW (lbf)
 % wing loading design point (lb/ft^2)
-wingLoading = designPoint; % from Constraint_Plots.m script
+wingLoading = designPoint(1); % from Constraint_Plots.m script
 % rhoSL = 0.002378; % density slugs/ft^3
 
 % Positive +1g stall speed 

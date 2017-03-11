@@ -28,7 +28,7 @@ Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt(
 cRootSuper = 19.364; % root chord supersonic wing; 
 thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
 trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
-sweepSemiChordSuper = 10; % wing semi-chord sweep angle (degrees)
+sweepSemiChordSuper = 20; % wing semi-chord sweep angle (degrees)
 bSuper = percentSuper * WING.geom.span; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
 Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
@@ -96,13 +96,13 @@ Wt.Struc.Total = Wt.Struc.Wing + Wt.Struc.HT + Wt.Struc.VT + ...
 
 % Engine
 Ne = 3; % number of engines
-if strcmp(Wt.enginetype.name, 'Pegasus')
+if strcmp(enginetype, 'Pegasus')
     Wt.Pwr.Engine = Ne*3960; % Pegasus 11-61 dry engine weight (lbs)
-elseif strcmp(Wt.enginetype.name, 'JT8D-219')
+elseif strcmp(enginetype, 'JT8D-219');
     Wt.Pwr.Engine = 4741 * Ne;
 % JT8D-219 dry engine weight = 4741 lbs
 % Air Induction System
-end
+
 
 
 % Fuel System
