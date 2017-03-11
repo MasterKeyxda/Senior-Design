@@ -1,5 +1,5 @@
 
-load('aircraft_vars.mat')
+% load('aircraft_vars.mat')
 %% Structural Weight
 
 % Structural Weight includes the weight of the wing , empennage, fuselage,
@@ -28,7 +28,7 @@ Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt(
 cRootSuper = 19.364; % root chord supersonic wing; 
 thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
 trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
-sweepSemiChordSuper = 20; % wing semi-chord sweep angle (degrees)
+sweepSemiChordSuper = 10; % wing semi-chord sweep angle (degrees)
 bSuper = percentSuper * WING.geom.span; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
 Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
@@ -49,7 +49,7 @@ Wt.Struc.HT = Kh*TAIL.Sh*(3.81*(((TAIL.Sh^0.2)*VD)/(1000*sqrt(cosd(semiChordSwee
 % Vertical Tail
 % Torenbeek Method, Eqn(s) 5.20 & 5.21, p.74
 semiChordSweepVT = 10; % VT semi chord sweep angle (degrees); per Keyur
-bv = 9.3846; % tail span; % WON'T UPDATE FROM TAIL.m
+bv = TAIL.bv;%9.3846; % tail span; % WON'T UPDATE FROM TAIL.m
 zh = bv; % distance from VT root to HT mounting location (ft);
 % assume tail mounted at top of VT
 Kv = 1 + (0.15*((TAIL.Sh*zh) / (TAIL.Sv*bv))); 
@@ -96,9 +96,13 @@ Wt.Struc.Total = Wt.Struc.Wing + Wt.Struc.HT + Wt.Struc.VT + ...
 
 % Engine
 Ne = 3; % number of engines
-Wt.Pwr.Engine = Ne*3960; % Pegasus 11-61 dry engine weight (lbs)
+if strcmp(Wt.enginetype.name, 'Pegasus')
+    Wt.Pwr.Engine = Ne*3960; % Pegasus 11-61 dry engine weight (lbs)
+elseif strcmp(Wt.enginetype.name, 'JT8D-219')
+    Wt.Pwr.Engine = 4741 * Ne;
 % JT8D-219 dry engine weight = 4741 lbs
 % Air Induction System
+end
 
 
 % Fuel System
@@ -263,55 +267,58 @@ fprintf('The discrepancy between the preliminary WTO and the new WTO is: %0.2f p
 if WeightDiff > 5
     fprintf('Iteration required. \n')
     Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
+    fprintf('New weight set to %6.2f lb\n', WTOnew);
 else
-    fprint('No iteration required. \n')
+    fprintf('No iteration required. \n')
+    Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
+    fprintf('Final weight set to %6.2f lb\n', WTOnew);
 end
 
 %% Constraint Plots
 
 % Obtain new wing area and take-off thrust
-Constraint_Plots;
+% Constraint_Plots;
 
 
 %% XCG Location
 
-% All references and moment arms in ft
-xRef = 20; % reference location to the left of the nose of airplane
-% Xarm refers to the x dist from the airplane nose to the start of component /
-% component MAC. 
-
-% Structural Components
-Xarm.Wing = 0.60 * L_F; % distance to LE MAC of wing
-Xcg.Wing = xRef + Xarm.Wing + 0.37*WING.geom.MAC; % 35-42% MAC (Sadraey Table 11.2)
-Xarm.HT = 138; 
-Xcg.HT = xRef + Xarm.HT + (0.35*TAIL.ch); % 30-40 % HT MAC (Sadraey Table 11.2)
-Xarm.VT = 140; 
-Xcg.VT = xRef + Xarm.VT + (0.35*TAIL.cv); % Is TAIL.cv the MAC? 30-40 % VT MAC (Sadraey Table 11.2)
-Xcg.Fuselage = xRef + 0.45*L_F; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
-% Nacelle Length
-% http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
-nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % ft
-nacDMax = 1.0827*(constraints.req_Thr^0.4134)/12;
-% JT8D-219 Specs (http://pw.utc.com/Content/Press_Kits/pdf/me_jt8d-219_pCard.pdf)
-% Take-off thrust = 21,000 lbs
-% Length = 154 inches (12.83 ft)
-% Fan-tip diameter = 49.2 inches (4.1 ft)
-% Xcg.Nacelles
-Xarm.NoseGear = 40;
-Xcg.NoseGear = xRef + Xarm.NoseGear; 
-Xcg.MainGear = Xcg.NoseGear + B; % B is the wheel base (dist between NG and MG)
-
-% Powerplant Components
-% Xcg.EngOne
-% Xcg.EngTwo
-% Xcg.EngThree
-% Where will fuel and engines be located?
-% Xcg.EngCtrl =
-% Xcg.EngStartSys = 
-
-% Fixed Equipment Components
-
-% Locate XCG
-Xcg.Location = ((Xcg.Wing*Wt.Struc.Wing) + (Xcg.HT*Wt.Struc.HT) + (Xcg.VT*Wt.Struc.VT) ...
-    + (Xcg.Fuselage*Wt.Struc.Fuselage) + (Xcg.NoseGear*Wt.Struc.NoseGear) ...
-    + (Xcg.MainGear*Wt.Struc.MainGear)) / Wt.WTO;
+% % % All references and moment arms in ft
+% % xRef = 20; % reference location to the left of the nose of airplane
+% % % Xarm refers to the x dist from the airplane nose to the start of component /
+% % % component MAC. 
+% % 
+% % % Structural Components
+% % Xarm.Wing = 0.60 * L_F; % distance to LE MAC of wing
+% % Xcg.Wing = xRef + Xarm.Wing + 0.37*WING.geom.MAC; % 35-42% MAC (Sadraey Table 11.2)
+% % Xarm.HT = 138; 
+% % Xcg.HT = xRef + Xarm.HT + (0.35*TAIL.ch); % 30-40 % HT MAC (Sadraey Table 11.2)
+% % Xarm.VT = 140; 
+% Xcg.VT = xRef + Xarm.VT + (0.35*TAIL.cv); % Is TAIL.cv the MAC? 30-40 % VT MAC (Sadraey Table 11.2)
+% Xcg.Fuselage = xRef + 0.45*L_F; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
+% % Nacelle Length
+% % http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
+% nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % ft
+% nacDMax = 1.0827*(constraints.req_Thr^0.4134)/12;
+% % JT8D-219 Specs (http://pw.utc.com/Content/Press_Kits/pdf/me_jt8d-219_pCard.pdf)
+% % Take-off thrust = 21,000 lbs
+% % Length = 154 inches (12.83 ft)
+% % Fan-tip diameter = 49.2 inches (4.1 ft)
+% % Xcg.Nacelles
+% Xarm.NoseGear = 40;
+% Xcg.NoseGear = xRef + Xarm.NoseGear; 
+% Xcg.MainGear = Xcg.NoseGear + B; % B is the wheel base (dist between NG and MG)
+% 
+% % Powerplant Components
+% % Xcg.EngOne
+% % Xcg.EngTwo
+% % Xcg.EngThree
+% % Where will fuel and engines be located?
+% % Xcg.EngCtrl =
+% % Xcg.EngStartSys = 
+% 
+% % Fixed Equipment Components
+% 
+% % Locate XCG
+% Xcg.Location = ((Xcg.Wing*Wt.Struc.Wing) + (Xcg.HT*Wt.Struc.HT) + (Xcg.VT*Wt.Struc.VT) ...
+%     + (Xcg.Fuselage*Wt.Struc.Fuselage) + (Xcg.NoseGear*Wt.Struc.NoseGear) ...
+%     + (Xcg.MainGear*Wt.Struc.MainGear)) / Wt.WTO;

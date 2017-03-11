@@ -21,6 +21,9 @@ WING.geom.AR = AR;
 % Determine Span & MAC
 WING.geom.span = sqrt(WING.geom.S_area * WING.geom.AR);
 WING.geom.MAC = sqrt(WING.geom.S_area/WING.geom.AR);
+WING.geom.sub_span = 0.2*WING.geom.span;
+WING.geom.sup_span = 0.8 * WING.geom.span;
+
 
 % Wing Taper Ratios - OPENVSP
 WING.geom.taper_sub = 0.82489; 
