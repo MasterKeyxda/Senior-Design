@@ -578,4 +578,14 @@ def LiftingLineMain(name, airfoils, S, b, c, t=0, alpha=0, Vinf=1, rhoinf=1,
     wing.GetLiftDist(maxiter, maxres, damping, showfig=False)
 
     return wing
-	
+    
+def xfoil(cmd):
+    # Open XFOIL on command line
+    ps = sp.Popen(['xfoil.exe'],
+                  stdin=sp.PIPE,
+                  stdout=None,
+                  stderr=None)
+
+    # Pass commands into XFOIL command line
+    res = ps.communicate( bytes('\n'.join(cmd), 'utf=8' ))
+    print (res)
