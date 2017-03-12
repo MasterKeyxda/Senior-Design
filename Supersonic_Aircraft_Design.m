@@ -1,6 +1,17 @@
 %% SETUP
-clear;
+% clear;
+% if ~exist('ctrl', 'var')
+%    clc;
+%    clearvars -except Wt atm req ctrl
+%    close all;
+% else
+%     clear;
+%     clc;
+%     close all;
+% end
+
 clc;
+clearvars -except Wt atm req ctrl
 close all;
 
 %% File META - Preliminary Design Elements
@@ -79,7 +90,10 @@ fprintf('Fuel Ratio (Pre-Reserve): %0.5f\n', Wt.fuel.Wf_Wto);
 Wt.fuel.reserve_ratio = 1.25; % Reserve fuel at least 20% FAR from Sadraey pg. 102 
 Wt.fuel.w_max = (1/req.f_eff)*(Wt.pld.n_pass * req.range)*Wt.fuel.reserve_ratio;
 Wt.fuel.w_tot = Wt.fuel.w_max;
-fprintf('Maximum Fuel Weight Allowed: %0.2f lb\n', Wt.fuel.w_max);
+fprintf('Maximum Fuel Weight Allowed to be burned: %0.2f lb\n', Wt.fuel.w_max);
+
+Wt.enginetype.name = 'Pegasus';
+Wt.enginetype.w_tot = 3960; %lbm
 
 %% Operating Empty Weight (oew)
 
@@ -135,7 +149,7 @@ fprintf('WE_WTO: %0.3f \n',Wt.WE_WTO);
 fprintf('W_TO: %.2f lbs \n',Wt.WTO);
 
 % Clear out other variables except for Wt
-clearvars -except Wt atm req
+clearvars -except Wt atm req ctrl
 
 % Empty weight (lbs)
 Wt.WE = Wt.WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew; 
