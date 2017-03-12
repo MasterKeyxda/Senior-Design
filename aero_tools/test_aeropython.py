@@ -1,6 +1,7 @@
-import 127_3Dflow
+import os
+os.system("python 127_3Dflow.py")
 
-#WING SETTINGS
+#WING GEOMETRY
 
 #Wing Name (list, first entry is plot title name, second is file name)
 wingname = ['Rectangular Test Wing', 'rect']
@@ -9,7 +10,6 @@ wingname = ['Rectangular Test Wing', 'rect']
     #(polar file must be located in 'Data' folder and named 'name.polar.dat)
     #Must be given as list, allowing for blended airfoils
 foil = ['naca1412']
-#Number of Spanwise Stations
 ny = 101
 #Wingspan
 b = 1.0
