@@ -1,4 +1,6 @@
 %% XCG Location
+clear CG_types
+clear mXcgi
 
 % All references and moment arms in ft
 % Xarm refers to the x dist from the airplane nose to the start of component /
@@ -14,9 +16,9 @@ XLE_w = 80;% length from nose to leading edge of wing
 mXcgi.Fuselage = [Wt.Struc.Fuselage, -XLE_w + cglocAC + 0.40*L_F]; % ranges from 0.40 - 0.50 length of fuselage;
 % Engine
 length_engine = 142/12; % ft length of PW TF33-P7
-x_engine = 100; % location of inlet of engine from nose
+x_engine = 101.25; % location of inlet of engine from nose
 mXcgi.Engine2 = [Wt.Pwr.Engine*(2/3),-XLE_w + cglocAC + x_engine + length_engine*.3]; % engine_cg can vary from .3 -.4 of length of engine from inlet 
-mXcgi.Engine1 = [Wt.Pwr.Engine*(1/3),-XLE_w + cglocAC + x_engine + 1.2*length_engine + length_engine*.3]; % single engine
+mXcgi.Engine1 = [Wt.Pwr.Engine*(1/3),-XLE_w + cglocAC + x_engine + 1.3*length_engine + length_engine*.3]; % single engine
 % Nacelle
 % http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
 nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % ft
@@ -105,7 +107,7 @@ fprintf('The operating empty weight cg is %0.4f \n', cgOEW)
 %% Empty Weight + Crew + PAX (No baggage) CG
 
 % Assume passenger distribution places cg at cabin center
-mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, (53.33+25)/2]; 
+mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, -XLE_w + cglocAC + (53.33+25)/2]; 
 CG_types = fieldnames(mXcgi);
 moment = 0;
 wt = 0;
@@ -119,7 +121,7 @@ fprintf('The cg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
 %% Empty Weight + Crew + PAX (w/ baggage) CG
 
 % Assume passenger distribution places cg at cabin center
-mXcgi.pldBag = [Wt.pld.w_tot, (53.33+25)/2]; 
+mXcgi.pldBag = [Wt.pld.w_tot, -XLE_w + cglocAC + (53.33+25)/2]; 
 CG_types = fieldnames(mXcgi);
 moment = 0;
 wt = 0;
