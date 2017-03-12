@@ -58,8 +58,8 @@ bv = TAIL.bv;%9.3846; % tail span; % WON'T UPDATE FROM TAIL.m
 zh = bv; % distance from VT root to HT mounting location (ft);
 % assume tail mounted at top of VT
 Kv = 1 + (0.15*((TAIL.Sh*zh) / (TAIL.Sv*bv))); 
-% Wt.Struc.VT = Kv*TAIL.Sv*(3.81*(((TAIL.Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
-Wt.Struc.VT = 900; % TEMPORARY
+Wt.Struc.VT = Kv*TAIL.Sv*(3.81*(((TAIL.Sv^0.2)*VD)/(1000*sqrt(cosd(semiChordSweepVT))))-0.287); 
+% Wt.Struc.VT = 900; % TEMPORARY
 
 % Fuselage
 % Sadraey, Eqn 10.7 p. 562
