@@ -85,6 +85,24 @@ cgEmpty = moment/wt;
 fprintf('The empty weight cg is %0.4f \n', cgEmpty)
 fprintf('The Difference Between Required and Actual CG %0.4f ft \n', cgEmpty);
 
+ 
+%  % Empty Weight CG Check
+% location = ((mXcgi.Wing(1)*mXcgi.Wing(2)) + (mXcgi.Tail(1)*mXcgi.Tail(2))+...
+%     (mXcgi.Fuselage(1)*mXcgi.Fuselage(2)) + (mXcgi.Engine2(1)*mXcgi.Engine2(2)) + ...
+%     (mXcgi.Engine1(1)*mXcgi.Engine1(2)) + (mXcgi.Nacelle2(1)*mXcgi.Nacelle2(2)) + ...
+%     (mXcgi.Nacelle1(1)*mXcgi.Nacelle1(2)) + (mXcgi.NoseGear(1)*mXcgi.NoseGear(2)) + ...
+%     (mXcgi.MainGear(1)*mXcgi.MainGear(2)) + (mXcgi.FCsys(1)*mXcgi.FCsys(2)) + ...
+%     (mXcgi.HydraulicNose(1)*mXcgi.HydraulicNose(2)) + (mXcgi.HydraulicMain(1)*mXcgi.HydraulicMain(2)) + ...
+%     (mXcgi.ElectricalSystem(1)*mXcgi.ElectricalSystem(2)) + (mXcgi.Api(1)*mXcgi.Api(2)) + ...
+%     (mXcgi.Oxygen(1)*mXcgi.Oxygen(2)) + (mXcgi.Apu1(1)*mXcgi.Apu1(2)) + ...
+%     (mXcgi.Furn(1)*mXcgi.Furn(2)) + (mXcgi.Oper(1)*mXcgi.Oper(2)) + ...
+%     (mXcgi.Paint(1)*mXcgi.Paint(2))) / (mXcgi.Wing(1) + mXcgi.Tail(1) + mXcgi.Fuselage(1) + ...
+%     mXcgi.Engine2(1) + mXcgi.Engine1(1) + mXcgi.Nacelle2(1) + mXcgi.Nacelle1(1) + ...
+%     mXcgi.NoseGear(1) + mXcgi.MainGear(1) + mXcgi.FCsys(1) + mXcgi.HydraulicNose(1) + ...
+%     mXcgi.HydraulicMain(1) + mXcgi.ElectricalSystem(1) + mXcgi.Api(1) + mXcgi.Oxygen(1) + ...
+%     mXcgi.Apu1(1) + mXcgi.Furn(1) + mXcgi.Oper(1) + mXcgi.Paint(1)); 
+
+
 %% Empty Weight + Crew CG (OEW CG)
 mXcgi.Crew = [Wt.oew.crew,-XLE_w + cglocAC + x_cockpit]; % crew in cockpit 
 CG_types = fieldnames(mXcgi);
@@ -137,16 +155,12 @@ fprintf('The cg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
 
 %% CG Excursion Diagram
 
-wtArray = [wtEmpty; wtOEW; wtPAX_NoBag; wtPAX_Bag];
-cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag]; 
-
 figure()
 title('Aircraft CG Excursion')
-xlabel('CG Location, ft (MAC)')
+xlabel('CG Location, ft (% MAC)')
 ylabel('Weight (lbs)')
-hold on;
-% Plot CG Diagram
-for iPlot = 1:length(wtArray)
-    plot(cgArray(iPlot),wtArray(iPlot), 'o')
-end
-plot(cgArray,wtArray, 'b--') % plot line through points
+
+plot(cgEmpty,wtEmpty, 'o') % empty weight cg
+plot(cgOEW, wtOEW, 'o') % operating empty weight cg
+plot(cgPAX_NoBag, wtPAX_NoBag, 'o') % OEW + PAX (No bags) cg
+plot(cgPAX_Bag, wtPAX_Bag, 'o') % OEW + PAX (with bags) cg
