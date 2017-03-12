@@ -71,7 +71,7 @@ Wt.Struc.Fuselage = L_F * (Dmax^2) * densFuse * kpf * (nUlt^0.25) * Kinlet;
 % Nacelles
 % Torenbeek Method, Eqn 5.36, p.80
 % For turbojet engine; based on req. take-off thrust
-Wt.Struc.Nacelle = 0.055*constraints.req_Thr; 
+Wt.Struc.Nacelle = 0.055*constraints.req_Thr; % accounts for weight of all nacelles for 3 engines
 
 % Torenbeek Method, Eqn 5.42, p.82
 % Applies to business jets with main gear mounted to wing and nose gear on
@@ -142,7 +142,7 @@ EngStartSysFour = 49.19 * ((Wt.Pwr.Engine/1000)^0.541);
 Wt.Pwr.EngStartSys = (EngStartSysTwo + EngStartSysFour)/2;
 
 Wt.Pwr.Propulsion = Wt.Pwr.EngineControls + Wt.Pwr.EngStartSys;
-
+% Propulsion weight is part of engine for electric power
 % Total Powerplant Weight 
 Wt.Pwr.Total = Wt.Pwr.Engine + Wt.Pwr.FuelSystem + Wt.Pwr.Propulsion;
 %% Fixed Equipment Weight
@@ -291,58 +291,3 @@ if exist('ctrl', 'var')
         end
     end
 end
-
-%% Constraint Plots
-
-% Obtain new wing area and take-off thrust
-% Constraint_Plots;
-
-
-%% XCG Location
-
-% All references and moment arms in ft
-% Xarm refers to the x dist from the airplane nose to the start of component /
-% component MAC. 
-
-% Lifting Components - referenced to desired CG
-mXcgi.Wing = [Wt.Struc.Wing, cglocAC+0.25*cRootSub];%0.60 * L_F; % distance to LE MAC of wing
-mXcgi.Tail = [Wt.Struc.HT+Wt.Struc.VT, TAIL.Lopt]; % 
-% Xcg.Wing = mXcg_i.Wing + 0.37*WING.geom.MAC; % 35-42% MAC (Sadraey Table 11.2)
-% mXcg_i.HT = 138; 
-% Xcg.HT = mXcg_i.HT + (0.35*TAIL.ch); % 30-40 % HT MAC (Sadraey Table 11.2)
-% mXcg_i.VT = 140; 
-% Xcg.VT = mXcg_i.VT + (0.35*TAIL.cv); % Is TAIL.cv the MAC? 30-40 % VT MAC (Sadraey Table 11.2)
-% 
-XLE_w = 72.5;
-mXcgi.Fuselage = [Wt.Struc.Fuselage, -XLE_w + cglocAC + 0.45*L_F]; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
-% mXcgi.Engines = [Wt.Pwr.Engine, 
-% Nacelle Length
-% http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
-% nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % ft
-% nacDMax = 1.0827*(constraints.req_Thr^0.4134)/12;
-% JT8D-219 Specs (http://pw.utc.com/Content/Press_Kits/pdf/me_jt8d-219_pCard.pdf)
-% Take-off thrust = 21,000 lbs
-% Length = 154 inches (12.83 ft)
-% Fan-tip diameter = 49.2 inches (4.1 ft)
-% Xcg.Nacelles
-% Xarm.NoseGear = 40;
-% Xcg.NoseGear = xRef + Xarm.NoseGear; 
-% Xcg.MainGear = Xcg.NoseGear + B; % B is the wheel base (dist between NG and MG)
-
-% Powerplant Components
-% Xcg.EngOne
-% Xcg.EngTwo
-% Xcg.EngThree
-% Where will fuel and engines be located?
-% Xcg.EngCtrl =
-% Xcg.EngStartSys = 
-% 
-% Fixed Equipment Components
-% 
-% Locate XCG
-% Xcg.Location = ((Xcg.Wing*Wt.Struc.Wing) + (Xcg.HT*Wt.Struc.HT) + (Xcg.VT*Wt.Struc.VT) ...
-%     + (Xcg.Fuselage*Wt.Struc.Fuselage) + (Xcg.NoseGear*Wt.Struc.NoseGear) ...
-%     + (Xcg.MainGear*Wt.Struc.MainGear)) / Wt.WTO;
-
-% % Wings and Tail
-% Xarm.wing = 
