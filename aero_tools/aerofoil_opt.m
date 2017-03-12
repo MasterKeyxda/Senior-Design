@@ -12,20 +12,20 @@ clearvars -except WING
 
 %% Airfoil Setup Controls
 
-t_c = 0.07; % global thickness ratio
+t_c = 0.0525; % global thickness ratio
 taper = 0.45;
 fname = 'biconvex';
 ftype = 'dat';
 dx = 1/50;
 
-wt = 0.5;
-sim_type = 'Selig';
+wt = 0;
+sim_type = 'ansys';
 
 % chord_len
-chord = 21.84 * 12; % ft -> in
+chord = 1;%21.84 * 12; % ft -> in
 
 %% Modify the Biconvex
-airfoil_design(fname, ftype, dx, t_c, wt, sim_type);
+airfoil_design(fname, ftype, dx, 1.0, t_c, wt, sim_type);
 
 %% Modify the HSNLF
 fid = fopen('BACNLF.dat', 'r');
@@ -72,35 +72,35 @@ coords = coords .* chord;
 plot(coords(:,1), coords(:,2));
 legend('Camber Line (Upper)', 'Original Airfoil', 'Camber Line (Lower)', '7% Airfoil', 'eastoutside');
 
-% % write file for openvsp
-% fid = fopen('BACNLF_7.dat', 'w');
-% 
-% fprintf(fid, 'DEMO GEOM AIRFOIL FILE\n');
-% fprintf(fid, 'BACNLF 7 Percent\n');
-% fprintf(fid, '0\tSym Flag\n');
-% fprintf(fid, '%i\t Num Pnts Upper\n', 67);
-% fprintf(fid, '%i\t Num Pnts Lower\n', 72);
-% 
-% for i = 1:66
-%     fprintf(fid, '%3.7f\t%4.7f\n', coords(67-i,1), coords(67-i,2));
-% end
-% fprintf(fid, '\n');
-% 
-% for i = 68:139
-%     fprintf(fid, '%3.7f\t%4.7f\n', coords(i,1), coords(i,2));
-% end
+% write file for openvsp
+fid = fopen('BACNLF_7.dat', 'w');
 
+fprintf(fid, 'DEMO GEOM AIRFOIL FILE\n');
+fprintf(fid, 'BACNLF 7 Percent\n');
+fprintf(fid, '0\tSym Flag\n');
+fprintf(fid, '%i\t Num Pnts Upper\n', 67);
+fprintf(fid, '%i\t Num Pnts Lower\n', 72);
 
-% fclose(fid);
+for i = 1:66
+    fprintf(fid, '%3.7f\t%4.7f\n', coords(67-i,1), coords(67-i,2));
+end
+fprintf(fid, '\n');
 
-% write file for selig format
-fid = fopen('BACNLF_real_selig.dat', 'w');
-fprintf(fid, 'BACNLF w/ Root Chord Percent\n\n');
-for i = 1:length(coords)
-    fprintf(fid, '%3.7f\t%4.7f\t%i\n', coords(i,1), coords(i,2), 0.0);
-    if i == 0.5*length(coords(:,1))
-        fprintf(fid, '\n');
-    end
+for i = 68:139
+    fprintf(fid, '%3.7f\t%4.7f\n', coords(i,1), coords(i,2));
 end
 
+
 fclose(fid);
+
+% % write file for selig format
+% fid = fopen('BACNLF_real_selig.dat', 'w');
+% fprintf(fid, 'BACNLF w/ Root Chord Percent\n\n');
+% for i = 1:length(coords)
+%     fprintf(fid, '%3.7f\t%4.7f\t%i\n', coords(i,1), coords(i,2), 0.0);
+%     if i == 0.5*length(coords(:,1))
+%         fprintf(fid, '\n');
+%     end
+% end
+% 
+% fclose(fid);

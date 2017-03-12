@@ -3,7 +3,7 @@
 % close all
 %% FILE META
 % File is now updated from AMAT calculation script into function calculations for senior design
-function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh, cglocAC)
+function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweepWing, taperh, cglocAC, vtail, M)
     %% Inputs:
 %     alpha = 0; % deg AOA
 %     Vh = 0.4; % horizontal tail volumen coefficient
@@ -34,7 +34,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     CLh = (Cm0wf + CL*(Xcgbar - 0.25))/Vh; % CL horizontal tail
     ARh = 2/3 * AR; % horizontal tail aspect ratio
     % ARh = 4;
-    CL_alphah = 6.7; % horizontal tail Cl_alpha (per radian)
+    CL_alphah = 4/sqrt(M^2-1); % horizontal tail Cl_alpha (per radian) #Linearized Supersonic Flow
     CL_alpha = CL_alphah / ( 1 + (CL_alphah / (pi*ARh))); % tail lift curve slope
     Alphah = CLh/CL_alphah; % Horizontal Tail Alpha
     Alphah = Alphah*57.3;
@@ -48,7 +48,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     ih = Alphah + eps; % horizontal tail incidence angle
     ch = sqrt(Sh/ARh);
     bh = Sh/ch;
-    cRooth = Sh / (bh * (1 + taperh)); % root chord of horizontal tail
+    cRooth = Sh / (bh * 0.5*(1 + taperh)); % root chord of horizontal tail
     cTiph = taperh * cRooth; % tip chord of horizontal tail
     effh = 0.9; % tail efficiency
     Cm_alpha = CL_alphaw*(Xcgbar - 0.25) - CL_alphah*effh*(Sh/S)*(Lopt/cbar - Xcgbar)*(1-deps);
@@ -56,7 +56,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
 
     Sv = (b*S*Vv)/(Lopt);
     cv = sqrt(Sv/ARh);
-    bv = Sv/ch;
+    bv = sqrt(Sv * ARh);
 
     TotArea = Sv + Sh;
     vb = sqrt(ARh*TotArea);
@@ -83,30 +83,35 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     % cma = - CL_alphaw*(x_ac-Xcgbar)
     
     %% Function Readouts
-    fprintf('Tail Moment Arm = %f ft\n', Lopt);
-    fprintf('Horizontal Tail Area = %f \n',Sh);
-    fprintf('Horizontal Tail Chord = %f ft \n', ch);
-    fprintf('Horizontal Tail Root Chord = %f \n', cRooth); 
-    fprintf('Horizontal Tail Tip Chord = %f \n', cTiph); 
-    fprintf('Horizontal Tail Span = %f ft \n', bh);
-    fprintf('Cm_alpha = %f  \n', Cm_alpha);
-    fprintf('Vertical Tail Area = %f ft^2 \n',Sv)
-    fprintf('Vertical Tail Chord = %f ft \n', cv);
-    fprintf('Verical Tail Span = %f ft \n', bv);
-    fprintf('Total Tail Area = %f ft^2\n',(Sh+Sv))
-    disp('One arm of V Tail')
-    fprintf('V Tail Span = %.2f ft \n', vbone);
-    fprintf('V Tail Chord = %.2f ft \n', cb);
-    fprintf('V Tail Angle = %.2f deg \n',Angle)
-    fprintf('Angle of V-tail with the x axis = %.2f deg\n',AlphaVt)
+    fprintf('Tail Moment Arm = %0.3f ft\n', Lopt);
+    fprintf('Horizontal Tail Area = %0.3f \n',Sh);
+    fprintf('Horizontal Tail Chord = %0.3f ft \n', ch);
+    fprintf('Horizontal Tail Root Chord = %0.3f \n', cRooth); 
+    fprintf('Horizontal Tail Tip Chord = %0.3f \n', cTiph); 
+    fprintf('Horizontal Tail Span = %0.3f ft \n', bh);
+    fprintf('Horizontal Tail Angle = %0.3f deg \n',ih);
+    fprintf('Cm_alpha = %0.3f  \n', Cm_alpha);
+    fprintf('Vertical Tail Area = %0.3f ft^2 \n',Sv)
+    fprintf('Vertical Tail Chord = %0.3f ft \n', cv);
+    fprintf('Verical Tail Span = %0.3f ft \n', bv);
+    fprintf('Total Tail Area = %0.3f ft^2\n',(Sh+Sv));
+    if strcmp(vtail, 'yes')
+        fprintf('One arm of V Tail')
+        fprintf('V Tail Span = %.2f ft \n', vbone);
+        fprintf('V Tail Chord = %.2f ft \n', cb);
+        fprintf('V Tail Angle = %.2f deg \n',Angle)
+        fprintf('Angle of V-tail with the x axis = %.2f deg\n',AlphaVt)
+    end
     fprintf('X_AC_bar = %.2f\n', x_ac)
     fprintf('CG Location = %.2f ft behind LE.\n', Xcg)
+    fprintf('Distance LE Wing to LE Tail = %0.2f ft\n', Xcg+Lopt-0.25*cv);
     fprintf('Static Margin (Percent) = %.2f \n', SM*100)
     
     % Save Important Performance Params
     TAIL.Lopt = Lopt;
     TAIL.Sh = Sh;
     TAIL.ch = ch;
+    TAIL.Cr_h = cRooth;
     TAIL.bh = bh;
     TAIL.Cm_alpha = Cm_alpha;
     TAIL.Sv = Sv;
@@ -119,4 +124,7 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     TAIL.x_ac = x_ac;
     TAIL.Xcg = Xcg;
     TAIL.SM = SM;
+    TAIL.Xcgbar = Xcgbar;
+    TAIL.hAngle = ih;
+    TAIL.bv = bv;
 end
