@@ -134,8 +134,8 @@ if Wt.enginetype.thr*3 < constraints.req_Thr
 else
     fprintf('Thrust requirement met\n');
 end
-XCGLocation
-fprintf('The Required CG %0.2f ft\n', cglocAC);
+%XCGLocation
+%fprintf('The Required CG %0.2f ft\n', cglocAC);
 % save meta information about current script run
 meta.date = datetime('today');
 
