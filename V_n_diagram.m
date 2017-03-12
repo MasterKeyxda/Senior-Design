@@ -8,32 +8,37 @@
 % Equations come from Section 12.4
 
 % Load in variables from other scripts
-load('aircraft_vars.mat')
+if ~exist('Wt', 'var')
+   clc;
+   clear;
+   load('aircraft_vars.mat'); 
+   close all;
+end
 %% Maneuever V-n Diagram
 
 % Info pulled from other scripts
 % MTOW (lbf)
 % wing loading design point (lb/ft^2)
-wingLoading = designPoint; % from Constraint_Plots.m script
-rhoSL = 0.002378; % density slugs/ft^3
+wingLoading = designPoint(1); % from Constraint_Plots.m script
+% rhoSL = 0.002378; % density slugs/ft^3
 
 % Positive +1g stall speed 
 CLMaxPos = 2.2; % max positive coefficient of lift
 % CDatCL = 0.314; % drag coefficient at CLmax
 % CNMax = sqrt((CLMax^2) + (CDatCL^2)); % Roskam part 5, eqn 4.5 (flaps up)
 CNMaxPos = 1.1*CLMaxPos; % eqn 12.17, preliminary value; update once CD is known at CLmax
-Vs1 = sqrt(2*(wingLoading) / (rhoSL * CNMaxPos));  % ft/s, eqn 12.15
+Vs1 = sqrt(2*(wingLoading) / (atm.rho_sl * CNMaxPos));  % ft/s, eqn 12.15
 Vs1 = Vs1 * 0.592484; % convert to knots
 
 % Negative 1g stall speed
 CLMaxNeg = -1; % max negative coefficient of lift
 CNMaxNeg = 1.1*CLMaxNeg; % eqn 12.24, preliminary value; update once CD is known at CLmax
 nNeg = -1:0.05:0; % negative load factor range, eqn 12.41
-Vsneg = sqrt((2*nNeg*wingLoading) / (rhoSL * CNMaxNeg));
+Vsneg = sqrt((2*nNeg*wingLoading) / (atm.rho_sl * CNMaxNeg));
 Vsneg = Vsneg * 0.592484; % convert to knots
 
 % Positive Design limit load factor, nlim
-nlimPos = 2.1 + (24000 / (WTO + 10000));
+nlimPos = 2.1 + (24000 / (Wt.WTO + 10000));
 % nlimPos must be greater than or equal to 2.5
 if nlimPos < 2.5
     nlimPos = 2.5; 
@@ -41,12 +46,12 @@ end
 
 % Ultimate Load Factor
 nUlt = nlimPos * 1.5; 
-fprintf('The max limit load factor is %0.2f', nlimPos)
-fprintf('The max ultimate load factor is % 0.2f', nUlt)
+fprintf('The max limit load factor is %0.2f \n', nlimPos)
+fprintf('The max ultimate load factor is % 0.2f \n', nUlt)
 
 % Positive stall curve for load factor ranging from n = 0 to nlimPos
 nPos = 0:0.05:nlimPos; % positive load factor range
-Vspos = sqrt((2*nPos*wingLoading) / (rhoSL * CNMaxPos)); % ft/s, eqn 12.18
+Vspos = sqrt((2*nPos*wingLoading) / (atm.rho_sl * CNMaxPos)); % ft/s, eqn 12.18
 Vspos = Vspos * 0.592484; % convert to knots
 
 % Design Maneuvering Speed, VA
@@ -57,8 +62,8 @@ M = req.cr_M0(1); % cruise Mach Number
 [~,~,sigma,aRatio] = AltTable(atm.alt,'h'); % speed of sound ratio
 aSound = 1116.5 * aRatio; % speed of sound at cruise alt, ft/s
 Vtrue = M * aSound; % cruise speed (TAS), ft/s
-VC = sqrt(sigma) * Vtrue; % cruise speed (EAS), ft/s
-VC = VC * 0.592484; % convert to knots (KEAS)
+Vtrue = Vtrue * 0.592484; % convert true airspeed to knots (KTAS)
+VC = sqrt(sigma) * Vtrue; % cruise speed (KEAS)
 
 % Design Diving Speed, VD
 VD = 1.25*VC; % knots (KEAS)
@@ -111,7 +116,7 @@ h = (atm.alt * 10^3); % cruise altitude in ft
 g = 32.17; % acceleration of gravity ft/s^2
 
 % Mass Ratio (eqn 12.31)
-massRatio = (2 * wingLoading) / (rhoSL * WING.MAC * g * CLalpha);
+massRatio = (2 * wingLoading) / (atm.rho_sl * WING.geom.MAC * g * CLalpha);
 
 % Gust Alleviation Factor (eqn 12.30)
 Kg = (massRatio^1.03) / (6.9 + (massRatio^1.03));
