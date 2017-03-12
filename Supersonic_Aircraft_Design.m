@@ -15,7 +15,7 @@ clearvars -except Wt atm req ctrl
 close all;
 
 %% File META - Preliminary Design Elements
-
+%% meta file fake rat
 % Requirements: 
     % Sonic Boom: 70-75 PLdB
     % Payload: 6-20 Passengers
@@ -89,7 +89,7 @@ fprintf('Fuel Ratio (Pre-Reserve): %0.5f\n', Wt.fuel.Wf_Wto);
 
 Wt.fuel.reserve_ratio = 1.25; % Reserve fuel at least 20% FAR from Sadraey pg. 102 
 Wt.fuel.w_max = (1/req.f_eff)*(Wt.pld.n_pass * req.range)*Wt.fuel.reserve_ratio;
-Wt.fuel.w_tot = Wt.fuel.w_max;
+% Wt.fuel.w_tot = Wt.fuel.w_max;
 fprintf('Maximum Fuel Weight Allowed to be burned: %0.2f lb\n', Wt.fuel.w_max);
 
 Wt.enginetype.name = 'Pegasus';
@@ -121,24 +121,24 @@ Wt.oew.w_tot = Wt.oew.tfo + Wt.oew.crew + Wt.oew.feq;
 
 
 %% Weight Display
-
-wt_types = fieldnames(Wt);
-for i = 1:numel(wt_types)
-    fprintf('%s weight: %0.2f lb\n', wt_types{i}, Wt.(wt_types{i}).w_tot);
-end
-
-clear wt_types;
+% 
+% wt_types = fieldnames(Wt);
+% for i = 1:numel(wt_types)
+%     fprintf('%s weight: %0.2f lb\n', wt_types{i}, Wt.(wt_types{i}).w_tot);
+% end
+% 
+% clear wt_types;
 
 %% WTO and WE/WTO Calculation
 
-WF_TO = .47948; % taken from main code loiter 0.75%
+% WF_TO = .47948; % taken from main code loiter 0.75%
 % Trainer Jet Raymer Table 3.1 pg 31 
 A = 1.59;
 C = -0.1;
 % Solve for WTO with Eq 3.4 and empirical Table 3.1 Eq
 y = linspace(80000,170000,1000);
 x1 = A*y.^C;
-x2 = 1- WF_TO - 1960./y;
+x2 = 1- Wt.fuel.Wf_Wto - 1960./y;
 % plot(y,x1,y,x2) 
 dif = abs(x1 - x2);
 index = find(dif == min(abs(x1 - x2)));
@@ -152,7 +152,9 @@ fprintf('W_TO: %.2f lbs \n',Wt.WTO);
 clearvars -except Wt atm req ctrl
 
 % Empty weight (lbs)
-Wt.WE = Wt.WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew; 
+% Wt.WE = Wt.WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew;
+Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
+Wt.WE = Wt.WE_WTO * Wt.WTO;
 
 fprintf('WE_WTO: %0.3f \n', Wt.WE_WTO);
 fprintf('W_TO: %.2f lbs \n', Wt.WTO);
