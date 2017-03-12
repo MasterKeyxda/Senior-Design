@@ -78,9 +78,6 @@ cpwr xfoil_a18.000_cpwr.dat
 alfa 19
 dump xfoil_a19.000_dump.dat
 cpwr xfoil_a19.000_cpwr.dat
-alfa 20
-dump xfoil_a20.000_dump.dat
-cpwr xfoil_a20.000_cpwr.dat
 pwrt
 xfoil_pwrt.dat
 plis
