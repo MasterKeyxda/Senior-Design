@@ -1,5 +1,10 @@
 
-% load('aircraft_vars.mat')
+if ~exist('ctrl', 'var')
+    clc;
+    clear;
+    load('aircraft_vars.mat')
+    close all;
+end
 %% Structural Weight
 
 % Structural Weight includes the weight of the wing , empennage, fuselage,
@@ -102,6 +107,8 @@ elseif strcmp(Wt.enginetype.name, 'JT8D-219')
     Wt.Pwr.Engine = 4741 * Ne;
 % JT8D-219 dry engine weight = 4741 lbs
 % Air Induction System
+elseif strcmp(Wt.enginetype.name, 'PW-TF33-3-7')
+    Wt.Pwr.Engine = 4650 * Ne;
 end
 
 
@@ -264,22 +271,24 @@ WTOnew = (WEnew + Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto);
 
 % Percent difference between new and prelminary WTO
 WeightDiff = (abs((WTOnew - Wt.WTO)) / Wt.WTO) * 100; 
-fprintf('\n\t WEIGHT CORRECTIONS \n');
-fprintf('The discrepancy between the preliminary WTO and the new WTO is: %0.2f percent \n', WeightDiff)
-if WeightDiff > 5
-    fprintf('Iteration required. \n')
-    Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
-    Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
-    fprintf('New weight set to %6.2f lb\n', WTOnew);
-else
-    fprintf('No iteration required. \n')
-    Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
-    Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
-    fprintf('Final weight set to %6.2f lb\n', WTOnew);
-    if Wt.fuel.w_tot > Wt.fuel.w_max
-        fprintf('Fuel mass exceeds max requirements by %0.5f percent\n', (Wt.fuel.w_tot - Wt.fuel.w_max)/Wt.fuel.w_tot * 100);
+if exist('ctrl', 'var')
+    fprintf('\n\t WEIGHT CORRECTIONS \n');
+    fprintf('The discrepancy between the preliminary WTO and the new WTO is: %0.2f percent \n', WeightDiff)
+    if WeightDiff > 5
+        fprintf('Iteration required. \n')
+        Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
+        Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
+        fprintf('New weight set to %6.2f lb\n', WTOnew);
     else
-        fprintf('Fuel mass meets max requirements by %0.5f percent\n', abs(Wt.fuel.w_tot - Wt.fuel.w_max)/Wt.fuel.w_tot * 100);
+        fprintf('No iteration required. \n')
+        Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
+        Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
+        fprintf('Final weight set to %6.2f lb\n', WTOnew);
+        if Wt.fuel.w_tot > Wt.fuel.w_max
+            fprintf('Fuel mass exceeds max requirements by %0.5f percent\n', (Wt.fuel.w_tot - Wt.fuel.w_max)/Wt.fuel.w_tot * 100);
+        else
+            fprintf('Fuel mass meets max requirements by %0.5f percent\n', abs(Wt.fuel.w_tot - Wt.fuel.w_max)/Wt.fuel.w_tot * 100);
+        end
     end
 end
 
@@ -291,43 +300,49 @@ end
 
 %% XCG Location
 
-% % % All references and moment arms in ft
-% % xRef = 20; % reference location to the left of the nose of airplane
-% % % Xarm refers to the x dist from the airplane nose to the start of component /
-% % % component MAC. 
-% % 
-% % % Structural Components
-% % Xarm.Wing = 0.60 * L_F; % distance to LE MAC of wing
-% % Xcg.Wing = xRef + Xarm.Wing + 0.37*WING.geom.MAC; % 35-42% MAC (Sadraey Table 11.2)
-% % Xarm.HT = 138; 
-% % Xcg.HT = xRef + Xarm.HT + (0.35*TAIL.ch); % 30-40 % HT MAC (Sadraey Table 11.2)
-% % Xarm.VT = 140; 
-% Xcg.VT = xRef + Xarm.VT + (0.35*TAIL.cv); % Is TAIL.cv the MAC? 30-40 % VT MAC (Sadraey Table 11.2)
-% Xcg.Fuselage = xRef + 0.45*L_F; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
-% % Nacelle Length
-% % http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
+% All references and moment arms in ft
+% Xarm refers to the x dist from the airplane nose to the start of component /
+% component MAC. 
+
+% Lifting Components - referenced to desired CG
+mXcgi.Wing = [Wt.Struc.Wing, cglocAC+0.25*cRootSub];%0.60 * L_F; % distance to LE MAC of wing
+mXcgi.Tail = [Wt.Struc.HT+Wt.Struc.VT, TAIL.Lopt]; % 
+% Xcg.Wing = mXcg_i.Wing + 0.37*WING.geom.MAC; % 35-42% MAC (Sadraey Table 11.2)
+% mXcg_i.HT = 138; 
+% Xcg.HT = mXcg_i.HT + (0.35*TAIL.ch); % 30-40 % HT MAC (Sadraey Table 11.2)
+% mXcg_i.VT = 140; 
+% Xcg.VT = mXcg_i.VT + (0.35*TAIL.cv); % Is TAIL.cv the MAC? 30-40 % VT MAC (Sadraey Table 11.2)
+% 
+XLE_w = 72.5;
+mXcgi.Fuselage = [Wt.Struc.Fuselage, -XLE_w + cglocAC + 0.45*L_F]; % ranges from 0.45 - 0.50 length of fuselage; Roskam Pt.5, p.114; rear fuselage mounted engines
+% mXcgi.Engines = [Wt.Pwr.Engine, 
+% Nacelle Length
+% http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
 % nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % ft
 % nacDMax = 1.0827*(constraints.req_Thr^0.4134)/12;
-% % JT8D-219 Specs (http://pw.utc.com/Content/Press_Kits/pdf/me_jt8d-219_pCard.pdf)
-% % Take-off thrust = 21,000 lbs
-% % Length = 154 inches (12.83 ft)
-% % Fan-tip diameter = 49.2 inches (4.1 ft)
-% % Xcg.Nacelles
+% JT8D-219 Specs (http://pw.utc.com/Content/Press_Kits/pdf/me_jt8d-219_pCard.pdf)
+% Take-off thrust = 21,000 lbs
+% Length = 154 inches (12.83 ft)
+% Fan-tip diameter = 49.2 inches (4.1 ft)
+% Xcg.Nacelles
 % Xarm.NoseGear = 40;
 % Xcg.NoseGear = xRef + Xarm.NoseGear; 
 % Xcg.MainGear = Xcg.NoseGear + B; % B is the wheel base (dist between NG and MG)
+
+% Powerplant Components
+% Xcg.EngOne
+% Xcg.EngTwo
+% Xcg.EngThree
+% Where will fuel and engines be located?
+% Xcg.EngCtrl =
+% Xcg.EngStartSys = 
 % 
-% % Powerplant Components
-% % Xcg.EngOne
-% % Xcg.EngTwo
-% % Xcg.EngThree
-% % Where will fuel and engines be located?
-% % Xcg.EngCtrl =
-% % Xcg.EngStartSys = 
+% Fixed Equipment Components
 % 
-% % Fixed Equipment Components
-% 
-% % Locate XCG
+% Locate XCG
 % Xcg.Location = ((Xcg.Wing*Wt.Struc.Wing) + (Xcg.HT*Wt.Struc.HT) + (Xcg.VT*Wt.Struc.VT) ...
 %     + (Xcg.Fuselage*Wt.Struc.Fuselage) + (Xcg.NoseGear*Wt.Struc.NoseGear) ...
 %     + (Xcg.MainGear*Wt.Struc.MainGear)) / Wt.WTO;
+
+% % Wings and Tail
+% Xarm.wing = 
