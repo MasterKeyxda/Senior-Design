@@ -1,6 +1,17 @@
 %% SETUP
-clear;
+% clear;
+% if ~exist('ctrl', 'var')
+%    clc;
+%    clearvars -except Wt atm req ctrl
+%    close all;
+% else
+%     clear;
+%     clc;
+%     close all;
+% end
+
 clc;
+clearvars -except Wt atm req ctrl
 close all;
 
 %% File META - Preliminary Design Elements
@@ -45,6 +56,8 @@ req.takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
 % Total Payload Weight = Weight of passengers + weight of luggage + weight of fuel + weight crew*
 % Total Weight = Total Payload Weight + Total Aircraft weight
 
+fprintf('\t\t PRELIMINARY WEIGHT ESTIMATES: \n');
+
 Wt.pld.n_pass = 8; % Number of Passengers
 Wt.pld.apw = 170; % lbf, average passenger weight (apw)
 Wt.pld.lug = 45; % lbf, luggage
@@ -76,8 +89,11 @@ fprintf('Fuel Ratio (Pre-Reserve): %0.5f\n', Wt.fuel.Wf_Wto);
 
 Wt.fuel.reserve_ratio = 1.25; % Reserve fuel at least 20% FAR from Sadraey pg. 102 
 Wt.fuel.w_max = (1/req.f_eff)*(Wt.pld.n_pass * req.range)*Wt.fuel.reserve_ratio;
-Wt.fuel.w_tot = Wt.fuel.w_max;
-fprintf('Maximum Fuel Weight Allowed: %0.2f lb\n', Wt.fuel.w_max);
+% Wt.fuel.w_tot = Wt.fuel.w_max;
+fprintf('Maximum Fuel Weight Allowed to be burned: %0.2f lb\n', Wt.fuel.w_max);
+
+Wt.enginetype.name = 'Pegasus';
+Wt.enginetype.w_tot = 3960; %lbm
 
 %% Operating Empty Weight (oew)
 
@@ -86,16 +102,12 @@ fprintf('Maximum Fuel Weight Allowed: %0.2f lb\n', Wt.fuel.w_max);
 
 % Solve for WTO with Empirical Model 4.26 Saedray
 
-% Solve for Total Weight using Fuel Weight Ratio
-WTO = Wt.fuel.w_tot/Wt.fuel.Wf_Wto; % Total Takeoff Weight
-
-
 % Crew Weight
 Wt.oew.n_crew = 2; % Number of Crew Members
-Wt.oew.crew = Wt.oew.n_crew*Wt.pld.apw; %lbf
+Wt.oew.baggage = 30; % crew has 30 lbs baggage
+Wt.oew.crew = Wt.oew.n_crew*(Wt.pld.apw+Wt.oew.baggage); %lb
 
 % Manufacturer's empty weight - empty airframe
-
 
 % Fixed equipment weight
 Wt.oew.seat = 33; % lbf  Aircraft Design - Sadre
@@ -104,60 +116,49 @@ Wt.oew.feq = Wt.oew.seat*(Wt.oew.n_crew + Wt.pld.n_pass);
 % Trapped Fuel and Oil
 Wt.oew.tfo = 0;
 
+% Total Operating Empty Weight
 Wt.oew.w_tot = Wt.oew.tfo + Wt.oew.crew + Wt.oew.feq;
 
 
 %% Weight Display
-
-wt_types = fieldnames(Wt);
-for i = 1:numel(wt_types)
-    fprintf('%s weight: %0.2f lb\n', wt_types{i}, Wt.(wt_types{i}).w_tot);
-end
-fprintf('WTO: %0.2f lb\n',WTO)
+% 
+% wt_types = fieldnames(Wt);
+% for i = 1:numel(wt_types)
+%     fprintf('%s weight: %0.2f lb\n', wt_types{i}, Wt.(wt_types{i}).w_tot);
+% end
+% 
+% clear wt_types;
 
 %% WTO and WE/WTO Calculation
 
-% Solve for Wt.oew.me with Empirical Model 4.26 Saedray
-% a = 1.59; b = -0.1; % From table 4.8
-% WTO_1 = WTO;
-% WE_TO = a*WTO_1^b;
-% WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
-% res = (WTO_2 - WTO_1);
-% ii = 1;
-% fprintf('Iteration Started\n');
-% while abs(res) >= 1
-%     WTO_1 = WTO_2;
-%     WE_TO = a*WTO_1^b;
-%     WTO_2 = (Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto - WE_TO);
-%     res = (WTO_2 - WTO_1);
-% 
-%     ii = ii + 1;
-%     if ii > 1e6
-%        fprintf('Warning: Iteration Broken\n');
-%        break;
-%     end
-% end
-% 
-% fprintf('Iterated WTO: %0.2f lb \n', WTO_1);
-% fprintf('Number of Iterations: %i \n', ii);
-
-% clc
-WF_TO = .47948; % taken from main code loiter 0.75%
+% WF_TO = .47948; % taken from main code loiter 0.75%
 % Trainer Jet Raymer Table 3.1 pg 31 
 A = 1.59;
 C = -0.1;
 % Solve for WTO with Eq 3.4 and empirical Table 3.1 Eq
 y = linspace(80000,170000,1000);
 x1 = A*y.^C;
-x2 = 1- WF_TO - 1960./y;
-plot(y,x1,y,x2) 
+x2 = 1- Wt.fuel.Wf_Wto - 1960./y;
+% plot(y,x1,y,x2) 
 dif = abs(x1 - x2);
 index = find(dif == min(abs(x1 - x2)));
-WE_WTO = x1(index);
-WTO = y(index);
+Wt.WE_WTO = x1(index);
+Wt.WTO = y(index);
 
-fprintf('WE_WTO: %0.3f \n',WE_WTO);
-fprintf('W_TO: %.2f lbs \n',WTO);
+fprintf('WE_WTO: %0.3f \n',Wt.WE_WTO);
+fprintf('W_TO: %.2f lbs \n',Wt.WTO);
+
+% Clear out other variables except for Wt
+clearvars -except Wt atm req ctrl
+
+% Empty weight (lbs)
+% Wt.WE = Wt.WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew;
+Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
+Wt.WE = Wt.WE_WTO * Wt.WTO;
+
+fprintf('WE_WTO: %0.3f \n', Wt.WE_WTO);
+fprintf('W_TO: %.2f lbs \n', Wt.WTO);
+fprintf('WE: %0.2f lbs \n', Wt.WE); 
 
 %% Constraints Plots
 fprintf('\n CONSTRAINT PLOTS: \n');
@@ -181,19 +182,13 @@ Vh = 0.6; % horizontal tail volumen coefficient
 Vv = 0.05; % vertical tail volumen coefficient
 sweepWing = 28; % wing sweep degrees
 taperh = 0.6; % horizontal tail taper ratio
-cglocAC = -6.5; % ft cg location in front or behind AC Wing
-
-
-%<<<<<<< HEAD
-
-TAIL = TailCalc(0, Vh, Vv, WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.S_area, WING.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
-%<<<<<<< HEAD
-%=======
+cglocAC = -12; % ft cg location in front or behind AC Wing
+TAIL = TailCalc(0, Vh, Vv, Wt.WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.geom.S_area, WING.geom.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
 
 %% V-n diagram
-V_n_diagram;
-%>>>>>>> Matt
 
+fprintf('\n V-N DIAGRAM CALCULATIONS: \n');
+V_n_diagram;
 
 %% Get run-time meta info for future reference
 
