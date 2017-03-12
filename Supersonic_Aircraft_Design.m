@@ -58,7 +58,7 @@ req.takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
 
 fprintf('\t\t PRELIMINARY WEIGHT ESTIMATES: \n');
 
-Wt.pld.n_pass = 8; % Number of Passengers
+Wt.pld.n_pass = 10; % Number of Passengers
 Wt.pld.apw = 170; % lbf, average passenger weight (apw)
 Wt.pld.lug = 45; % lbf, luggage
 Wt.pld.w_tot = Wt.pld.n_pass * (Wt.pld.apw + Wt.pld.lug); % lbf
