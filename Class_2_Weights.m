@@ -259,19 +259,28 @@ FeqWT = [Wt.Feq.FCsysToren; Wt.Feq.Hydraulic; Wt.Feq.Iae; Wt.Feq.ElecSys; ...
 
 % Class 2 Weight Summary
 WEnew = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;
-WTOnew = WEnew + WF + Wt.pld.w_tot + Wt.oew.crew; 
+% WTOnew = WEnew + WF + Wt.pld.w_tot + Wt.oew.crew; 
+WTOnew = (WEnew + Wt.pld.w_tot + Wt.oew.crew)/(1 - Wt.fuel.Wf_Wto);
 
 % Percent difference between new and prelminary WTO
 WeightDiff = (abs((WTOnew - Wt.WTO)) / Wt.WTO) * 100; 
+fprintf('\n\t WEIGHT CORRECTIONS \n');
 fprintf('The discrepancy between the preliminary WTO and the new WTO is: %0.2f percent \n', WeightDiff)
 if WeightDiff > 5
     fprintf('Iteration required. \n')
     Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
+    Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
     fprintf('New weight set to %6.2f lb\n', WTOnew);
 else
     fprintf('No iteration required. \n')
     Wt.WTO = WTOnew; % overwrite preliminary sizing MTOW (lb)
+    Wt.fuel.w_tot = Wt.fuel.Wf_Wto * Wt.WTO;
     fprintf('Final weight set to %6.2f lb\n', WTOnew);
+    if Wt.fuel.w_tot > Wt.fuel.w_max
+        fprintf('Fuel mass exceeds max requirements by %0.5f percent\n', (Wt.fuel.w_tot - Wt.fuel.w_max)/Wt.fuel.w_tot * 100);
+    else
+        fprintf('Fuel mass meets max requirements by %0.5f percent\n', abs(Wt.fuel.w_tot - Wt.fuel.w_max)/Wt.fuel.w_tot * 100);
+    end
 end
 
 %% Constraint Plots
