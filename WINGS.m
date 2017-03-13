@@ -113,19 +113,25 @@ end
 
 figure(); plot(WING.hsnlf.polar_inv.alpha, WING.hsnlf.polar_inv.CL);
 ylabel('C_l');
-xlabel('\alpha');
-title('Boeing HSNLF Lift-Curve Polar');
+xlabel('ANGLE OF ATTACK (\alpha)');
+title('BOEING HSNLF LIFT POLAR');
 if ~exist([pwd '\aero_results'], 'dir')
    mkdir(pwd, 'aero_results');
 end
 saveas(gcf, [pwd '\aero_results\HSNLF_lift_polar.png']);
 
 figure(); plot(WING.hsnlf.polar_inv.CL, WING.hsnlf.polar_inv.CD);
-ylabel('C_d');
-xlabel('C_l');
-title('Boeing HSNLF Drag Polar');
+ylabel('C_d (SECTION DRAG COEFFICIENT)');
+xlabel('C_l (SECTION LIFT COEFFICIENT)');
+title('BOEING HSNLF DRAG POLAR');
 saveas(gcf, [pwd '\aero_results\HSNLF_drag_polar.png']);
 % WING.swept.i_w = spline(WING.swept.polar_inv.CL, WING.swept.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
+
+figure(); plot(WING.hsnlf.polar_inv.alpha, WING.hsnlf.polar_inv.CL./ WING.hsnlf.polar_inv.CD);
+xlabel(['ANGLE OF ATTACK (\alpha)']);
+ylabel('L/D');
+title('BOEING HSNLF LIFT/DRAG RATIO');
+saveas(gcf, [pwd '\aero_results\HSNLF_LDRAT_polar.png']);
 
 % Supersonic Airfoil Characteristics
 % WING.supersonic.name = 'biconvex';
@@ -189,13 +195,13 @@ WING.biconvex(2).Cd = WING.biconvex(2).Cl .* WING.biconvex(2).alpha + ((WING.bic
 WING.biconvex(2).L_D = WING.biconvex(2).Cl ./WING.biconvex(2).Cd;
 
 figure(); % lift polars
-plot(WING.biconvex(1).alpha, WING.biconvex(1).Cl);
+plot(WING.biconvex(1).alpha.*180./pi, WING.biconvex(1).Cl);
 hold on;
-plot(WING.biconvex(2).alpha, WING.biconvex(2).Cl, 'o');
+plot(WING.biconvex(2).alpha.*180./pi, WING.biconvex(2).Cl, 'o');
 legend('Symmetric', 'Modified');
-title('Lift Polars');
-xlabel('\alpha');
-ylabel('C_l');
+title('LIFT POLARS - BICONVEX');
+xlabel('ANGLE OF ATTACK (\alpha)');
+ylabel('C_l (SECTION LIFT COEFFICIENT)');
 saveas(gcf, [pwd '\aero_results\bicon_lift_polar.png']);
 
 figure(); % drag polars
@@ -203,18 +209,18 @@ plot(WING.biconvex(1).Cl, WING.biconvex(1).Cd);
 hold on;
 plot(WING.biconvex(2).Cl, WING.biconvex(2).Cd, 'o');
 legend('Symmetric', 'Modified');
-title('Drag Polars');
-xlabel('C_l');
-ylabel('C_d');
+title('DRAG POLARS - BICONVEX');
+xlabel('C_l (SECTION LIFT COEFFICIENT)');
+ylabel('C_d (SECTION DRAG COEFFICIENT)');
 saveas(gcf, [pwd '\aero_results\bicon_drag_polar.png']);
 
 figure(); % L/D polars
-plot(WING.biconvex(1).alpha, WING.biconvex(1).L_D);
+plot(WING.biconvex(1).alpha.*180./pi, WING.biconvex(1).L_D);
 hold on;
-plot(WING.biconvex(2).alpha, WING.biconvex(2).L_D, 'o');
+plot(WING.biconvex(2).alpha.*180./pi, WING.biconvex(2).L_D, 'o');
 legend('Symmetric', 'Modified');
-title('Lift over Drag');
-xlabel('\alpha');
+title('LIFT/DRAG RATIO - BICONVEX');
+xlabel('ANGLE OF ATTACK (\alpha)');
 ylabel('L/D');
 saveas(gcf, [pwd '\aero_results\bicon_LD_polar.png']);
 %% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
