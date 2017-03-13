@@ -16,6 +16,9 @@ ctrl.Wt_old(1) = Wt.WTO; % Save old weight
 % Get corrected weight
 Class_2_Weights;
 
+Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;
+Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
+
 % Calculate Residual
 ctrl.res(1) = WeightDiff / 100; %
 
@@ -116,6 +119,10 @@ while ctrl.res(end) > ctrl.tol
     % Get corrected weight
     Class_2_Weights;
     
+    % Update Empty Weight
+    Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total; 
+    Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
+    
     % Calculate Residual
     ctrl.res(iterate) = WeightDiff / 100; %
     
@@ -139,7 +146,7 @@ XCGLocation
 
 % fprintf('The Required CG %0.2f ft\n', cglocAC);
 % save meta information about current script run
-meta.date = datetime('today');
+% meta.date = datetime('today');
 
 % save variables to .mat file
 clear ctrl;

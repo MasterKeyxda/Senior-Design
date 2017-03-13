@@ -15,26 +15,26 @@ end
 WF = Wt.fuel.w_tot; % weight of fuel (lbs)
 Wmzf = Wt.WTO - WF; % max zero fuel weight (lbs)
 nUlt = 3.75; % ultimate load factor from V-n diagram % GET FROM ANOTHER SCRIPT
-percentSub = 0.20; % percentage of subsonic portion of wing
-percentSuper = 0.80; % percentage of supersonic portion of wing
-SwSub = S_w * percentSub; % subsonic wing area (ft^2) 
-SwSuper = S_w * percentSuper; % supersonic wing area (ft^2)
+% percentSub = 0.20; % percentage of subsonic portion of wing
+% percentSuper = 0.80; % percentage of supersonic portion of wing
+SwSub = WING.geom.sub.S_area; % subsonic wing area (ft^2) 
+SwSuper = WING.geom.sup.S_area; % supersonic wing area (ft^2)
 
 % Subsonic portion of wing (dim from Solidworks model Wing.v2)
-cRootSub = 23.475; % root chord length (ft); from Solidworks model
+cRootSub = WING.geom.sub.Cr; % root chord length (ft); from Solidworks model
 thickToChordSub = 0.10; % thickness to chord ratio subsonic wing
 trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic wing (ft)
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
-bSub = percentSub * WING.geom.span; % subsonic wing span (ft)
+bSub = WING.geom.sub.span;%percentSub * WING.geom.span; % subsonic wing span (ft)
 % Subsonic wing weight (lbs)
 Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
 
 % Supersonic portion of wing (dim from Solidworks model Wing.v2)
-cRootSuper = 19.364; % root chord supersonic wing; 
-thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
+cRootSuper = WING.geom.sup.Cr; % root chord supersonic wing; 
+thickToChordSuper = 0.0525; % thickness to chord ration supersonic wing
 trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
 sweepSemiChordSuper = 10; % wing semi-chord sweep angle (degrees)
-bSuper = percentSuper * WING.geom.span; % supersonic wing span (ft)
+bSuper = WING.geom.sup.span;%percentSuper * WING.geom.span; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
 Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
 
@@ -144,7 +144,7 @@ Wt.Pwr.EngStartSys = (EngStartSysTwo + EngStartSysFour)/2;
 Wt.Pwr.Propulsion = Wt.Pwr.EngineControls + Wt.Pwr.EngStartSys;
 % Propulsion weight is part of engine for electric power
 % Total Powerplant Weight 
-Wt.Pwr.Total = Wt.Pwr.Engine + Wt.Pwr.FuelSystem + Wt.Pwr.Propulsion;
+Wt.Pwr.Total = Wt.Pwr.Engine + Wt.Pwr.FuelSystem;
 %% Fixed Equipment Weight
 
 % Fixed Equipment weight includes the weight of the flight control system
@@ -216,8 +216,8 @@ Wt.Feq.Furn = 756; % chosen based on similar business jets
 
 % Baggage and Cargo Handling Equipment
 % GD Method, Eqn 7.48, p.110
-Kbc = 0.316; % constant with preload provisions
-Wt.Feq.CargoEquip = Kbc * (Wt.pld.n_pass^1.456);
+%Kbc = 0.316; % constant with preload provisions
+%Wt.Feq.CargoEquip = Kbc * (Wt.pld.n_pass^1.456);
 
 % Operational Items
 % Includes food, water, drinks, lavatory supplies, p.108
@@ -230,7 +230,7 @@ Wt.Feq.Paint = 0.005*Wt.WTO; % ranges from 0.003 to 0.006WTO
 % Total Fixed Equipment Weight
 Wt.Feq.Total = Wt.Feq.FCsysGD + Wt.Feq.Hydraulic + Wt.Feq.Iae + ...
     Wt.Feq.ElecSys + Wt.Feq.ApiGD + Wt.Feq.OxygenGD + Wt.Feq.Apu + ... 
-    Wt.Feq.Furn + Wt.Feq.CargoEquip + Wt.Feq.Oper + Wt.Feq.Paint; 
+    Wt.Feq.Furn + Wt.Feq.Oper + Wt.Feq.Paint; 
 
 
 %% Export to Excel
@@ -245,17 +245,17 @@ FeqLabels = {'Flight Control System'; 'Hydraulic Systems'; ...
     'Total Fixed Equipment Weight'}; 
 
 % Structural Weight Array
-StrucWT = [Wt.Struc.Wing; Wt.Struc.HT; Wt.Struc.VT; ...
-    Wt.Struc.Fuselage; Wt.Struc.Nacelle; Wt.Struc.NoseGear; ...
-    Wt.Struc.MainGear; Wt.Struc.Total];
+%StrucWT = [Wt.Struc.Wing; Wt.Struc.HT; Wt.Struc.VT; ...
+ %   Wt.Struc.Fuselage; Wt.Struc.Nacelle; Wt.Struc.NoseGear; ...
+ %   Wt.Struc.MainGear; Wt.Struc.Total];
 
 % Powerplant Weight Array
-PwrWT = [Wt.Pwr.Engine; Wt.Pwr.FuelSystem; Wt.Pwr.Propulsion; Wt.Pwr.Total];
+%PwrWT = [Wt.Pwr.Engine; Wt.Pwr.FuelSystem; Wt.Pwr.Propulsion; Wt.Pwr.Total];
 
 % Fixed Equipment Weight Array
-FeqWT = [Wt.Feq.FCsysToren; Wt.Feq.Hydraulic; Wt.Feq.Iae; Wt.Feq.ElecSys; ...
-    Wt.Feq.Api; Wt.Feq.OxygenGD; Wt.Feq.Apu; Wt.Feq.Furn; Wt.Feq.CargoEquip; ... 
-    Wt.Feq.Oper; Wt.Feq.Paint];
+% FeqWT = [Wt.Feq.FCsysToren; Wt.Feq.Hydraulic; Wt.Feq.Iae; Wt.Feq.ElecSys; ...
+  %  Wt.Feq.Api; Wt.Feq.OxygenGD; Wt.Feq.Apu; Wt.Feq.Furn; Wt.Feq.CargoEquip; ... 
+   % Wt.Feq.Oper; Wt.Feq.Paint];
 
 % Total Weight
 %WETotal = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;

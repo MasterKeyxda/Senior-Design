@@ -55,7 +55,7 @@ mXcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,-XLE_w + cglocAC + x_MainGear];
 mXcgi.ElectricalSystem = [Wt.Feq.Iae,-XLE_w + cglocAC + x_cockpit]; % Under Cockpit
 
 % Air Conditioning, Pressurazation, and de-icing systems
-mXcgi.Api = [Wt.Feq.Api,-XLE_w + cglocAC + x_engine + length_engine*.4]; % located at engine
+mXcgi.Api = [Wt.Feq.ApiGD,-XLE_w + cglocAC + x_engine + length_engine*.4]; % located at engine
 
 % Oxygen System
 mXcgi.Oxygen = [Wt.Feq.OxygenGD,-XLE_w + cglocAC + (53.33+25)/2]; % CG placed in center of habitable cabin 
@@ -144,7 +144,7 @@ cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag];
 
 figure()
 title('Aircraft CG Excursion')
-xlabel('CG Location, ft (MAC)')
+xlabel('CG Location, ft')
 ylabel('Weight (lbs)')
 hold on;
 % Plot CG Diagram
