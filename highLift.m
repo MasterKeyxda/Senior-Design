@@ -36,7 +36,7 @@ dcl_max_s = dcl_s * delta_f * c_RAT;
 % p. 8-18
 %reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
 K_lambda = 0.92; % corresponding to wing sweep of 10 degrees
-S_RAT_f = 0.58; % flaps-wing wetted area ratio, referenced t?o DC-6 which had ratio of 0.58
+S_RAT_f = 0.65; % flaps-wing wetted area ratio, referenced t?o DC-6 which had ratio of 0.58
 dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
 
 S_RAT_s = 1; % slat-wing wetted area ratio 
@@ -77,11 +77,11 @@ dcl_max_s = dcl_s * delta_f * c_RAT;
 % p. 8-18
 %reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
 K_lambda = 0.57; % corresponding to wing sweep of 60 degrees
-S_RAT_f = 0.58; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
+S_RAT_f = 0.60; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
 dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
 
 S_RAT_s = 1; % slat-wing wetted area ratio 
-phi_HL = 60; %sweep angle of the hinge line of flap
+phi_HL = 65; %sweep angle of the hinge line of flap
 d_CL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
 
 dC_L2 = dCL_max_f + d_CL_max_s;
