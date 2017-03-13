@@ -15,26 +15,26 @@ end
 WF = Wt.fuel.w_tot; % weight of fuel (lbs)
 Wmzf = Wt.WTO - WF; % max zero fuel weight (lbs)
 nUlt = 3.75; % ultimate load factor from V-n diagram % GET FROM ANOTHER SCRIPT
-percentSub = 0.20; % percentage of subsonic portion of wing
-percentSuper = 0.80; % percentage of supersonic portion of wing
-SwSub = S_w * percentSub; % subsonic wing area (ft^2) 
-SwSuper = S_w * percentSuper; % supersonic wing area (ft^2)
+% percentSub = 0.20; % percentage of subsonic portion of wing
+% percentSuper = 0.80; % percentage of supersonic portion of wing
+SwSub = WING.geom.sub.S_area; % subsonic wing area (ft^2) 
+SwSuper = WING.geom.sup.S_area; % supersonic wing area (ft^2)
 
 % Subsonic portion of wing (dim from Solidworks model Wing.v2)
-cRootSub = 23.475; % root chord length (ft); from Solidworks model
+cRootSub = WING.geom.sub.Cr; % root chord length (ft); from Solidworks model
 thickToChordSub = 0.10; % thickness to chord ratio subsonic wing
 trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic wing (ft)
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
-bSub = percentSub * WING.geom.span; % subsonic wing span (ft)
+bSub = WING.geom.sub.span;%percentSub * WING.geom.span; % subsonic wing span (ft)
 % Subsonic wing weight (lbs)
 Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
 
 % Supersonic portion of wing (dim from Solidworks model Wing.v2)
-cRootSuper = 19.364; % root chord supersonic wing; 
-thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
+cRootSuper = WING.geom.sup.Cr; % root chord supersonic wing; 
+thickToChordSuper = 0.0525; % thickness to chord ration supersonic wing
 trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
 sweepSemiChordSuper = 10; % wing semi-chord sweep angle (degrees)
-bSuper = percentSuper * WING.geom.span; % supersonic wing span (ft)
+bSuper = WING.geom.sup.span;%percentSuper * WING.geom.span; % supersonic wing span (ft)
 % Supersonic wing weight (lbs)
 Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
 

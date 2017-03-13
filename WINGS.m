@@ -22,13 +22,25 @@ WING.geom.AR = AR;
 % Determine Span & MAC
 WING.geom.span = sqrt(WING.geom.S_area * WING.geom.AR);
 WING.geom.MAC = sqrt(WING.geom.S_area/WING.geom.AR);
-WING.geom.sub_span = 0.2*WING.geom.span;
-WING.geom.sup_span = 0.8 * WING.geom.span;
+WING.geom.sub_b_ratio = 0.2;
+WING.geom.sub_s_ratio = 0.24;
 
+WING.geom.sub.span = WING.geom.sub_b_ratio * WING.geom.span;
+WING.geom.sup.span = (1 - WING.geom.sub_b_ratio)*WING.geom.span;
+WING.geom.sub.S_area = WING.geom.sub_s_ratio * WING.geom.S_area;
+WING.geom.sup.S_area = (1 - WING.geom.sub_s_ratio) * WING.geom.S_area;
+WING.geom.sub.MAC = WING.geom.sub.S_area / WING.geom.sub.span;
+WING.geom.sup.MAC = WING.geom.sup.S_area / WING.geom.sup.span;
 
 % Wing Taper Ratios - OPENVSP
-WING.geom.taper_sub = 0.82489; 
-WING.geom.taper_super = 0.74667;
+WING.geom.sub.taper = 0.82489; 
+WING.geom.sup.taper = 0.74667;
+
+WING.geom.sub.Cr = WING.geom.sub.MAC * 1.5 * ( 1 + WING.geom.sub.taper)/(1 + WING.geom.sub.taper + WING.geom.sub.taper^2);
+WING.geom.sub.Ct = WING.geom.sub.Cr * WING.geom.sub.taper;
+WING.geom.sup.Cr = WING.geom.sub.Ct;
+%WING.geom.sup.MAC * 1.5 * ( 1 + WING.geom.sup.taper)/(1 + WING.geom.sup.taper + WING.geom.sup.taper^2);
+WING.geom.sup.Ct = WING.geom.sup.Cr * WING.geom.sup.taper;
 
 WING.CD0 = 0.02;
 WING.df_b = 6.5 / WING.geom.span;
@@ -41,7 +53,9 @@ fprintf('\n\tWing Geometry: \n');
 
 wt_types = fieldnames(WING.geom);
 for i = 1:numel(wt_types)
-    fprintf('%s: %0.4f\n', wt_types{i}, WING.geom.(wt_types{i}));
+    if ~isstruct(WING.geom.(wt_types{i}))
+        fprintf('%s: %0.4f\n', wt_types{i}, WING.geom.(wt_types{i}));
+    end
 end
 clear wt_types
 
