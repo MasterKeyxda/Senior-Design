@@ -193,7 +193,7 @@ V_n_diagram;
 %% Get run-time meta info for future reference
 
 % save meta information about current script run
-meta.date = datetime('today');
+% meta.date = datetime('today');
 
 % save variables to .mat file
 save('aircraft_vars.mat'); 

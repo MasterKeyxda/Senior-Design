@@ -139,7 +139,7 @@ XCGLocation
 
 % fprintf('The Required CG %0.2f ft\n', cglocAC);
 % save meta information about current script run
-meta.date = datetime('today');
+% meta.date = datetime('today');
 
 % save variables to .mat file
 clear ctrl;
