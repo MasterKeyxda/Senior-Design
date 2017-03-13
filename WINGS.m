@@ -1,7 +1,8 @@
-if ~exist('Wt', 'var')
+if ~exist('Wt', 'var') || exist('WING', 'var')
    clc;
    clear;
-   load('aircraft_vars.mat'); 
+   load('aircraft_vars.mat');
+   clear WING
    close all;
 end
 
@@ -100,6 +101,16 @@ figure(); plot(WING.hsnlf.polar_inv.alpha, WING.hsnlf.polar_inv.CL);
 ylabel('C_l');
 xlabel('\alpha');
 title('Boeing HSNLF Lift-Curve Polar');
+if ~exist([pwd '\aero_results'], 'dir')
+   mkdir(pwd, 'aero_results');
+end
+saveas(gcf, [pwd '\aero_results\HSNLF_lift_polar.png']);
+
+figure(); plot(WING.hsnlf.polar_inv.CL, WING.hsnlf.polar_inv.CD);
+ylabel('C_d');
+xlabel('C_l');
+title('Boeing HSNLF Drag Polar');
+saveas(gcf, [pwd '\aero_results\HSNLF_drag_polar.png']);
 % WING.swept.i_w = spline(WING.swept.polar_inv.CL, WING.swept.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
 
 % Supersonic Airfoil Characteristics
@@ -146,7 +157,7 @@ title('Boeing HSNLF Lift-Curve Polar');
 % Flat Plate Formulas in Supersonic flow
 
 % Symmetric Biconvex
-WING.biconvex.alpha = (0:20).*pi ./ 180;
+WING.biconvex.alpha = linspace(0,20, 21).*pi./180;
 WING.biconvex.tc_u = 0.03*0.5; % 5.25 percent chord thickness
 WING.biconvex.tc_l = WING.biconvex.tc_u;
 WING.biconvex.chord = 1.0;
@@ -169,6 +180,9 @@ hold on;
 plot(WING.biconvex(2).alpha, WING.biconvex(2).Cl, 'o');
 legend('Symmetric', 'Modified');
 title('Lift Polars');
+xlabel('\alpha');
+ylabel('C_l');
+saveas(gcf, [pwd '\aero_results\bicon_lift_polar.png']);
 
 figure(); % drag polars
 plot(WING.biconvex(1).Cl, WING.biconvex(1).Cd);
@@ -176,6 +190,9 @@ hold on;
 plot(WING.biconvex(2).Cl, WING.biconvex(2).Cd, 'o');
 legend('Symmetric', 'Modified');
 title('Drag Polars');
+xlabel('C_l');
+ylabel('C_d');
+saveas(gcf, [pwd '\aero_results\bicon_drag_polar.png']);
 
 figure(); % L/D polars
 plot(WING.biconvex(1).alpha, WING.biconvex(1).L_D);
@@ -183,6 +200,9 @@ hold on;
 plot(WING.biconvex(2).alpha, WING.biconvex(2).L_D, 'o');
 legend('Symmetric', 'Modified');
 title('Lift over Drag');
+xlabel('\alpha');
+ylabel('L/D');
+saveas(gcf, [pwd '\aero_results\bicon_LD_polar.png']);
 %% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
 
 % Plot Results from ANSYS analysis of the lift and drag polars
