@@ -84,6 +84,7 @@ fprintf('W_TO: %.2f lbs \n', Wt.WTO);
 fprintf('WE: %0.2f lbs \n', Wt.WE); 
 
 while ctrl.res(end) > ctrl.tol
+    close all
    iterate = iterate + 1;
     %% Constraints Plots
     fprintf('\n CONSTRAINT PLOTS: \n');
