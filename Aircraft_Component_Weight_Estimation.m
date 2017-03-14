@@ -39,20 +39,8 @@ dens.AS4_Epoxy = dens.AS4_Epoxy * 1728;
 % Section: 10.4.1
 % Eqn(s) 10.3, 10.4
 
-<<<<<<< HEAD
-% Equation Parameters
-Sw = 930; % wing planform area (ft^2)
-MACw = 15.25; % mean aerodynamic chord (ft)
-thickToChordRatioWing = 0.12; % max thickness to chord ratio
-densityWing = 0.1015; % density of wing material (lb/in^3), 
-AR_Wing = 4; % aspect ratio
-sweepQuarterWing = 30; % 1/4 chord sweep angle (degrees)
-taperRatioWing = 2; % taper ratio
-g = 32.17; % gravitational constant (32.17 ft/s^2)
-=======
 % General / Common Inputs
 
->>>>>>> master
 KpWing = 0.0025; % wing density factor (Table 10.8)
 chordRatioWing = 0.05; % max thickness to chord ratio
 
@@ -233,43 +221,6 @@ fprintf('Landing Gear Weight = %0.2f lbf (%0.2f percent of total weight) \n', Wt
 fprintf('Installed Engine Weight = %0.2f lbf (%0.2f percent of total weight) \n', WtInstalledEngine, (WtInstalledEngine / WtTotal) * 100)
 fprintf('Fuel System Weight = %0.2f lbf (%0.2f percent of total weight) \n', WtFuelSystem, (WtFuelSystem / WtTotal) * 100)
 fprintf('Equipment + Subsystem Weight = %0.2f lbf (%0.2f percent of total weight) \n', WtEquipment, (WtEquipment / WtTotal) * 100)
-
-%% Emtpy Weight Center of Gravity Estimate
-
-% p. 580 , Chapter 11 Sadraey 
-% datum set at nose
-xWing = 0;
-xHtail = 0;
-xVtail = 0;
-xFuselage = 0;
-xLandingGear = 0;
-xInstalledEngine = 0;
-xFuelSys = 0;
-xEquipment = 0;
-
-X_cgEW = xWing*WtWing + xHtail*WtHorizontalTail + xVtail*WtVerticalTail ...
-    + xFuselage*WtFuselage + xLandingGear*WtLandingGear + xInstalledEngine ...
-    + xFuelSys*WtFuelSystem + xEquipment*WtEquipment;
-
-%% Passenger Loading Distribution
-% FAA Weight Handbook, Section 9-13
-
-% Weights
-crew = 
-passenger = 170; % lbs
-baggage = 
-% passenger moment arm
-P_xrow1 = 
-P_xrow2 = 
-P_xrow3 = 
-P_xrow4 = 
-% baggage moment arm
-B_xrow1 = 
-B_xrow2 =
-B_xrow3 =
-B_xrow4 =
-% center of gravity of passengers/crew
-
 
 %% ------------------------ MATLAB --> Excel --------------------------- %%
 

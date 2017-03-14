@@ -15,7 +15,7 @@ clearvars -except Wt atm req ctrl
 close all;
 
 %% File META - Preliminary Design Elements
-%% meta file fake rat
+
 % Requirements: 
     % Sonic Boom: 70-75 PLdB
     % Payload: 6-20 Passengers
@@ -58,7 +58,7 @@ req.takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
 
 fprintf('\t\t PRELIMINARY WEIGHT ESTIMATES: \n');
 
-Wt.pld.n_pass = 8; % Number of Passengers
+Wt.pld.n_pass = 10; % Number of Passengers
 Wt.pld.apw = 170; % lbf, average passenger weight (apw)
 Wt.pld.lug = 45; % lbf, luggage
 Wt.pld.w_tot = Wt.pld.n_pass * (Wt.pld.apw + Wt.pld.lug); % lbf
@@ -193,7 +193,7 @@ V_n_diagram;
 %% Get run-time meta info for future reference
 
 % save meta information about current script run
-meta.date = datetime('today');
+% meta.date = datetime('today');
 
 % save variables to .mat file
 save('aircraft_vars.mat'); 

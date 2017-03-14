@@ -16,6 +16,9 @@ ctrl.Wt_old(1) = Wt.WTO; % Save old weight
 % Get corrected weight
 Class_2_Weights;
 
+Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;
+Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
+
 % Calculate Residual
 ctrl.res(1) = WeightDiff / 100; %
 
@@ -104,7 +107,7 @@ while ctrl.res(end) > ctrl.tol
     Vv = 0.05; % vertical tail volumen coefficient
     sweepWing = 28; % wing sweep degrees
     taperh = 0.6; % horizontal tail taper ratio
-    cglocAC = -5.5; % ft cg location in front or behind AC Wing
+    cglocAC = -6.0; % ft cg location in front or behind AC Wing
     TAIL = TailCalc(0, Vh, Vv, Wt.WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.geom.S_area, WING.geom.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
 
     %% V-n diagram
@@ -115,6 +118,10 @@ while ctrl.res(end) > ctrl.tol
     
     % Get corrected weight
     Class_2_Weights;
+    
+    % Update Empty Weight
+    Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total; 
+    Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
     
     % Calculate Residual
     ctrl.res(iterate) = WeightDiff / 100; %
@@ -134,9 +141,12 @@ if Wt.enginetype.thr*3 < constraints.req_Thr
 else
     fprintf('Thrust requirement met\n');
 end
+% Call XCGLocation Script 
+XCGLocation
 
+% fprintf('The Required CG %0.2f ft\n', cglocAC);
 % save meta information about current script run
-meta.date = datetime('today');
+% meta.date = datetime('today');
 
 % save variables to .mat file
 clear ctrl;
