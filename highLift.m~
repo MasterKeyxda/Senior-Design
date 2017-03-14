@@ -31,7 +31,7 @@ dcl_max_f = k1*k2*k3*dcl_max_b; % trailing edge flaps c_l
 dcl_s = 0.020; % for cf/c = 0.50
 delta_f = 30; % degrees
 c_RAT = 1.30;
-dcl_max_s = dcl_s * delta_f * c_RAT;
+dcL_max_s = dcl_s * delta_f * c_RAT
 
 % p. 8-18
 %reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
@@ -41,7 +41,7 @@ dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift fro
 
 S_RAT_s = 1; % slat-wing wetted area ratio 
 phi_HL = 10; %sweep angle of the hinge line of flap
-dCL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
+d_CL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
 
 dC_L1 = dCL_max_f + dCL_max_s;
 fprintf('dCL = %f for supersonic wing \n',dC_L1)
@@ -71,7 +71,7 @@ dcl_max_f = k1*k2*k3*dcl_max_b; % trailing edge flaps c_l
 dcl_s = 0.020; % for cf/c = 0.50
 delta_f = 30; % degrees
 c_RAT = 1.30;
-dcl_max_s = dcl_s * delta_f * c_RAT;
+dCL_max_s = dcl_s * delta_f * c_RAT
 
 
 % p. 8-18
