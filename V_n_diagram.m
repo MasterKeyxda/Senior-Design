@@ -18,12 +18,11 @@ end
 
 % Info pulled from other scripts
 % MTOW (lbf)
-% wing loading design point (lb/ft^2)
 wingLoading = designPoint(1); % from Constraint_Plots.m script
 % rhoSL = 0.002378; % density slugs/ft^3
 
 % Positive +1g stall speed 
-CLMaxPos = 2.2; % max positive coefficient of lift
+CLMaxPos = 2.0; % max positive coefficient of lift
 % CDatCL = 0.314; % drag coefficient at CLmax
 % CNMax = sqrt((CLMax^2) + (CDatCL^2)); % Roskam part 5, eqn 4.5 (flaps up)
 CNMaxPos = 1.1*CLMaxPos; % eqn 12.17, preliminary value; update once CD is known at CLmax
