@@ -12,6 +12,12 @@
 % AIAA Journal of Aircraft: Undercarriage Lateral Tip-over Criteria
 % Aircraft Design: A Conceptual Approach
 
+if ~exist('Wt', 'var')
+   clc;
+   clear;
+   load('aircraft_vars.mat'); 
+   close all;
+end
 %% Inputs
 % Dimensions in ft
 % CG Locations
@@ -102,6 +108,7 @@ fprintf('\n')
 
 %% Landing Gear Loads
 
+% Based on Raymer Ch 11
 % See Figure 11.5 Aircraft Conceptual Design, Raymer (p. 234)
 LG.geom.Na = XcgAft; % dist from nose gear to aft cg
 LG.geom.Nf = XcgFwd; % dist from nose gear to fwd cg
@@ -123,6 +130,7 @@ LG.load.MGwheel = (LG.load.MGMax / LG.qty.MainTire)  * 1.07; % load on each whee
 
 % Max Static Load (Nose Gear) --> eqn 11.2
 LG.load.NGMaxStatic = Wt.WTO * (LG.geom.Mf / LG.geom.B); 
+
 LG.load.NGMaxStatic = LG.load.NGMaxStatic / LG.qty.Nosestruts; % Divide load by # of struts
 
 % Nose Gear Dynamic Braking Load --> eqn 11.4
@@ -137,14 +145,80 @@ LG.load.NG = max(LG.load.NGBrakeDyn, LG.load.NGMaxStatic);
 % Load on each nose wheel; mult by 1.07 for FAR 25 requirements
 LG.load.NGwheel = (LG.load.NG / LG.qty.NoseTire) * 1.07;
 
+% Desirable load percentages: 5-20% Nose LG; 80-95% Main LG
+LG.geom.Bm = LG.geom.B - Xcg; % distance between Xcg and MLG (ft)
+
+% From statics 
+LG.load.NGpercent = ((LG.geom.Bm / LG.geom.B) * 100); % NG load percentage
+LG.load.MGpercent = ((Xcg / LG.geom.B) * 100); % MLG load percentage
+fprintf('The percentage of static load on the nose gear is %0.2f percent \n', LG.load.NGpercent)
+fprintf('The percentage of static load on the main gear is %0.2f percent \n', LG.load.MGpercent)
+fprintf('\n')
+
 %% Tire Sizing
 
+% Plan to select from tire book once airplane design is further along
+% For now, the tires will be sized using statistical methods
+% Raymer, Table 11.1 Tire Constants for Business Twin
+% Tire Diameter Constants
+LG.const.ADiam = 2.69;
+LG.const.BDiam = 0.251; 
+
+% Tire Width Constants
+LG.const.AWidth = 1.17; 
+LG.const.BWidth = 0.216;
+
+% Main Gear Assembly Tire Sizes (Dimensions in inches)
+LG.tire.MainDiam = LG.const.ADiam *(LG.load.MGwheel^LG.const.BDiam);
+LG.tire.MainWidth = LG.const.AWidth * (LG.load.MGwheel^LG.const.BWidth);
+
+% Nose Gear Assembly Tire Sizes (Dimensions in inches)
+% Raymer - "Nose tires can assumed to be 60-100% the size of main tires"
+LG.tire.scale = 0.70; % scale nose tires dimensions by 70% of main tires
+LG.tire.NoseDiam = LG.tire.scale * LG.tire.MainDiam;
+LG.tire.NoseWidth = LG.tire.scale * LG.tire.MainWidth;
+
+% Tire pressures
+
+% Tire Parameters for later design 
+% LG.tire.defl % max allowable tire deflection 
+
+% Print sizing results
+fprintf('TIRE SIZING \n')
+fprintf('The tire diameter for the main gear assembly is %0.2f ft \n', LG.tire.MainDiam/12)
+fprintf('The tire width for the main gear assembly is %0.2f ft \n', LG.tire.MainWidth/12)
+fprintf('The tire diameter for the nose gear assembly is %0.2f ft \n', LG.tire.NoseDiam/12)
+fprintf('The tire width for the nose gear assembly is %0.2f ft \n', LG.tire.NoseWidth/12)
+fprintf('\n')
 %% Strut Sizing
 
-% Strut Length
-LG.strut.WL
+% Strut Parameters
+% Based on method in Roskam Pt. 4, Section 2.5
 
+% Strut Length --> eqn 2.11, 2.12 Roskam Pt.4
+LG.tire.eff = 0.47; % tire energy absorption efficiency (Table 2.17 Roskam)
+LG.strut.LdFactor = 1.5; % FAR 25 landing gear load factor (1.5 - 2.0)
+LG.strut.Wtouch = 12; % design vertical touchdown rate (ft/s) --> FAR 25.723
+LG.strut.eff = 0.75; % Raymer p.242 Table 11.4 Oleo-pneumatic)
 
+% Main Landing Gear Strut
+% MISSING TERMS 
+LG.strut.WLMain =  LG.qty.Mainstruts * LG.load.MGMax; % MLG landing weight (lb) --> eqn 2.10
+% Shock absorber efficiency 
+% Shock absorber length (ft) --> eqn 2.12 Roskam Pt.4
+LG.strut.lengthMain = (0.5*(LG.strut.WLMain / g)*(LG.strut.Wtouch^2) / (LG.qty.Mainstruts * LG.load.MGMax * LG.strut.LdFactor)); 
+
+% Strut Diameter --> eqn 2.13 Roskam Pt.4
+LG.strut.diamMain = 0.041 + (0.0025 * (LG.load.MGMax)^0.5); % diameter of strut
+
+% Nose Landing Gear Strut
+LG.strut.WLNose = LG.qty.Nosestruts * LG.load.NG; % NLG landing weight (lb) --> eqn 2.10
+
+fprintf('Strut Sizing \n')
+fprintf('The main gear strut length is %0.2f ft\n')
+fprintf('The main gear strut diameter is %0.2f ft \n',LG.strut.diamMain)
+fprintf('The nose gear strut length is %0.2f ft \n')
+fprintf('The nose gear strut diameter is %0.2f ft \n')
 
 
 
