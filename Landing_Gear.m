@@ -43,7 +43,6 @@ fprintf('The load percentage on the nose gear is %0.2f percent \n',PercentFn)
 fprintf('The load percentage on the main gear is %0.2f percent \n',PercentFm)
 fprintf('\n')
 
-
 % See Sadraey, Figure 9.18, p.506
 % UDPATE ONCE Cg excursion known
 LG.geom.height = 6.50; % height from bottom of tire to zcg location
@@ -134,23 +133,39 @@ LG.load.mainT = LG.load.FmMax / LG.geom.mainTire;
 
 % Tire Sizing
 % Table 11.1 Raymer (dimensions in inches)
+% Table valid for main wheel sizing (Nose tires can be assumed to be about
+% 60 - 100% the size of the main tires per Raymer)
+% Table assumes 90% of load is distributed to main LG
 % Constants for Business Twin
 LG.diam.A = 2.69;
 LG.diam.B = 0.251; 
+LG.width.A = 1.170; 
+LG.width.B = 0.216; 
 
-% Nose Gear Wheel Diameter
-LG.geom.noseDiam = LG.diam.A * (LG.load.noseT^LG.diam.B);
-LG.geom.noseDiam = LG.geom.noseDiam / 12; % convert to ft
+% Tire diameter and width (in)
+% Main Landing Gear Tires
+LG.geom.mainDiam = LG.diam.A * (LG.load.mainT^LG.diam.B); % main tire diameter
+LG.geom.mainWidth = LG.width.A * (LG.load.mainT^LG.width.B); % main tire width
 
-% Nose Gear Wheel Width
-
-% Main Gear Wheel Diameter
-
-% Main Gear Wheel Width
+% Nose Landing Gear Tires (in)
+% Assume nose wheel tire size is 60-100% of main tires
+LG.geom.tireRatio = 0.60; 
+LG.geom.noseDiam = LG.geom.mainDiam * LG.geom.tireRatio; % nose tire diameter
+LG.geom.noseWidth = LG.geom.mainWidth * LG.geom.tireRatio; % nose tire width
 
 fprintf('TIRE SELECTION \n')
+% Number of tires
+fprintf('Number of tires: \n')
 fprintf('The number of tires on the nose gear assembly is %0.0f \n', LG.geom.noseTire)
 fprintf('The number of tires on the main gear assembly is %0.0f \n', LG.geom.mainTire)
+fprintf('\n')
+
+% Tire Dimensions
+fprintf('Tire Dimensions: \n')
+fprintf('The diameter of the nose gear tires is %0.2f ft (%0.2f in). \n', LG.geom.noseDiam/12, LG.geom.noseDiam)
+fprintf('The width of the nose gear tires is %0.2f ft (%0.2f in). \n', LG.geom.noseWidth/12, LG.geom.noseWidth)
+fprintf('The diameter of the main gear tires is %0.2f ft (%0.2f in). \n', LG.geom.mainDiam/12, LG.geom.mainDiam)
+fprintf('The width of the main gear tires is %0.2f ft (%0.2f in). \n', LG.geom.mainWidth/12, LG.geom.mainWidth)
 
 
 
