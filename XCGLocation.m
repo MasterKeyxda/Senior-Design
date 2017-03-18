@@ -55,6 +55,7 @@ mXcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,-XLE_w  - 0.25*cRootSub + cgloc
 mXcgi.Instrumentation = [Wt.Feq.Iae,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % Under Cockpit
 
 % Electrical System 
+mXcgi.ElecSys = [Wt.Feq.ElecSys,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % Also under cockpit
 
 % Air Conditioning, Pressurazation, and de-icing systems
 mXcgi.Api = [Wt.Feq.ApiGD,-XLE_w - 0.25*cRootSub + cglocAC + x_engine + length_engine*.4]; % located at engine
