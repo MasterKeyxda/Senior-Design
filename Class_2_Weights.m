@@ -173,10 +173,6 @@ Wt.Feq.Hydraulic = 0.0130 * Wt.WTO; % ranges from 0.0070 to 0.0150 of WTO for
 Npil = 2; % number of pilots
 Wt.Feq.Iae = Npil*(15 + 0.032*(Wt.WTO/1000)) + Ne*(5 + 0.006*(Wt.WTO/1000)) + 0.015*(Wt.WTO/1000) + (0.012*Wt.WTO); 
 
-% Torenbeek Method, Eqn 7.25, p.104
-% WE = 60983; % empty weight
-% Wt.Feq.IaeToren = 0.575 * (WE^0.556)*(req.range^0.25);
-
 % Electical System
 % GD Method, Eqn 7.15, p.102
 Wt.Feq.ElecSys = 1163 * (((Wt.Pwr.FuelSystem + Wt.Feq.Iae) / 1000)^0.506);
@@ -194,7 +190,6 @@ Wt.Feq.Api = 6.75*(L_C^1.28); %L_C = cabin length
 Wt.Feq.OxygenGD = 7 * ((Wt.pld.n_pass + Wt.oew.n_crew)^0.702);
 
 % Auxiliary Power Unit (APU)
-% Not sure if needed
 % Eqn 7.40
 Wt.Feq.Apu = 0.005*Wt.WTO; % can be estimated as 0.004 to 0.013WTO
 
