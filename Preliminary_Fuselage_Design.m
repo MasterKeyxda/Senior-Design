@@ -117,7 +117,7 @@ m_f = 182377.09/9.81; % kg of fuel
 rho_f = 840; % kg/m^3
 V_f = m_f/rho_f; % m^3
 V_f = V_f * 35.31; % ft^3
-fprintf('The fuel tank volume is %0.2f ft^3 \n',V_f)
+fprintf('The fuel tank volume is %0.2f ft^3 \n',1.2*V_f)
 %% Volume of Bottom Half
 % Equation 7.4a
 V_bot = 0.5* (pi*W_C^2/4*(L_C+L_R));

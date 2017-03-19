@@ -18,22 +18,24 @@ mXcgi.Fuselage = [Wt.Struc.Fuselage, -XLE_w - 0.25*cRootSub + cglocAC + 0.40*L_F
 
 % Engine
 length_engine = 142/12; % ft length of PW TF33-P7
-x_engine = 101.25; % location of inlet of engine from nose
+x_engine2 = 116.5; % location of inlet double engines from nose
+x_engine = 1.5*length_engine+x_engine2; % location of inlet of single engine from nose
+
 % Engine_cg can vary from .3 -.4 of length of engine from inlet 
-mXcgi.Engine2 = [Wt.Pwr.Engine*(2/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + length_engine*.3]; 
+mXcgi.Engine2 = [Wt.Pwr.Engine*(2/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine2 + length_engine*.3]; 
 % Single engine (most aft)
-mXcgi.Engine1 = [Wt.Pwr.Engine*(1/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + 1.3*length_engine + length_engine*.3]; 
+mXcgi.Engine1 = [Wt.Pwr.Engine*(1/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + 0.3*length_engine + length_engine*.3]; 
 
 % Nacelle
 % http://adg.stanford.edu/aa241/AircraftDesign.html Sect 9.2.2)
 nacLength = (2.4077*(constraints.req_Thr^0.3876))/12; % nacelle length ft
 nacDMax = 1.0827*(constraints.req_Thr^0.4134)/12; % nacelle diameter ft
-mXcgi.Nacelle2 = [Wt.Struc.Nacelle*(2/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + nacLength*.38];
-mXcgi.Nacelle1 = [Wt.Struc.Nacelle*(1/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + 1.2*length_engine + nacLength*.38];
+mXcgi.Nacelle2 = [Wt.Struc.Nacelle*(2/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine2 + nacLength*.38];
+mXcgi.Nacelle1 = [Wt.Struc.Nacelle*(1/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + 0.2*length_engine + nacLength*.38];
 
 % Nose and Main Gear
 x_NoseGear = 30; % ft nosegear distance from nose
-x_MainGear = 85.92; % ft main gear distance from nose
+x_MainGear = 95.92; % ft main gear distance from nose
 mXcgi.NoseGear = [Wt.Struc.NoseGear,-XLE_w - 0.25*cRootSub + cglocAC + x_NoseGear];
 mXcgi.MainGear = [Wt.Struc.MainGear,-XLE_w - 0.25*cRootSub + cglocAC + x_MainGear];
 
@@ -46,7 +48,8 @@ mXcgi.FuelSystem = [Wt.Pwr.FuelSystem,0];
 
 % Fixed Equipment Weight
 % Flight Control System
-x_cockpit = 25 + 5.5/3; % center of cockpit from nose
+
+x_cockpit = L_N + L_CP/3; % length of quiet spike needle +  center of cockpit from nose
 mXcgi.FCsys = [Wt.Feq.FCsysGD,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % In Cockpit
 
 % Hydraulic System for Landing Gear
@@ -59,18 +62,16 @@ mXcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,-XLE_w  - 0.25*cRootSub + cgloc
 mXcgi.Instrumentation = [Wt.Feq.Iae,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % Under Cockpit
 
 % Electrical System 
-<<<<<<< HEAD
 mXcgi.ElecSys = [Wt.Feq.ElecSys,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % Also under cockpit
-=======
-% mXcgi.ElecSys = [Wt. 
->>>>>>> refs/remotes/origin/master
+
+
 
 % Air Conditioning, Pressurazation, and de-icing systems
 mXcgi.Api = [Wt.Feq.ApiGD,-XLE_w - 0.25*cRootSub + cglocAC + x_engine + length_engine*.4]; % located at engine
 
 % Oxygen System
 % CG placed in center of habitable cabin 
-mXcgi.Oxygen = [Wt.Feq.OxygenGD,-XLE_w - 0.25*cRootSub + cglocAC + (53.33+25)/2]; 
+mXcgi.Oxygen = [Wt.Feq.OxygenGD,-XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP]; 
 
 % Auxiliary Power Unit
 % Placed at Engines
@@ -78,10 +79,10 @@ mXcgi.Apu1 = [Wt.Feq.Apu,-XLE_w - 0.25*cRootSub + cglocAC + x_engine + length_en
 
 % Aircraft Furnishings (Seats, Lavatory, etc.)
 % CG placed in center of habitable cabin
-mXcgi.Furn =[Wt.Feq.Furn,(-XLE_w - 0.25*cRootSub + cglocAC +53.33+25)/2]; 
+mXcgi.Furn =[Wt.Feq.Furn,-XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP]; 
 
 % Operational Weight( Food, Drinks, ETC)
-mXcgi.Oper = [Wt.Feq.Oper,-XLE_w - 0.25*cRootSub + cglocAC + 26]; % CG placed in front of cabin
+mXcgi.Oper = [Wt.Feq.Oper,-XLE_w - 0.25*cRootSub + cglocAC + L_N + L_CP]; % CG placed in front of cabin
 
 % Paint Weight
 mXcgi.Paint = [Wt.Feq.Paint,-XLE_w - 0.25*cRootSub + cglocAC + 0.40*L_F]; % Fuselage CG paint
@@ -118,13 +119,18 @@ cgOEW = moment/wt;
 fprintf('The operating empty weight cg is %0.4f \n', cgOEW)
 %% Empty Weight + Crew + Fuel CG
 
-
-% How are we distributing the fuel again?
-
+wt = 0;
+ for i = 1:numel(CG_types)
+   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
+   wt = wt + mXcgi.(CG_types{i})(1);
+ end
+wtFuel = wt + Wt.fuel.w_tot; 
+cgFuel = moment/wt;
+fprintf('The oew + fuel cg is %0.4f \n', cgFuel)
 %% Empty Weight + Crew + PAX (No baggage) CG
 
 % Assume passenger distribution places cg at cabin center
-mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, -XLE_w - 0.25*cRootSub + cglocAC + (53.33+25)/2]; 
+mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, -XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP]; 
 CG_types = fieldnames(mXcgi);
 moment = 0;
 wt = 0;
@@ -136,9 +142,9 @@ wtPAX_NoBag = wt;
 cgPAX_NoBag = moment/wt;
 fprintf('The cg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
 %% Empty Weight + Crew + PAX (w/ baggage) CG
-
+x_baggage = 4; % distance of baggage from end of cabin
 % Assume passenger distribution places cg at cabin center
-mXcgi.pldBag = [Wt.pld.w_tot, -XLE_w - 0.25*cRootSub + cglocAC + (53.33+25)/2]; 
+mXcgi.pldBag = [Wt.pld.lug * Wt.pld.n_pass, -XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP + x_baggage]; 
 CG_types = fieldnames(mXcgi);
 moment = 0;
 wt = 0;
@@ -150,14 +156,20 @@ wtPAX_Bag = wt;
 cgPAX_Bag = moment/wt;
 fprintf('The cg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
 
-%% Empty Weight + Crew + PAX (No baggage) + Fuel  CG
-
 %% Empty Weight + Crew + PAX (w/ baggage) + Fuel (MTOW) CG
+
+ for i = 1:numel(CG_types)
+   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); % Convert sign NEGATIVE = FLIP OVER
+   wt = wt + mXcgi.(CG_types{i})(1);
+ end
+wtMTOW = wt + Wt.fuel.w_tot; 
+cgMTOW = moment/wt;
+fprintf('The cg for MTOW is %0.4f \n', cgMTOW)
 
 %% CG Excursion Diagram
 
-wtArray = [wtEmpty; wtOEW; wtPAX_NoBag; wtPAX_Bag];
-cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag]; 
+wtArray = [wtEmpty; wtOEW; wtPAX_NoBag; wtPAX_Bag; wtFuel; wtMTOW];
+cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag; cgFuel; cgMTOW]; 
 
 figure()
 title('Aircraft CG Excursion')
