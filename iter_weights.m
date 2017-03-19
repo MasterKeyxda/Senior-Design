@@ -6,7 +6,7 @@ close all;
 
 % want to iterate weights to get new weight
 % set weight tolerance
-ctrl.tol = 0.01; % 5 percent
+ctrl.tol = 0.001; % 0.1 percent
 
 %% First Run of SAD.m
 
@@ -108,7 +108,7 @@ while ctrl.res(end) > ctrl.tol
     Vv = 0.05; % vertical tail volumen coefficient
     sweepWing = 28; % wing sweep degrees
     taperh = 0.6; % horizontal tail taper ratio
-    cglocAC = -6.0; % ft cg location in front or behind AC Wing
+    cglocAC = -6.25; % ft cg location in front or behind AC Wing
     TAIL = TailCalc(0, Vh, Vv, Wt.WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.geom.S_area, WING.geom.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
 
     %% V-n diagram
