@@ -29,6 +29,7 @@ hPR_gas = 18443.6801; % BTU/lbm
 % TL level 4
 eta_b = 0.99;
 e_c = 0.9;
+e_t = 0.9;
 pi_b = 0.95;
 pi_n = 0.98;
 pi_d = 0.96;
@@ -56,6 +57,7 @@ pi_t = OPR/ ( pi_c * pi_b * pi_n * pi_d);
 tau_t = pi_t ^ ((gamma_t - 1) * e_t/gamma_t);
 fprintf('pi_t: %0.5f\n', pi_t);
 
-
-
-
+area = pi * 0.25 * (54/12)^2;
+rho = 0.000531556; % slugs/ft^3
+M0 = 1.6;
+mdot_alt = 355.787 * 1.6^2 * area * gamma_c / (1.6 * 968.076);
