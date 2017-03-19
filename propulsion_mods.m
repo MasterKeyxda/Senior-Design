@@ -2,6 +2,8 @@ clc;
 clear;
 close all;
 
+load('aircraft_vars.mat');
+
 %% Reverse calculate the pi_c and pi_t
 
 % GIVENS
@@ -29,10 +31,12 @@ hPR_gas = 18443.6801; % BTU/lbm
 % TL level 4
 eta_b = 0.99;
 e_c = 0.9;
+e_f = e_c;
 e_t = 0.9;
 pi_b = 0.95;
 pi_n = 0.98;
 pi_d = 0.96;
+eta_m = 0.96;
 
 f_ratio = SFC/3600 * (1+BPR) * Force / mdot;
 
@@ -57,7 +61,54 @@ pi_t = OPR/ ( pi_c * pi_b * pi_n * pi_d);
 tau_t = pi_t ^ ((gamma_t - 1) * e_t/gamma_t);
 fprintf('pi_t: %0.5f\n', pi_t);
 
-area = pi * 0.25 * (54/12)^2;
-rho = 0.000531556; % slugs/ft^3
-M0 = 1.6;
-mdot_alt = 355.787 * 1.6^2 * area * gamma_c / (1.6 * 968.076);
+% Fan performance (Tau_f)
+tau_f = 1 + (1/BPR) * ((tau_t - 1)* (-(cp_t*Tt4/(cp_c * Tt0))*eta_m * (1 + f_ratio)) - (tau_c - 1));
+pi_f = (gamma_c * e_f / (gamma_c - 1));
+fprintf('pi_f: %0.5f\n', pi_f);
+
+% area = pi * 0.25 * (54/12)^2;
+% rho = 0.000531556; % slugs/ft^3
+% press = 355.787; % lbf/ft^2
+% M0 = 1.6;
+% mdot_alt = rho * area * (1.6 * 968.076) * 32.174;
+% mdot_alt = 
+
+%% Get New Engine Power Curves?
+
+% FC: flight conditions (P0, T0, M0, gamma, cp)
+% ENG: engine parameters (pi_c, pi_f, Tt4_max, hPR, ENG.p0_9, ENG.p0_19, d (diameter, ft), BPR)
+% THR: required thrust
+% TL: tech level
+
+FC.P0 = 2116.23;%*atm.delta; % lbf/ft^2
+FC.T0 = 518.67;% * atm.theta; % Rankine
+FC.M0 = 0.0;%req.cr_M0(1);
+FC.gamma = 1.4;  % air
+FC.cp = 0.24; % BTU/lbm R
+FC.rho = 0.00237717;%0.000531556; % slugs/ft^3
+
+ENG.pi_c = pi_c;
+ENG.pi_f = pi_f;
+ENG.Tt4_max = 4000; % TECH LEVEL 5
+ENG.hPR = hPR_kerosene; % replace Jet Fuel B with Jet Fuel A
+ENG.p0_9 = 1.0;
+ENG.p0_19 = 1.0;
+ENG.d = 54/12; % in -> ft
+ENG.BPR = BPR;
+
+n_eng = 1; % three engines
+thrust = (Wt.WTO * Wt.fuel.w2_1 * Wt.fuel.w3_2) / (LD_Max * n_eng);
+
+% TL level 5
+TL.d_max = 0.97; % supersonic aircraft
+TL.e_c = 0.91;
+TL.e_f = 0.92;
+TL.pi_b = 0.96;
+TL.eta_b = 0.999;
+TL.e_t = 0.91; % uncooled
+TL.pi_n = 0.99; % variable area convergent/divergent nozzle
+TL.eta_m = 0.996; % shaft only
+% TL
+
+[Tts4, f_ratio_T, SFC_T] = throttle_calcs(FC, ENG, TL, thrust);
+
