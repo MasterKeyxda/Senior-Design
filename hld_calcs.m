@@ -21,8 +21,11 @@ hld.V_TO = constraints.Vstall * 1.2; % fly at 20% safety margin
 hld.Cl_base = 0.535; % generated w/ OpenVSP
 hld.sf = 1.2; % safety factor to obtain Cl_max
 hld.dCl_req = (hld.sf*Wt.WTO * cos(hld.gamma_TO) - constraints.req_Thr * sin(hld.alpha_TO))/(0.5*atm.rho_sl*(hld.V_TO^2)*WING.geom.S_area) - hld.Cl_base;
-fprintf('Cl defecit: %0.5f\n', hld.dCl_req);
+fprintf('Cl deficit: %0.5f\n', hld.dCl_req);
 
+<<<<<<< HEAD
+%% DETERMINE THE HLD CONFIGURATION 
+=======
 
 %% DATCOM 1978: HLD for supersonic airfoil 
 
@@ -101,3 +104,4 @@ k2 = 0.20; % percent of wetted area for subsonic airfoil region
 
 dCL = k1*dC_L1 + k2*dC_L2;
 fprintf('dCL = %f for total wing   \n',dCL)
+>>>>>>> origin/master
