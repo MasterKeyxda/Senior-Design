@@ -13,6 +13,7 @@ Tt4 = 2209.67; % R
 Tt0 = 518.69; % R
 Force = 21e3; %lbf
 BPR = 1.21; % bypass ratio
+FPR = 1.9; % Fan Pressure Ratio
 OPR = 16;
 
 % Air Properties
@@ -56,15 +57,12 @@ tau_c = Tt3 / Tt0;
 pi_c = tau_c ^ (gamma_c * e_c / (gamma_c - 1));
 fprintf('pi_c: %0.5f\n', pi_c); 
 
-% pi_t and tau_t
-pi_t = OPR/ ( pi_c * pi_b * pi_n * pi_d);
-tau_t = pi_t ^ ((gamma_t - 1) * e_t/gamma_t);
+% Get Tau_T from pi_c and the pi_f
+tau_f = FPR ^ ((gamma_c - 1)/(gamma_c * e_c));
+tau_t = 1 - (cp_c * Tt0)/(cp_t * Tt4) * 1./(eta_m * (1 + f_ratio))*(tau_c -1 + BPR * (tau_f - 1));
+fprintf('tau_t: %0.5f\n', tau_t);
+pi_t = tau_t ^ (gamma_t/((gamma_t - 1) * e_t));
 fprintf('pi_t: %0.5f\n', pi_t);
-
-% Fan performance (Tau_f)
-tau_f = 1 + (1/BPR) * ((tau_t - 1)* (-(cp_t*Tt4/(cp_c * Tt0))*eta_m * (1 + f_ratio)) - (tau_c - 1));
-pi_f = (gamma_c * e_f / (gamma_c - 1));
-fprintf('pi_f: %0.5f\n', pi_f);
 
 % area = pi * 0.25 * (54/12)^2;
 % rho = 0.000531556; % slugs/ft^3
@@ -88,9 +86,11 @@ FC.cp = 0.24; % BTU/lbm R
 FC.rho = 0.000531556; % slugs/ft^3
 
 ENG.pi_c = pi_c;
-ENG.pi_f = pi_f;
+ENG.pi_f = FPR;
+ENG.tau_t = tau_t;
+ENG.tau_f = tau_f;
 ENG.Tt4_sl = Tt4;
-ENG.T0 = Tt0;
+ENG.Tt0 = Tt0;
 ENG.Tt4_max = 4000; % TECH LEVEL 5
 ENG.Tt4_min = Tt4;
 ENG.hPR = hPR_kerosene; % replace Jet Fuel B with Jet Fuel A
