@@ -17,7 +17,11 @@ TR.r = 1 + 0.5*(FC.gamma - 1)*FC.M0^2;
 PR.r = TR.r ^ (FC.gamma/ (FC.gamma - 1));
 
 mdot = area * FC.M0 * a0 * FC.rho * gc;
+if FC.M0 == 0.0
+    mdot = ENG.mdot_sl; % lb/s
+end
 Fsp_req = thrust/mdot; % get required specific thrust
+Tt4_vals = linspace(ENG.Tt4_min, ENG.Tt4_max, 1000);
 
 % Diffuser
 TR.d = 1;
@@ -30,16 +34,17 @@ end
 PR.d = TL.d_max * eta_r;
 
 % Compressor
-TR.c = ENG.pi_c ^ ((FC.gamma - 1)/(FC.gamma * TL.e_c));
+TR.cR = ENG.pi_c ^ ((FC.gamma - 1)/(FC.gamma * TL.e_c)); % reference tau_c
+TR.c = 1 + (TR.cR - 1) .* (Tt4_vals./(FC.T0 * TR.r))./(ENG.Tt4_sl / ENG.Tt0);
+PR.c = TR.c ^ (FC.gamma * ENG.e_c / (FC.gamma - 1));
 
 Tt.s3 = FC.T0 * TR.r * TR.d * TR.c;
-Pt.s3 = FC.P0 * PR.r * PR.d * ENG.pi_c;
+Pt.s3 = FC.P0 * PR.r * PR.d * PR.c;
 
 % Fan Conditions
-TR.f = ENG.pi_f ^ ((FC.gamma - 1)/(FC.gamma * TL.e_f));
+TR.fR = ENG.pi_f ^ ((FC.gamma - 1)/(FC.gamma * TL.e_f));
 
 % Turbine Conditions
-Tt4_vals = linspace(2000, ENG.Tt4_max, 1000);
 cp_t = [];
 gamma_t = [];
 for i = 1:length(Tt4_vals)
