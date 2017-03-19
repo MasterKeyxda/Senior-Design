@@ -6,7 +6,7 @@ close all;
 
 % want to iterate weights to get new weight
 % set weight tolerance
-ctrl.tol = 0.01; % 5 percent
+ctrl.tol = 0.001; % 0.1 percent
 
 %% First Run of SAD.m
 

@@ -135,4 +135,16 @@ CD0.trim = (1 / (pi * eTail * ARTail)) * (TAIL.Sh/Sref) * (CL.tail^2);
 CD0.correction = 1.1; % correction factor for misc items (Table 3.5, jet transport)
 CD0.total = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim);
 
+%% CD_Wave (3.5.2 Aircraft Wave Drag)
 
+% Lift Dependent Wave drag
+CDw.K_wl = 2 * (WING.geom.S_area / (WING.geom.span * L_F));
+CDw.lift = CDw.K_wl * WING.geom.S_area * (CL.overall^2) * (req.cr_M0(1)^2 - 1)/(2 * pi * L_F^2);
+
+% Volume Dependent Wave Drag
+CDw.beta = sqrt(req.cr_M0(1)^2 - 1);
+CDw.K_wv = 1.17 * ((1 + 0.75*CDw.beta * WING.geom.span / L_F)/(1+2*CDw.beta * WING.geom.span / L_F));
+CDw.vol_aircraft = 1;
+CDw.volume = 128 * CDw.K_wv * CDw.vol_aircraft^2 / (pi * WING.geom.S_area * L_F^4);
+
+CDw.total = CDw.lift + CDw.volume;
