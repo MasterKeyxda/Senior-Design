@@ -21,10 +21,10 @@ end
 %% Inputs
 % Dimensions in ft
 % CG Locations
-% Xcg locations referenced from nose of landing gear
 
-Xcg = abs(x_NoseGear -XLE_w - 0.25*cRootSub - cgEmpty);
-XcgAft = Xcg; % Most aft Xcg location 
+% Xcg locations referenced from nose of landing gear
+Xcg = 92; % Location of Xcg 
+XcgAft = Xcg + 3; % Most aft Xcg location 
 XcgFwd = Xcg - 3; % Most forward Xcg location
 
 % Zcg locations 
@@ -32,8 +32,8 @@ ZcgFuse = 4.83; % zcg from bottom of fuselage
 Zcg = 5 + ZcgFuse; % referenced from ground
 
 % Landing Gear Geometry
-
-LG.geom.B = x_MainGear - x_NoseGear; % LG wheel base (dist between nose gear and main gear)
+LG.geom.xNose = 30; % distance from nose of airplane to nose LG
+LG.geom.B = 98; % LG wheel base (dist between nose gear and main gear)
 LG.geom.T = 9; % LG wheel track (dist between main gear wheels)
 % XLE_w = 80; % length from nose to leading edge of wing
 

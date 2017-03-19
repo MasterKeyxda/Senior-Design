@@ -48,7 +48,7 @@ fM = 1 - (0.08*req.cr_M0(1)^1.45);
 %-----Wing-----%
 
 % Eqn 3.19
-Swet.wing = WING.geom.S_area; % wing wetted area
+Swet.wing = 2*WING.geom.S_area; % wing wetted area
 wing_TCRatio = 0.0525; % wing max thickness to chord ratio
 ftc_w = 1 + (2.7*wing_TCRatio) + 100*((wing_TCRatio)^4); % ftc_w is a function of thickness ratio
 Cdmin.wing = min(WING.biconvex(2).Cd);
@@ -57,7 +57,7 @@ CD0.wing = Cf.wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
 %-----Horizontal Tail-----%
 
 % Eqn 3.20
-Swet.ht = TAIL.Sh; % wetted area of horizontal tail
+Swet.ht = 2*TAIL.Sh; % wetted area of horizontal tail
 HT_TCRatio = 0.0525; % horizontal tail max thickness to chord ratio
 ftc_ht = 1 + (2.7*HT_TCRatio) + 100*((HT_TCRatio)^4);
 Cdmin.ht = min(WING.biconvex(2).Cd);
@@ -66,7 +66,7 @@ CD0.ht = Cf.ht * ftc_ht * fM * (Swet.ht/Sref)*((Cdmin.ht/ 0.004)^0.4);
 %-----Vertical Tail-----%
 
 % Eqn 3.21
-Swet.vt = TAIL.Sv; % wetted area of vertical tail
+Swet.vt = 2*TAIL.Sv; % wetted area of vertical tail
 VT_TCRatio = 0.0525; % vertical tail max thickness to chord ratio
 ftc_vt = 1 + (2.7*VT_TCRatio) + 100*((VT_TCRatio)^4);
 Cdmin.vt = min(WING.biconvex(2).Cd); 
@@ -97,28 +97,54 @@ CD0.nacelle = 0.0012; % APPROXIMATION; based on nacelle CD0 for Gates Learjet 25
 
 %-----High Lift Devices-----%
 
-% Trailing Edge HLD (Eqn 3.27)
-% Eqn 3.27 is based on a flap with a flap-span-to-wing-span ratio of 70%
-% Constants (Table 3.3)
-A_TEflap = 0.0011; % double-slotted flap
-B_TEflap = 1; 
-deltaFlap = 40; % flap deflection angle (deg)
-Cf_C_Ratio = 0.3; % ratio between avg flap chord to avg wing chord
-CD0.TEflap = Cf_C_Ratio*A_TEflap*(deltaFlap^B_TEflap);
-
-% Leading Edge HLD (Eqn 3.28)
-Csl_C_Ratio = 0.3; % ratio between avg extended slat chord and extended wing chord
-CD0.LEslat = (Csl_C_Ratio)*CD0.wing;
+% % Trailing Edge HLD (Eqn 3.27)
+% % Eqn 3.27 is based on a flap with a flap-span-to-wing-span ratio of 70%
+% % Constants (Table 3.3)
+% A_TEflap = 0.0011; % double-slotted flap
+% B_TEflap = 1; 
+% deltaFlap = 40; % flap deflection angle (deg)
+% Cf_C_Ratio = 0.3; % ratio between avg flap chord to avg wing chord
+% CD0.TEflap = Cf_C_Ratio*A_TEflap*(deltaFlap^B_TEflap);
+% 
+% % Leading Edge HLD (Eqn 3.28)
+% Csl_C_Ratio = 0.3; % ratio between avg extended slat chord and extended wing chord
+% CD0.LEslat = (Csl_C_Ratio)*CD0.wing;
 
 %-----Protruding / Miscellaneous Components-----%
 % Accounted for with correction factor below.
 
 %-----Trim Drag Contribution-----%
 
+WING.incidence = 3; % wing incidence angle (deg)
+Cl.wing = WING.incidence * (pi/180) * (4/sqrt((req.cr_M0(1)^2)-1)); 
+Kwing = 0.85; % correction factor for tail
+CL.wing = Cl.wing * Kwing; 
 
+% 3D Lift Coefficient entire aircraft
+CL.overall = 2*Wt.WTO / (atm.densCr * (Vcr^2) * Sref);
+
+% 3D Tail lift coefficient
+CL.tail = (CL.overall - CL.wing) * (Sref / TAIL.Sh);
+
+% Trim Drag CD0 --> eqn 3.37
+ARTail = (TAIL.bh^2) / TAIL.Sh; % ht aspect ratio
+eTail = 0.8; % tail oswald efficiency factor
+CD0.trim = (1 / (pi * eTail * ARTail)) * (TAIL.Sh/Sref) * (CL.tail^2);
 
 %-----TOTAL CD0-----%
 CD0.correction = 1.1; % correction factor for misc items (Table 3.5, jet transport)
-CD0.total = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle);
+CD0.total = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim);
 
+%% CD_Wave (3.5.2 Aircraft Wave Drag)
 
+% Lift Dependent Wave drag
+CDw.K_wl = 2 * (WING.geom.S_area / (WING.geom.span * L_F));
+CDw.lift = CDw.K_wl * WING.geom.S_area * (CL.overall^2) * (req.cr_M0(1)^2 - 1)/(2 * pi * L_F^2);
+
+% Volume Dependent Wave Drag
+CDw.beta = sqrt(req.cr_M0(1)^2 - 1);
+CDw.K_wv = 1.17 * ((1 + 0.75*CDw.beta * WING.geom.span / L_F)/(1+2*CDw.beta * WING.geom.span / L_F));
+CDw.vol_aircraft = 5153.3045; %ft^3
+CDw.volume = 128 * CDw.K_wv * CDw.vol_aircraft^2 / (pi * WING.geom.S_area * L_F^4);
+
+CDw.total = CDw.lift + CDw.volume;
