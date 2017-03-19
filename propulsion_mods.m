@@ -29,14 +29,14 @@ cp_gas = 0.53;
 hPR_gas = 18443.6801; % BTU/lbm
 
 % TL level 4
-eta_b = 0.99;
+eta_b = 0.999;
 e_c = 0.9;
-e_f = e_c;
-e_t = 0.9;
+e_f = 0.89;
+e_t = 0.9; % uncooled
 pi_b = 0.95;
 pi_n = 0.98;
-pi_d = 0.96;
-eta_m = 0.96;
+pi_d = 0.96; % type C
+eta_m = 0.995;  % shaft only
 
 f_ratio = SFC/3600 * (1+BPR) * Force / mdot;
 
@@ -80,21 +80,26 @@ fprintf('pi_f: %0.5f\n', pi_f);
 % THR: required thrust
 % TL: tech level
 
-FC.P0 = 2116.23;%*atm.delta; % lbf/ft^2
-FC.T0 = 518.67;% * atm.theta; % Rankine
-FC.M0 = 0.0;%req.cr_M0(1);
+FC.P0 = 2116.23*atm.delta; % lbf/ft^2
+FC.T0 = 518.67 * atm.theta; % Rankine
+FC.M0 = req.cr_M0(1);
 FC.gamma = 1.4;  % air
 FC.cp = 0.24; % BTU/lbm R
-FC.rho = 0.00237717;%0.000531556; % slugs/ft^3
+FC.rho = 0.000531556; % slugs/ft^3
 
 ENG.pi_c = pi_c;
 ENG.pi_f = pi_f;
+ENG.Tt4_sl = Tt4;
+ENG.T0 = Tt0;
 ENG.Tt4_max = 4000; % TECH LEVEL 5
+ENG.Tt4_min = Tt4;
 ENG.hPR = hPR_kerosene; % replace Jet Fuel B with Jet Fuel A
 ENG.p0_9 = 1.0;
 ENG.p0_19 = 1.0;
 ENG.d = 54/12; % in -> ft
 ENG.BPR = BPR;
+ENG.mdot_sl = mdot;
+
 
 n_eng = 1; % three engines
 thrust = (Wt.WTO * Wt.fuel.w2_1 * Wt.fuel.w3_2) / (LD_Max * n_eng);
