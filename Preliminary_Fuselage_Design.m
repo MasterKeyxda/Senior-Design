@@ -112,12 +112,12 @@ Dmax = 100/12;
 LF_DF = L_F/Dmax; 
 fprintf('The L/D ratio for the fuselage is %0.2f  \n',LF_DF)
 %% Fuel Tanks
-m_f = 213514/9.81; % kg of fuel
+m_f = 182377.09/9.81; % kg of fuel
 % Table 7.8 for fuel types and density
 rho_f = 840; % kg/m^3
 V_f = m_f/rho_f; % m^3
 V_f = V_f * 35.31; % ft^3
-fprintf('The fuel tank volume is %0.2f ft^3 \n',V_f)
+fprintf('The fuel tank volume is %0.2f ft^3 \n',1.2*V_f)
 %% Volume of Bottom Half
 % Equation 7.4a
 V_bot = 0.5* (pi*W_C^2/4*(L_C+L_R));
@@ -133,14 +133,14 @@ V_n = (3*pi^2/16 * R_max^2*L_F2)/2;
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);
 r_x2 = ((1/(12.*L_F2)).*(4.*x_2.*(12.*L_F2-x_2)).^.75)/12; % Solidworks
-%FigHandle = figure('Position', [250, 250, L_F2*40, R_max*40]);
+FigHandle = figure('Position', [250, 250, L_F2*40, R_max*40]);
 %figure(1)
 x_CP = L_n+L_CP;
 x_C = x_CP + L_C;
-%plot(x*L_F2,r_x2,'r',x*L_F2,-r_x2,'r')
-%line([L_n L_n], [-3.25 3.25]);
-%line([x_CP x_CP], [-3.25 3.25]);
-%line([x_C x_C], [-3.25 3.25]);
+plot(x*L_F2,r_x2,'r',x*L_F2,-r_x2,'r')
+line([L_n L_n], [-3.25 3.25]);
+line([x_CP x_CP], [-3.25 3.25]);
+line([x_C x_C], [-3.25 3.25]);
 
 %title('Haack Body Fuselage Design')
 %%
