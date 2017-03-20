@@ -48,7 +48,6 @@ fM = 1 - (0.08*req.cr_M0(1)^1.45);
 %-----Wing-----%
 
 % Eqn 3.19
-
 Swet.wing = WING.geom.S_area - 2*0.5*D_C*(WING.geom.sub.Cr +...
     (WING.geom.sub.Cr+(0.5*D_C)*((WING.geom.sub.Ct-WING.geom.sub.Cr)/WING.geom.sub.span)))/2; % wing wetted area correction for removed area inside fuselage
 Swet.wing = 2*Swet.wing; % wing wetted area
