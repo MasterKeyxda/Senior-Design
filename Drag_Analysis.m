@@ -158,7 +158,7 @@ CD0.total.cruise = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.n
 
 % CD0 for takeoff
 % Account for HLDs and LG deployed
-CD0.total.takeoff = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim + CD0.LEslat + CD0.TEflap + CD0.LGTotal);
+CD0.total.takeoff = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim) + CD0.LEslat + CD0.TEflap + CD0.LGTotal;
 
 %% CD_Wave (3.5.2 Aircraft Wave Drag)
 
