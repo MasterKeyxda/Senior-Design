@@ -27,14 +27,14 @@ iterate = 1;
 
 % Recalculate fuel fraction for new engines
 % Cruise Fuel Consumption
-Wt.fuel.sfc_cr = 0.6/3600; %0.572/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
+Wt.fuel.sfc_cr = 0.7/3600; %0.572/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
 [atm.delta,atm.theta,atm.sig_rho,Wt.fuel.a_snd] = AltTable(atm.alt,'h'); % speed of sound ratio
 Wt.fuel.V_max_cr = Wt.fuel.a_snd * req.cr_M0(1) * 1116; % ft/s
 Wt.fuel.LD_ratio = 7; % based on past, real aircraft (e.g. concorde)
 Wt.fuel.w4_3 = exp(-req.range * 6076.12 * Wt.fuel.sfc_cr/(0.866*Wt.fuel.V_max_cr * Wt.fuel.LD_ratio));
 
 % Loiter Fuel Consumption
-Wt.fuel.t_loiter = 1; % hr of loiter
+Wt.fuel.t_loiter = 0.5; % hr of loiter
 Wt.fuel.sfc_loiter = 0.7; % 1/hr
 Wt.fuel.w5_4 = exp(-Wt.fuel.t_loiter*Wt.fuel.sfc_loiter / Wt.fuel.LD_ratio);
 
@@ -122,7 +122,7 @@ while ctrl.res(end) > ctrl.tol
     
     % Update Empty Weight
     Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total; 
-    Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
+    Wt.WOEW = Wt.WE + Wt.oew.crew;
     
     % Calculate Residual
     ctrl.res(iterate) = WeightDiff / 100; %

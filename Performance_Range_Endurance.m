@@ -39,12 +39,13 @@ L_D.cr.begin = CL.cr.begin / CD.cr.begin;
 L_D.cr.end = CL.cr.end / CD.cr.end;
 
 % Average start and end CL/CD values
-L_D.cr.average = (L_D.cr.begin + L_D.cr.end) / 2;
-%L_D.cr.average = 7;
+%L_D.cr.average = (L_D.cr.begin + L_D.cr.end) / 2;
+L_D.cr.average = 7; 
+
 % Determine range (nm) of aircraft for constant Mach number (eqn 11.62)
 cj = Wt.fuel.sfc_cr * 3600; % lbs/h/lbs GET UPDATED VALUE FROM PARA ANALYSIS
 Perf.Rng.ConsM = ((a.soundCr * sqrt(atm.theta) * req.cr_M0(1) * L_D.cr.average) / cj) * log(Wt.cr.begin/Wt.cr.end);
-fprintf('The maximum range is %0.2f nm. \n', Perf.Rng.ConsM)
+fprintf('The maximum range (Constant Mach Number) is %0.2f nm. \n', Perf.Rng.ConsM)
 %% Determine Endurance (Const Mach Number)
 
 Wt.ltr.start = Wt.cr.end; % start loiter at end of cruise phase
@@ -54,7 +55,7 @@ Wt.ltr.end = Wt.fuel.w5_4 * Wt.ltr.start; % end of loiter weight
 % different cj
 % Determine Endurance (hours) for constant Mach number (eqn 11.63)
 Perf.End.ConsM = (1/cj)*(L_D.cr.average)*log(Wt.ltr.start/Wt.ltr.end);
-fprintf('The maximum endurance (const Mach number) is %0.2f hours \n.', Perf.End.ConsM)
+fprintf('The maximum endurance (const Mach number) is %0.2f hours. \n', Perf.End.ConsM)
 
 
 %% Determine Range (Const Altitude)
@@ -64,4 +65,32 @@ CD.alt.max = (4/3)*CD0.total.cruise; % eqn 11.66
 sqrtCL_CD = sqrt(CL.alt.max) / CD.alt.max; 
 
 Perf.Rng.ConsAlt = (1.675 / (cj * sqrt(atm.crRange * WING.geom.S_area)))*(sqrtCL_CD) * (sqrt(Wt.cr.begin) - sqrt(Wt.cr.end));
-fprintf('The maximum range (const altitude) is %0.2f nm \n.', Perf.Rng.ConsAlt)
+fprintf('The maximum range (const altitude) is %0.2f nm. \n', Perf.Rng.ConsAlt)
+
+%% Payload Range Diagram
+
+% Determine max range from const alt and const mach number methods
+Perf.Rng.max = max(Perf.Rng.ConsAlt,Perf.Rng.ConsM);
+% Useful Weight
+% Linearly decrease from max payload to 0
+Wt.pld.linear = linspace(Wt.pld.w_tot, 0, 10); 
+% Linearly increase fuel to max useful weight
+Wt.fuel.linear = linspace(Wt.fuel.w_tot, Wt.Useful, 10); 
+% See Roskam and Lam p.560
+% Pt A --> R = 0 nm, Max payload
+figure()
+plot(0, Wt.pld.w_tot)
+hold on;
+title('Payload-Range Diagram')
+xlabel('Range, nm')
+ylabel('Payload Weight (lbs)')
+
+% Pt B --> R = Rmax, Max payload
+plot(Perf.Rng.max, Wt.pld.w_tot)
+
+% Pt C --> Rmax,fuel
+% Mission fuel fraction for various fuel weights
+Wt.mff.array = 1 - (Wt.fuel.linear / Wt.WTO);
+
+% Fuel Fraction array for cruise
+Wt.mff.array
