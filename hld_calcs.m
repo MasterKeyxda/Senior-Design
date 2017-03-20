@@ -23,10 +23,6 @@ hld.sf = 1.2; % safety factor to obtain Cl_max
 hld.dCl_req = (hld.sf*Wt.WTO * cos(hld.gamma_TO) - constraints.req_Thr * sin(hld.alpha_TO))/(0.5*atm.rho_sl*(hld.V_TO^2)*WING.geom.S_area) - hld.Cl_base;
 fprintf('Cl deficit: %0.5f\n', hld.dCl_req);
 
-<<<<<<< HEAD
-%% DETERMINE THE HLD CONFIGURATION 
-=======
-
 %% DATCOM 1978: HLD for supersonic airfoil 
 
 % p. 8-13 
