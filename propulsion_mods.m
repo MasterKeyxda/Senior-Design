@@ -75,13 +75,8 @@ M9 = sqrt((2/(gamma_t - 1)) * (pi_t9_s ^ ((gamma_t - 1)/gamma_t) - 1));
 % To use with EngineSimU 1.8a
 
 
-
 %% Get New Engine Power Curves?
-
-% FC: flight conditions (P0, T0, M0, gamma, cp)
-% ENG: engine parameters (pi_c, pi_f, Tt4_max, hPR, ENG.p0_9, ENG.p0_19, d (diameter, ft), BPR)
-% THR: required thrust
-% TL: tech level
+fprintf('Thrust Specific Fuel Consumtion = %f \n',SFC_T*3600)
 
 % FC.P0 = 2116.23 * atm.delta; % lbf/ft^2
 % FC.T0 = 518.67 * atm.theta; % Rankine

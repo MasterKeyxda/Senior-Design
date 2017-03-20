@@ -28,6 +28,17 @@ end
 TR.d = 1;
 PR.d = TL.d_max * eta_r;
 
+% Compressor
+TR.cR = ENG.pi_c ^ ((FC.gamma - 1)/(FC.gamma * TL.e_c)); % reference tau_c
+TR.c = 1 + (TR.cR - 1) .* (Tt4_vals./(FC.T0 * TR.r))./(ENG.Tt4_sl / ENG.Tt0);
+PR.c = TR.c.^ (FC.gamma * TL.e_c ./ (FC.gamma - 1));
+
+Tt.s3 = FC.T0 * TR.r * TR.d * TR.c;
+Pt.s3 = FC.P0 * PR.r * PR.d * PR.c;
+
+% Fan Conditions
+TR.f = ENG.pi_f ^ ((FC.gamma - 1)/(FC.gamma * TL.e_f));
+
 % Turbine Conditions
 cp_t = [];
 gamma_t = [];
