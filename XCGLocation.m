@@ -173,11 +173,20 @@ cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag; cgFuel; cgMTOW];
 
 figure()
 title('Aircraft CG Excursion')
-xlabel('CG Location, ft')
+xlabel('CG Location (F.S.), ft')
 ylabel('Weight (lbs)')
 hold on;
+
 % Plot CG Diagram
-for iPlot = 1:length(wtArray)
-    plot(cgArray(iPlot),wtArray(iPlot), 'o')
-end
+plot(cgArray(1), wtArray(1), 'ro', 'MarkerSize',10)
+plot(cgArray(2), wtArray(2), 'go', 'MarkerSize',10)
+plot(cgArray(3), wtArray(3), 'o', 'MarkerSize',10, 'Color',[0.5 0 1])
+plot(cgArray(4), wtArray(4), 'o', 'MarkerSize',10, 'Color',[0 0.4 0.3])
+plot(cgArray(5), wtArray(5), 'o', 'MarkerSize',10, 'Color',[1 0.5 0])
+plot(cgArray(6), wtArray(6), 'o', 'MarkerSize',10, 'Color',[0 1 1])
 plot(cgArray,wtArray, 'b--') % plot line through points
+legend('Empty Wt CG','OEW Wt CG','OEW Wt + Fuel CG', ...
+    'OEW Wt + Fuel + PAX (No Baggage) CG', ... 
+    'OEW Wt + Fuel + PAX (With Baggage) CG',...
+    'MTOW CG','Location','Northwest')
+legend('boxoff')
