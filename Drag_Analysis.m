@@ -48,7 +48,9 @@ fM = 1 - (0.08*req.cr_M0(1)^1.45);
 %-----Wing-----%
 
 % Eqn 3.19
-Swet.wing = 2*WING.geom.S_area; % wing wetted area
+Swet.wing = WING.geom.S_area - 2*0.5*D_C*(WING.geom.sub.Cr +...
+    (WING.geom.sub.Cr+(0.5*D_C)*((WING.geom.sub.Ct-WING.geom.sub.Cr)/WING.geom.sub.span)))/2; % wing wetted area correction for removed area inside fuselage
+Swet.wing = 2*Swet.wing; % wing wetted area
 wing_TCRatio = 0.0525; % wing max thickness to chord ratio
 ftc_w = 1 + (2.7*wing_TCRatio) + 100*((wing_TCRatio)^4); % ftc_w is a function of thickness ratio
 Cdmin.wing = min(WING.biconvex(2).Cd);
@@ -97,18 +99,38 @@ CD0.nacelle = 0.0012; % APPROXIMATION; based on nacelle CD0 for Gates Learjet 25
 
 %-----High Lift Devices-----%
 
-% % Trailing Edge HLD (Eqn 3.27)
-% % Eqn 3.27 is based on a flap with a flap-span-to-wing-span ratio of 70%
-% % Constants (Table 3.3)
-% A_TEflap = 0.0011; % double-slotted flap
-% B_TEflap = 1; 
-% deltaFlap = 40; % flap deflection angle (deg)
-% Cf_C_Ratio = 0.3; % ratio between avg flap chord to avg wing chord
-% CD0.TEflap = Cf_C_Ratio*A_TEflap*(deltaFlap^B_TEflap);
+% Trailing Edge HLD (Eqn 3.27)
+% Eqn 3.27 is based on a flap with a flap-span-to-wing-span ratio of 70%
+% Constants (Table 3.3)
+A_TEflap = 0.0011; % double-slotted flap
+B_TEflap = 1; 
+deltaFlap = 40; % flap deflection angle (deg)
+Cf_C_Ratio = 0.3; % ratio between avg flap chord to avg wing chord
+CD0.TEflap = Cf_C_Ratio*A_TEflap*(deltaFlap^B_TEflap);
 % 
-% % Leading Edge HLD (Eqn 3.28)
-% Csl_C_Ratio = 0.3; % ratio between avg extended slat chord and extended wing chord
-% CD0.LEslat = (Csl_C_Ratio)*CD0.wing;
+% Leading Edge HLD (Eqn 3.28)
+Csl_C_Ratio = 0.3; % ratio between avg extended slat chord and extended wing chord
+CD0.LEslat = (Csl_C_Ratio)*CD0.wing;
+
+%-----Landing Gear Retracted-----%
+
+nWhlMain = 4; % number of main gear assembly wheels
+nWhlNose = 2; % number of nose gear assembly wheels
+CDlg = 0.30; % LG with no fairing
+
+% Nose Gear
+D.nose = 1.84; % wheel diameter(ft)
+w.nose = 0.57; % wheel width (ft)
+Slg.nose = D.nose*w.nose; % frontal area of nose gear wheel
+CD0.LGNose = nWhlNose*CDlg*(Slg.nose/Sref); 
+
+% Main Gear 
+D.main = 2.63; % wheel diameter (ft)
+w.main = 0.81; % wheel width (ft)
+Slg.main = D.main*w.main; % frontal area (ft)
+CD0.LGMain = nWhlMain*CDlg*(Slg.main/Sref);
+
+CD0.LGTotal = CD0.LGNose + CD0.LGMain; 
 
 %-----Protruding / Miscellaneous Components-----%
 % Accounted for with correction factor below.
@@ -133,7 +155,12 @@ CD0.trim = (1 / (pi * eTail * ARTail)) * (TAIL.Sh/Sref) * (CL.tail^2);
 
 %-----TOTAL CD0-----%
 CD0.correction = 1.1; % correction factor for misc items (Table 3.5, jet transport)
-CD0.total = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim);
+% CD0 for cruise
+CD0.total.cruise = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim);
+
+% CD0 for takeoff
+% Account for HLDs and LG deployed
+CD0.total.takeoff = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacelle + CD0.trim) + CD0.LEslat + CD0.TEflap + CD0.LGTotal;
 
 %% CD_Wave (3.5.2 Aircraft Wave Drag)
 
@@ -148,3 +175,48 @@ CDw.vol_aircraft = 4956.42; %ft^3 -> obtained from solidworks
 CDw.volume = 128 * CDw.K_wv * CDw.vol_aircraft^2 / (pi * WING.geom.S_area * L_F^4);
 
 CDw.total = CDw.lift + CDw.volume;
+
+%% Plot Drag Polars
+
+% Induced drag
+e_Oswald = 0.8; % efficiency factor
+CL.overall = linspace(0, 2, 20);
+CD.induced = (CL.overall.^2) ./ (pi * e_Oswald * WING.geom.AR); 
+
+% Wave Drag
+CD.wave = CDw.volume + CDw.K_wl .* WING.geom.S_area .* (CL.overall.^2) .* (req.cr_M0(1)^2 - 1)/(2 .* pi .* L_F^2);
+
+% Supersonic Cruise Drag Polar
+CD.total.super = CD0.total.cruise + CD.induced + CD.wave; 
+figure()
+plot(CL.overall, CD.total.super)
+xlabel('Lift Coefficient, C_L')
+ylabel('Drag Coefficient, C_D')
+title('Supersonic Cruise Drag Polar')
+
+% Subsonic Drag Polar
+CD.total.sub = CD0.total.cruise + CD.induced;
+figure()
+plot(CL.overall, CD.total.sub)
+xlabel('Lift Coefficient, C_L')
+ylabel('Drag Coefficient, C_D')
+title('Subsonic Cruise Drag Polar')
+
+% Takeoff and Landing Drag Polar
+CD.total.takeoff = CD0.total.takeoff + CD.induced;
+figure()
+plot(CL.overall, CD.total.takeoff)
+xlabel('Lift Coefficient, C_L')
+ylabel('Drag Coefficient, C_D')
+title('Takeoff/Landing Cruise Drag Polar')
+
+% Plot all drag polars on same figure
+figure()
+hold on;
+plot(CL.overall, CD.total.super, 'b--') % supersonic
+plot(CL.overall, CD.total.sub, 'r:','LineWidth',1.5) % subsonic
+plot(CL.overall, CD.total.takeoff, 'c') % takeoff/landing
+xlabel('Lift Coefficient, C_L')
+ylabel('Drag Coefficient, C_D')
+legend('Supersonic Cruise', 'Subsonic Cruise', 'Takeoff/Landing', 'Location','Northwest')
+title('Aircraft Drag Polars')
