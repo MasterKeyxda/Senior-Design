@@ -173,8 +173,12 @@ fprintf('dCL = %f for supersonic wing \n',dC_L1)
 % dC_L = 1.55 for DC-9-30
 %http://adg.stanford.edu/aa241/highlift/highliftintro.html
 
+<<<<<<< Updated upstream
 %percentFlap = dCL_max_f/dC_L1
 %percentSlat = 1-percentFlap
+=======
+
+>>>>>>> Stashed changes
 
 %% DATCOM 1978: HLD for supersonic airfoil 
 
@@ -215,8 +219,11 @@ fprintf('dCL = %f for subsonic wing \n',dC_L2)
 % dC_L = 1.55 for DC-9-30
 %http://adg.stanford.edu/aa241/highlift/highliftintro.html
 
+<<<<<<< Updated upstream
 %percentf = dCL_max_f/dC_L2
 %percents = 1-percentf
+=======
+>>>>>>> Stashed changes
 
 %% dCL for supersonic and subsonic wing combined
 
