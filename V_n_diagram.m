@@ -19,6 +19,10 @@ end
 % Info pulled from other scripts
 % MTOW (lbf)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+% wing loading design point (lb/ft^2)
+>>>>>>> Stashed changes
 =======
 % wing loading design point (lb/ft^2)
 >>>>>>> Stashed changes
@@ -27,7 +31,11 @@ wingLoading = designPoint(1); % from Constraint_Plots.m script
 
 % Positive +1g stall speed 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 CLMaxPos = 2.0; % max positive coefficient of lift
+=======
+CLMaxPos = 2.2; % max positive coefficient of lift
+>>>>>>> Stashed changes
 =======
 CLMaxPos = 2.2; % max positive coefficient of lift
 >>>>>>> Stashed changes

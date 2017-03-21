@@ -23,6 +23,7 @@ WING.geom.AR = AR;
 WING.geom.span = sqrt(WING.geom.S_area * WING.geom.AR);
 WING.geom.MAC = sqrt(WING.geom.S_area/WING.geom.AR);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 WING.geom.sub_b_ratio = 0.2;
 WING.geom.sub_s_ratio = 0.24;
 
@@ -43,6 +44,8 @@ WING.geom.sup.Cr = WING.geom.sub.Ct;
 %WING.geom.sup.MAC * 1.5 * ( 1 + WING.geom.sup.taper)/(1 + WING.geom.sup.taper + WING.geom.sup.taper^2);
 WING.geom.sup.Ct = WING.geom.sup.Cr * WING.geom.sup.taper;
 =======
+=======
+>>>>>>> Stashed changes
 WING.geom.sub_span = 0.2*WING.geom.span;
 WING.geom.sup_span = 0.8 * WING.geom.span;
 
@@ -50,6 +53,9 @@ WING.geom.sup_span = 0.8 * WING.geom.span;
 % Wing Taper Ratios - OPENVSP
 WING.geom.taper_sub = 0.82489; 
 WING.geom.taper_super = 0.74667;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 WING.CD0 = 0.02;
@@ -64,9 +70,13 @@ fprintf('\n\tWing Geometry: \n');
 wt_types = fieldnames(WING.geom);
 for i = 1:numel(wt_types)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     if ~isstruct(WING.geom.(wt_types{i}))
         fprintf('%s: %0.4f\n', wt_types{i}, WING.geom.(wt_types{i}));
     end
+=======
+    fprintf('%s: %0.4f\n', wt_types{i}, WING.geom.(wt_types{i}));
+>>>>>>> Stashed changes
 =======
     fprintf('%s: %0.4f\n', wt_types{i}, WING.geom.(wt_types{i}));
 >>>>>>> Stashed changes
@@ -105,6 +115,7 @@ clear wt_types
 % WING.dCL_flaps = [1 1.3]; % fowler flaps -> Sadraey
 
 %% STEP 11: Determine Subsonic Taper Angles and Dihedral Angle
+<<<<<<< Updated upstream
 
 WING.dihedral = 6; % degrees
 
@@ -178,6 +189,10 @@ title('Boeing HSNLF Drag Polar');
 saveas(gcf, [pwd '\aero_results\HSNLF_drag_polar.png']);
 % WING.swept.i_w = spline(WING.swept.polar_inv.CL, WING.swept.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
 >>>>>>> Stashed changes
+=======
+
+WING.dihedral = 6; % degrees
+>>>>>>> Stashed changes
 
 % Supersonic Airfoil Characteristics
 % WING.supersonic.name = 'biconvex';
@@ -220,6 +235,7 @@ saveas(gcf, [pwd '\aero_results\HSNLF_drag_polar.png']);
 % xlabel('C_l');
 % title('Bi-convex Drag Polar');
 
+<<<<<<< Updated upstream
 % Flat Plate Formulas in Supersonic flow
 
 % Symmetric Biconvex
@@ -293,6 +309,120 @@ xlabel('C_l');
 ylabel('C_d');
 saveas(gcf, [pwd '\aero_results\bicon_drag_polar.png']);
 
+=======
+%% STEP 9-10: Select Airfoil and determine wing incidence angle
+
+% Subsonic HSNLF Characteristics
+WING.hsnlf.name = 'BACNLF';
+if ~exist('boeing_polars.mat', 'file')
+    [swept.polar_inv, swept.foil_inv] = xfoil([WING.swept.name '.dat'], [-2:19], 10e6, 0.0, 'oper/iter 10000');
+    WING.hsnlf.polar_inv = swept.polar_inv;
+    WING.hsnlf.foil_inv = swept.foil_inv;
+else
+    load('boeing_polars.mat');
+    WING.hsnlf.polar_inv = swept.polar_inv;
+    WING.hsnlf.foil_inv = swept.foil_inv;
+    clear swept;
+end
+
+figure(); plot(WING.hsnlf.polar_inv.alpha, WING.hsnlf.polar_inv.CL);
+ylabel('C_l');
+xlabel('\alpha');
+title('Boeing HSNLF Lift-Curve Polar');
+if ~exist([pwd '\aero_results'], 'dir')
+   mkdir(pwd, 'aero_results');
+end
+saveas(gcf, [pwd '\aero_results\HSNLF_lift_polar.png']);
+
+figure(); plot(WING.hsnlf.polar_inv.CL, WING.hsnlf.polar_inv.CD);
+ylabel('C_d');
+xlabel('C_l');
+title('Boeing HSNLF Drag Polar');
+saveas(gcf, [pwd '\aero_results\HSNLF_drag_polar.png']);
+% WING.swept.i_w = spline(WING.swept.polar_inv.CL, WING.swept.polar_inv.alpha, WING.CL_cr); % Wing incidence or setting angle (i_w)
+
+% Supersonic Airfoil Characteristics
+% WING.supersonic.name = 'biconvex';
+% WING.supersonic.t_c = 0.12; % thickness ratio
+% cd_data = dlmread('cd-history', ' ', 2, 0);
+% cl_data = dlmread('cl-history', ' ', 2, 0);
+% cm_data = dlmread('cm-history', ' ', 2, 0);
+% iter = find(cd_data(:,1) == 1);
+% alpha = 0:1:length(iter)-1;
+% i = 1;
+% ii = 1;
+% while i <= length(iter)
+%     if i < length(iter)
+%         if cd_data(iter(i+1)-1,1) ~= 5000
+%             WING.supersonic.Cd(ii) = cd_data(iter(i+1)-1,end);
+%             WING.supersonic.Cl(ii) = cl_data(iter(i+1)-1,end);
+%             WING.supersonic.Cm(ii) = cm_data(iter(i+1)-1,end);
+%             WING.supersonic.alpha(ii) = alpha(i);
+%             ii = ii + 1;
+%         end
+%     else
+%         if cd_data(end,1) ~= 5000
+%             WING.supersonic.Cd(ii) = cd_data(end,end);
+%             WING.supersonic.Cl(ii) = cl_data(end,end);
+%             WING.supersonic.Cm(ii) = cm_data(end,end);
+%             WING.supersonic.alpha(ii) = alpha(i);
+%         end
+%     end
+%     i = i + 1;
+% end
+% 
+% figure(); plot(WING.supersonic.alpha(WING.supersonic.Cl>=0), WING.supersonic.Cl(WING.supersonic.Cl>=0),'o-');
+% 
+% ylabel('C_l');
+% xlabel('\alpha');
+% title('Bi-convex Lift-Curve Polar');
+% 
+% figure(); plot(WING.supersonic.Cl(WING.supersonic.Cl>=0), WING.supersonic.Cd(WING.supersonic.Cl>=0),'o-');
+% ylabel('C_d');
+% xlabel('C_l');
+% title('Bi-convex Drag Polar');
+
+% Flat Plate Formulas in Supersonic flow
+
+% Symmetric Biconvex
+WING.biconvex.alpha = linspace(0,20, 21).*pi./180;
+WING.biconvex.tc_u = 0.03*0.5; % 5.25 percent chord thickness
+WING.biconvex.tc_l = WING.biconvex.tc_u;
+WING.biconvex.chord = 1.0;
+WING.biconvex.Cl = 4.* WING.biconvex.alpha ./ sqrt(req.cr_M0(1)^2 - 1); % section lift coefficient
+WING.biconvex.Cd = WING.biconvex.Cl .* WING.biconvex.alpha + (2*WING.biconvex.tc_u^2 * pi^2 / (WING.biconvex.chord^2 * sqrt(req.cr_M0(1)^2 - 1))) + WING.CD0;
+WING.biconvex.L_D = WING.biconvex.Cl ./WING.biconvex.Cd;
+
+% Bottom Biased Modified Biconvex
+WING.biconvex(2).alpha = WING.biconvex(1).alpha;
+WING.biconvex(2).tc_u = 0.03*0.25; % 5.25 percent chord thickness
+WING.biconvex(2).tc_l = 0.03*0.75;
+WING.biconvex(2).chord = 1.0;
+WING.biconvex(2).Cl = 4.* WING.biconvex(2).alpha ./ sqrt(req.cr_M0(1)^2 - 1); % section lift coefficient
+WING.biconvex(2).Cd = WING.biconvex(2).Cl .* WING.biconvex(2).alpha + ((WING.biconvex(2).tc_u^2 + WING.biconvex(2).tc_l^2) * pi^2 / (WING.biconvex(2).chord^2 * sqrt(req.cr_M0(1)^2 - 1))) + WING.CD0;
+WING.biconvex(2).L_D = WING.biconvex(2).Cl ./WING.biconvex(2).Cd;
+
+figure(); % lift polars
+plot(WING.biconvex(1).alpha, WING.biconvex(1).Cl);
+hold on;
+plot(WING.biconvex(2).alpha, WING.biconvex(2).Cl, 'o');
+legend('Symmetric', 'Modified');
+title('Lift Polars');
+xlabel('\alpha');
+ylabel('C_l');
+saveas(gcf, [pwd '\aero_results\bicon_lift_polar.png']);
+
+figure(); % drag polars
+plot(WING.biconvex(1).Cl, WING.biconvex(1).Cd);
+hold on;
+plot(WING.biconvex(2).Cl, WING.biconvex(2).Cd, 'o');
+legend('Symmetric', 'Modified');
+title('Drag Polars');
+xlabel('C_l');
+ylabel('C_d');
+saveas(gcf, [pwd '\aero_results\bicon_drag_polar.png']);
+
+>>>>>>> Stashed changes
 figure(); % L/D polars
 plot(WING.biconvex(1).alpha, WING.biconvex(1).L_D);
 hold on;
@@ -300,6 +430,9 @@ plot(WING.biconvex(2).alpha, WING.biconvex(2).L_D, 'o');
 legend('Symmetric', 'Modified');
 title('Lift over Drag');
 xlabel('\alpha');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 ylabel('L/D');
 saveas(gcf, [pwd '\aero_results\bicon_LD_polar.png']);

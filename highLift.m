@@ -174,8 +174,12 @@ fprintf('dCL = %f for supersonic wing \n',dC_L1)
 %http://adg.stanford.edu/aa241/highlift/highliftintro.html
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 %percentFlap = dCL_max_f/dC_L1
 %percentSlat = 1-percentFlap
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
@@ -220,8 +224,11 @@ fprintf('dCL = %f for subsonic wing \n',dC_L2)
 %http://adg.stanford.edu/aa241/highlift/highliftintro.html
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 %percentf = dCL_max_f/dC_L2
 %percents = 1-percentf
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 

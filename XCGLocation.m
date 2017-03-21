@@ -4,6 +4,7 @@ clear mXcgi
 
 % All references and moment arms in ft
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 % Lifting Components - referenced to desired CG
 
 % Wing
@@ -53,6 +54,8 @@ mXcgi.FuelSystem = [Wt.Pwr.FuelSystem,0];
 x_cockpit = L_N + L_CP/3; % length of quiet spike needle +  center of cockpit from nose
 mXcgi.FCsys = [Wt.Feq.FCsysGD,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % In Cockpit
 =======
+=======
+>>>>>>> Stashed changes
 % Xarm refers to the x dist from the airplane nose to the start of component /
 % component MAC. 
 
@@ -94,11 +97,15 @@ mXcgi.FuelSystem = [Wt.Pwr.FuelSystem,0];
 % Flight Control System
 x_cockpit = 25 + 5.5/3; % center of cockpit from nose
 mXcgi.FCsys = [Wt.Feq.FCsysGD,-XLE_w + cglocAC + x_cockpit]; % In Cockpit
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 % Hydraulic System for Landing Gear
 Nose_rat = Wt.Struc.NoseGear/(Wt.Struc.NoseGear+Wt.Struc.MainGear); % weight ratio of nose landing gear
 Main_rat = Wt.Struc.MainGear/(Wt.Struc.NoseGear+Wt.Struc.MainGear); % weight ratio of main landing gear
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 mXcgi.HydraulicNose = [Wt.Feq.Hydraulic*Nose_rat,-XLE_w  - 0.25*cRootSub + cglocAC + x_NoseGear];
 mXcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,-XLE_w  - 0.25*cRootSub + cglocAC + x_MainGear];
@@ -131,6 +138,8 @@ mXcgi.Oper = [Wt.Feq.Oper,-XLE_w - 0.25*cRootSub + cglocAC + L_N + L_CP]; % CG p
 % Paint Weight
 mXcgi.Paint = [Wt.Feq.Paint,-XLE_w - 0.25*cRootSub + cglocAC + 0.40*L_F]; % Fuselage CG paint
 =======
+=======
+>>>>>>> Stashed changes
 mXcgi.HydraulicNose = [Wt.Feq.Hydraulic*Nose_rat,-XLE_w + cglocAC + x_NoseGear];
 mXcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,-XLE_w + cglocAC + x_MainGear];
 
@@ -156,12 +165,16 @@ mXcgi.Oper = [Wt.Feq.Oper,-XLE_w + cglocAC + 26]; % CG placed in front of cabin
 
 % Paint Weight
 mXcgi.Paint = [Wt.Feq.Paint,-XLE_w + cglocAC + 0.40*L_F]; % Fuselage CG paint
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 % Empty Weight CG
 CG_types = fieldnames(mXcgi);
 moment = 0;
 wt = 0;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
 for i = 1:numel(CG_types)
@@ -180,6 +193,8 @@ fprintf('The Difference Between Required and Actual XCG %0.4f ft \n', cgEmpty);
 %% Empty Weight + Crew CG (OEW CG)
 mXcgi.Crew = [Wt.oew.crew,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % crew in cockpit 
 =======
+=======
+>>>>>>> Stashed changes
  for i = 1:numel(CG_types)
    moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
    wt = wt + mXcgi.(CG_types{i})(1);
@@ -191,6 +206,9 @@ fprintf('The Difference Between Required and Actual CG %0.4f ft \n', cgEmpty);
 
 %% Empty Weight + Crew CG (OEW CG)
 mXcgi.Crew = [Wt.oew.crew,-XLE_w + cglocAC + x_cockpit]; % crew in cockpit 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 CG_types = fieldnames(mXcgi);
 moment = 0;
@@ -201,6 +219,7 @@ wt = 0;
  end
 wtOEW = wt; 
 cgOEW = moment/wt;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 fprintf('The operating empty weight Xcg is %0.4f \n', cgOEW)
 %% Empty Weight + Crew + Fuel CG
@@ -218,6 +237,8 @@ fprintf('The Xoew + fuel cg is %0.4f \n', cgFuel)
 % Assume passenger distribution places cg at cabin center
 mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, -XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP]; 
 =======
+=======
+>>>>>>> Stashed changes
 fprintf('The operating empty weight cg is %0.4f \n', cgOEW)
 %% Empty Weight + Crew + Fuel CG
 
@@ -228,6 +249,9 @@ fprintf('The operating empty weight cg is %0.4f \n', cgOEW)
 
 % Assume passenger distribution places cg at cabin center
 mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, -XLE_w + cglocAC + (53.33+25)/2]; 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 CG_types = fieldnames(mXcgi);
 moment = 0;
@@ -239,17 +263,23 @@ wt = 0;
 wtPAX_NoBag = wt; 
 cgPAX_NoBag = moment/wt;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 fprintf('The Xcg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
 %% Empty Weight + Crew + PAX (w/ baggage) CG
 x_baggage = 4; % distance of baggage from end of cabin
 % Assume passenger distribution places cg at cabin center
 mXcgi.pldBag = [Wt.pld.lug * Wt.pld.n_pass, -XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP + x_baggage]; 
 =======
+=======
+>>>>>>> Stashed changes
 fprintf('The cg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
 %% Empty Weight + Crew + PAX (w/ baggage) CG
 
 % Assume passenger distribution places cg at cabin center
 mXcgi.pldBag = [Wt.pld.w_tot, -XLE_w + cglocAC + (53.33+25)/2]; 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 CG_types = fieldnames(mXcgi);
 moment = 0;
@@ -260,6 +290,7 @@ wt = 0;
  end
 wtPAX_Bag = wt; 
 cgPAX_Bag = moment/wt;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 fprintf('The Xcg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
 
@@ -299,6 +330,8 @@ legend('Empty Wt CG','OEW Wt CG','OEW Wt + Fuel CG', ...
     'MTOW CG','Location','Northwest')
 legend('boxoff')
 =======
+=======
+>>>>>>> Stashed changes
 fprintf('The cg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
 
 %% Empty Weight + Crew + PAX (No baggage) + Fuel  CG
@@ -319,5 +352,9 @@ hold on;
 for iPlot = 1:length(wtArray)
     plot(cgArray(iPlot),wtArray(iPlot), 'o')
 end
+<<<<<<< Updated upstream
+plot(cgArray,wtArray, 'b--') % plot line through points
+>>>>>>> Stashed changes
+=======
 plot(cgArray,wtArray, 'b--') % plot line through points
 >>>>>>> Stashed changes

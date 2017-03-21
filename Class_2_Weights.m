@@ -16,6 +16,7 @@ WF = Wt.fuel.w_tot; % weight of fuel (lbs)
 Wmzf = Wt.WTO - WF; % max zero fuel weight (lbs)
 nUlt = 3.75; % ultimate load factor from V-n diagram % GET FROM ANOTHER SCRIPT
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 % percentSub = 0.20; % percentage of subsonic portion of wing
 % percentSuper = 0.80; % percentage of supersonic portion of wing
 SwSub = WING.geom.sub.S_area; % subsonic wing area (ft^2) 
@@ -28,6 +29,8 @@ trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic w
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
 bSub = WING.geom.sub.span;%percentSub * WING.geom.span; % subsonic wing span (ft)
 =======
+=======
+>>>>>>> Stashed changes
 percentSub = 0.20; % percentage of subsonic portion of wing
 percentSuper = 0.80; % percentage of supersonic portion of wing
 SwSub = S_w * percentSub; % subsonic wing area (ft^2) 
@@ -39,11 +42,15 @@ thickToChordSub = 0.10; % thickness to chord ratio subsonic wing
 trSub = cRootSub*thickToChordSub; % max thickness of wing root chord; subsonic wing (ft)
 sweepSemiChordSub = 60; % wing semi-chord sweep angle (degrees)
 bSub = percentSub * WING.geom.span; % subsonic wing span (ft)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 % Subsonic wing weight (lbs)
 Wt.Struc.WingSub = 0.0017*Wmzf*((bSub/cosd(sweepSemiChordSub))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSub))/bSub)))*(nUlt^0.55)*(((bSub*SwSub) / (trSub*Wmzf*cosd(sweepSemiChordSub)))^0.30);
 
 % Supersonic portion of wing (dim from Solidworks model Wing.v2)
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 cRootSuper = WING.geom.sup.Cr; % root chord supersonic wing; 
 thickToChordSuper = 0.0525; % thickness to chord ration supersonic wing
@@ -51,11 +58,16 @@ trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; su
 sweepSemiChordSuper = 10; % wing semi-chord sweep angle (degrees)
 bSuper = WING.geom.sup.span;%percentSuper * WING.geom.span; % supersonic wing span (ft)
 =======
+=======
+>>>>>>> Stashed changes
 cRootSuper = 19.364; % root chord supersonic wing; 
 thickToChordSuper = 0.05; % thickness to chord ration supersonic wing
 trSuper = cRootSuper * thickToChordSuper; % max thickness of wing root chord; supersonic wing (ft)
 sweepSemiChordSuper = 10; % wing semi-chord sweep angle (degrees)
 bSuper = percentSuper * WING.geom.span; % supersonic wing span (ft)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 % Supersonic wing weight (lbs)
 Wt.Struc.WingSuper = 0.0017*Wmzf*((bSuper/cosd(sweepSemiChordSuper))^0.75)*((1 + sqrt((6.3*cosd(sweepSemiChordSuper)/bSuper))))*(nUlt^0.55)*(((bSuper*SwSuper) / (trSuper*Wmzf*cosd(sweepSemiChordSuper)))^0.30);
@@ -196,11 +208,17 @@ Npil = 2; % number of pilots
 Wt.Feq.Iae = Npil*(15 + 0.032*(Wt.WTO/1000)) + Ne*(5 + 0.006*(Wt.WTO/1000)) + 0.015*(Wt.WTO/1000) + (0.012*Wt.WTO); 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 % Torenbeek Method, Eqn 7.25, p.104
 % WE = 60983; % empty weight
 % Wt.Feq.IaeToren = 0.575 * (WE^0.556)*(req.range^0.25);
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 % Electical System
 % GD Method, Eqn 7.15, p.102
@@ -220,6 +238,10 @@ Wt.Feq.OxygenGD = 7 * ((Wt.pld.n_pass + Wt.oew.n_crew)^0.702);
 
 % Auxiliary Power Unit (APU)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+% Not sure if needed
+>>>>>>> Stashed changes
 =======
 % Not sure if needed
 >>>>>>> Stashed changes

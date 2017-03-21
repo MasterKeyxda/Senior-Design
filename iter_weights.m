@@ -7,7 +7,11 @@ close all;
 % want to iterate weights to get new weight
 % set weight tolerance
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ctrl.tol = 0.001; % 0.1 percent
+=======
+ctrl.tol = 0.01; % 5 percent
+>>>>>>> Stashed changes
 =======
 ctrl.tol = 0.01; % 5 percent
 >>>>>>> Stashed changes
@@ -21,9 +25,12 @@ ctrl.Wt_old(1) = Wt.WTO; % Save old weight
 Class_2_Weights;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total;
 Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 % Calculate Residual
@@ -35,7 +42,11 @@ iterate = 1;
 % Recalculate fuel fraction for new engines
 % Cruise Fuel Consumption
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 Wt.fuel.sfc_cr = 0.7/3600; %0.572/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
+=======
+Wt.fuel.sfc_cr = 0.6/3600; %0.572/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
+>>>>>>> Stashed changes
 =======
 Wt.fuel.sfc_cr = 0.6/3600; %0.572/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
 >>>>>>> Stashed changes
@@ -46,7 +57,11 @@ Wt.fuel.w4_3 = exp(-req.range * 6076.12 * Wt.fuel.sfc_cr/(0.866*Wt.fuel.V_max_cr
 
 % Loiter Fuel Consumption
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 Wt.fuel.t_loiter = 0.5; % hr of loiter
+=======
+Wt.fuel.t_loiter = 1; % hr of loiter
+>>>>>>> Stashed changes
 =======
 Wt.fuel.t_loiter = 1; % hr of loiter
 >>>>>>> Stashed changes
@@ -100,7 +115,10 @@ fprintf('WE: %0.2f lbs \n', Wt.WE);
 
 while ctrl.res(end) > ctrl.tol
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     close all
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
    iterate = iterate + 1;
@@ -124,15 +142,21 @@ while ctrl.res(end) > ctrl.tol
     Kc = 1.2; % tail calculation correction factor?
     Vh = 0.6; % horizontal tail volumen coefficient
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     Vv = 0.09; % vertical tail volumen coefficient
     sweepWing = 28; % wing sweep degrees
     taperh = 0.6; % horizontal tail taper ratio
     cglocAC = -6.25; % ft cg location in front or behind AC Wing
 =======
+=======
+>>>>>>> Stashed changes
     Vv = 0.05; % vertical tail volumen coefficient
     sweepWing = 28; % wing sweep degrees
     taperh = 0.6; % horizontal tail taper ratio
     cglocAC = -6.0; % ft cg location in front or behind AC Wing
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     TAIL = TailCalc(0, Vh, Vv, Wt.WTO, atm.sig_rho * atm.rho_sl, Wt.fuel.V_max_cr, D_C, Kc, WING.geom.S_area, WING.geom.AR, WING.Cmwf, sweepWing, taperh, cglocAC, '', req.cr_M0(1));
 
@@ -146,10 +170,13 @@ while ctrl.res(end) > ctrl.tol
     Class_2_Weights;
     
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     % Update Empty Weight
     Wt.WE = Wt.Struc.Total + Wt.Pwr.Total + Wt.Feq.Total; 
     Wt.WOEW = Wt.WE + Wt.oew.crew;
     
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     % Calculate Residual
@@ -171,6 +198,7 @@ else
     fprintf('Thrust requirement met\n');
 end
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 %-----Call XCGLocation Script-----%
 XCGLocation
@@ -180,6 +208,11 @@ ZCG_Location
 
 %-----Landing Gear-----% 
 
+=======
+% Call XCGLocation Script 
+XCGLocation
+
+>>>>>>> Stashed changes
 =======
 % Call XCGLocation Script 
 XCGLocation

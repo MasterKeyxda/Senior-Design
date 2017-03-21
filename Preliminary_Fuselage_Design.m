@@ -99,7 +99,11 @@ L_n = 25; % arbitrary length of nose ft
 % Will Include Tail and Wing as well for supersonic aircraft.
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 L_R = 98.33; % arbitrary length of rear section ft
+=======
+L_R = 99; % arbitrary length of rear section ft
+>>>>>>> Stashed changes
 =======
 L_R = 99; % arbitrary length of rear section ft
 >>>>>>> Stashed changes
@@ -117,7 +121,11 @@ LF_DF = L_F/Dmax;
 fprintf('The L/D ratio for the fuselage is %0.2f  \n',LF_DF)
 %% Fuel Tanks
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 m_f = 182377.09/9.81; % kg of fuel
+=======
+m_f = 213514/9.81; % kg of fuel
+>>>>>>> Stashed changes
 =======
 m_f = 213514/9.81; % kg of fuel
 >>>>>>> Stashed changes
@@ -126,7 +134,11 @@ rho_f = 840; % kg/m^3
 V_f = m_f/rho_f; % m^3
 V_f = V_f * 35.31; % ft^3
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 fprintf('The fuel tank volume is %0.2f ft^3 \n',1.2*V_f)
+=======
+fprintf('The fuel tank volume is %0.2f ft^3 \n',V_f)
+>>>>>>> Stashed changes
 =======
 fprintf('The fuel tank volume is %0.2f ft^3 \n',V_f)
 >>>>>>> Stashed changes
@@ -140,7 +152,11 @@ L_F2 = L_F; % arbitrary length of nose ft
 % Looking at the SEARS-HACK Body Equation from WIKIPEDIA
 x = linspace(0,1,100); % range
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 x_2 = linspace(0,150*12,100);
+=======
+x_2 = linspace(0,140*12,100);
+>>>>>>> Stashed changes
 =======
 x_2 = linspace(0,140*12,100);
 >>>>>>> Stashed changes
@@ -149,6 +165,7 @@ V_n = (3*pi^2/16 * R_max^2*L_F2)/2;
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);
 r_x2 = ((1/(12.*L_F2)).*(4.*x_2.*(12.*L_F2-x_2)).^.75)/12; % Solidworks
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 figure('Position', [250, 250, L_F2*40, R_max*40]);
 %figure(1)
@@ -165,6 +182,8 @@ text(26,0,'CP')
 text(15,0,'Nose')
 text(75,0,'Rear Section')
 =======
+=======
+>>>>>>> Stashed changes
 %FigHandle = figure('Position', [250, 250, L_F2*40, R_max*40]);
 %figure(1)
 x_CP = L_n+L_CP;
@@ -174,6 +193,9 @@ x_C = x_CP + L_C;
 %line([x_CP x_CP], [-3.25 3.25]);
 %line([x_C x_C], [-3.25 3.25]);
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 %title('Haack Body Fuselage Design')
 %%
