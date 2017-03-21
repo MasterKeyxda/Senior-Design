@@ -133,7 +133,7 @@ V_n = (3*pi^2/16 * R_max^2*L_F2)/2;
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
 r_x = R_max*(4*x.*(1-x)).^(3/4);
 r_x2 = ((1/(12.*L_F2)).*(4.*x_2.*(12.*L_F2-x_2)).^.75)/12; % Solidworks
-FigHandle = figure('Position', [250, 250, L_F2*40, R_max*40]);
+figure('Position', [250, 250, L_F2*40, R_max*40]);
 %figure(1)
 x_CP = L_n+L_CP;
 x_C = x_CP + L_C;

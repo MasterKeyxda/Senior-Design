@@ -100,4 +100,3 @@ k2 = 0.20; % percent of wetted area for subsonic airfoil region
 
 dCL = k1*dC_L1 + k2*dC_L2;
 fprintf('dCL = %f for total wing   \n',dCL)
->>>>>>> origin/master
