@@ -97,11 +97,11 @@ fprintf('\n')
 %% Longitudinal Ground Clearance Criteria
 
 % Ensure aircraft tail does not strike ground during takeoff
-LG.angle.takeOff = 9; % aircraft take-off angle 
+LG.angle.takeOff = 8; % aircraft take-off angle 
 
 % x Distance from main gear to end of tail
 LG.geom.xMGAft = L_F - x_NoseGear - LG.geom.B; 
-LG.geom.hTail = 10; % distance from ground to tail of fuselage
+LG.geom.hTail = LG.geom.hClear + (Dmax/2); % distance from ground to tail of fuselage
 
 % Longitudinal Ground Clearance Angle
 LG.angle.theta = atand(LG.geom.hTail / LG.geom.xMGAft);  

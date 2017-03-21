@@ -105,7 +105,7 @@ while ctrl.res(end) > ctrl.tol
     % Sample Tail Params
     Kc = 1.2; % tail calculation correction factor?
     Vh = 0.6; % horizontal tail volumen coefficient
-    Vv = 0.05; % vertical tail volumen coefficient
+    Vv = 0.09; % vertical tail volumen coefficient
     sweepWing = 28; % wing sweep degrees
     taperh = 0.6; % horizontal tail taper ratio
     cglocAC = -6.25; % ft cg location in front or behind AC Wing
