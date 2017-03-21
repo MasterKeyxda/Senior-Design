@@ -18,7 +18,7 @@ mXcgi.Fuselage = [Wt.Struc.Fuselage, -XLE_w - 0.25*cRootSub + cglocAC + 0.40*L_F
 
 % Engine
 length_engine = 142/12; % ft length of PW TF33-P7
-x_engine2 = 116.5; % location of inlet double engines from nose
+x_engine2 = 116; % location of inlet double engines from nose
 x_engine = 1.5*length_engine+x_engine2; % location of inlet of single engine from nose
 
 % Engine_cg can vary from .3 -.4 of length of engine from inlet 
@@ -34,7 +34,7 @@ mXcgi.Nacelle2 = [Wt.Struc.Nacelle*(2/3),-XLE_w - 0.25*cRootSub + cglocAC + x_en
 mXcgi.Nacelle1 = [Wt.Struc.Nacelle*(1/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + 0.2*length_engine + nacLength*.38];
 
 % Nose and Main Gear
-x_NoseGear = 30; % ft nosegear distance from nose
+x_NoseGear = 32; % ft nosegear distance from nose
 x_MainGear = 95.92; % ft main gear distance from nose
 mXcgi.NoseGear = [Wt.Struc.NoseGear,-XLE_w - 0.25*cRootSub + cglocAC + x_NoseGear];
 mXcgi.MainGear = [Wt.Struc.MainGear,-XLE_w - 0.25*cRootSub + cglocAC + x_MainGear];
@@ -63,7 +63,6 @@ mXcgi.Instrumentation = [Wt.Feq.Iae,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit
 
 % Electrical System 
 mXcgi.ElecSys = [Wt.Feq.ElecSys,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % Also under cockpit
-
 
 
 % Air Conditioning, Pressurazation, and de-icing systems
@@ -102,8 +101,8 @@ cgEmpty = moment/wt;
 
 % If positive - nose heavy
 % If negative - tail heavy
-fprintf('The empty weight cg is %0.4f \n', cgEmpty)
-fprintf('The Difference Between Required and Actual CG %0.4f ft \n', cgEmpty);
+fprintf('The empty weight Xcg is %0.4f \n', cgEmpty)
+fprintf('The Difference Between Required and Actual XCG %0.4f ft \n', cgEmpty);
 
 %% Empty Weight + Crew CG (OEW CG)
 mXcgi.Crew = [Wt.oew.crew,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % crew in cockpit 
@@ -116,7 +115,7 @@ wt = 0;
  end
 wtOEW = wt; 
 cgOEW = moment/wt;
-fprintf('The operating empty weight cg is %0.4f \n', cgOEW)
+fprintf('The operating empty weight Xcg is %0.4f \n', cgOEW)
 %% Empty Weight + Crew + Fuel CG
 
 wt = 0;
@@ -126,7 +125,7 @@ wt = 0;
  end
 wtFuel = wt + Wt.fuel.w_tot; 
 cgFuel = moment/wt;
-fprintf('The oew + fuel cg is %0.4f \n', cgFuel)
+fprintf('The Xoew + fuel cg is %0.4f \n', cgFuel)
 %% Empty Weight + Crew + PAX (No baggage) CG
 
 % Assume passenger distribution places cg at cabin center
@@ -140,7 +139,7 @@ wt = 0;
  end
 wtPAX_NoBag = wt; 
 cgPAX_NoBag = moment/wt;
-fprintf('The cg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
+fprintf('The Xcg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
 %% Empty Weight + Crew + PAX (w/ baggage) CG
 x_baggage = 4; % distance of baggage from end of cabin
 % Assume passenger distribution places cg at cabin center
@@ -154,7 +153,7 @@ wt = 0;
  end
 wtPAX_Bag = wt; 
 cgPAX_Bag = moment/wt;
-fprintf('The cg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
+fprintf('The Xcg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
 
 %% Empty Weight + Crew + PAX (w/ baggage) + Fuel (MTOW) CG
 
@@ -164,20 +163,30 @@ fprintf('The cg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
  end
 wtMTOW = wt + Wt.fuel.w_tot; 
 cgMTOW = moment/wt;
-fprintf('The cg for MTOW is %0.4f \n', cgMTOW)
+fprintf('The Xcg for MTOW is %0.4f \n', cgMTOW)
 
 %% CG Excursion Diagram
 
 wtArray = [wtEmpty; wtOEW; wtPAX_NoBag; wtPAX_Bag; wtFuel; wtMTOW];
 cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag; cgFuel; cgMTOW]; 
-
+cgRange = max(cgArray) - min(cgArray); 
+fprintf('The cg range is %0.2f ft \n', cgRange)
 figure()
 title('Aircraft CG Excursion')
-xlabel('CG Location, ft')
+xlabel('CG Location (F.S.), ft')
 ylabel('Weight (lbs)')
 hold on;
+
 % Plot CG Diagram
-for iPlot = 1:length(wtArray)
-    plot(cgArray(iPlot),wtArray(iPlot), 'o')
-end
+plot(cgArray(1), wtArray(1), 'ro', 'MarkerSize',10)
+plot(cgArray(2), wtArray(2), 'go', 'MarkerSize',10)
+plot(cgArray(3), wtArray(3), 'o', 'MarkerSize',10, 'Color',[0.5 0 1])
+plot(cgArray(4), wtArray(4), 'o', 'MarkerSize',10, 'Color',[0 0.4 0.3])
+plot(cgArray(5), wtArray(5), 'o', 'MarkerSize',10, 'Color',[1 0.5 0])
+plot(cgArray(6), wtArray(6), 'o', 'MarkerSize',10, 'Color',[0 1 1])
 plot(cgArray,wtArray, 'b--') % plot line through points
+legend('Empty Wt CG','OEW Wt CG','OEW Wt + Fuel CG', ...
+    'OEW Wt + Fuel + PAX (No Baggage) CG', ... 
+    'OEW Wt + Fuel + PAX (With Baggage) CG',...
+    'MTOW CG','Location','Northwest')
+legend('boxoff')
