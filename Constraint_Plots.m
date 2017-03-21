@@ -146,4 +146,4 @@ fprintf('The wing area, S is: %0.2f ft^2 \n', Wt.WTO / designPoint(1))
 fprintf('The thrust, T is: %0.2f lbf \n', ceilCurve_avg * Wt.WTO)
 
 S_w = Wt.WTO/designPoint(1);
-constraints.req_Thr = ceilCurve_avg * Wt.WTO;
+constraints.req_Thr = designPoint(2) * Wt.WTO;

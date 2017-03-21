@@ -48,7 +48,6 @@ fM = 1 - (0.08*req.cr_M0(1)^1.45);
 %-----Wing-----%
 
 % Eqn 3.19
-
 Swet.wing = WING.geom.S_area - 2*0.5*D_C*(WING.geom.sub.Cr +...
     (WING.geom.sub.Cr+(0.5*D_C)*((WING.geom.sub.Ct-WING.geom.sub.Cr)/WING.geom.sub.span)))/2; % wing wetted area correction for removed area inside fuselage
 Swet.wing = 2*Swet.wing; % wing wetted area
@@ -172,7 +171,7 @@ CDw.lift = CDw.K_wl * WING.geom.S_area * (CL.overall^2) * (req.cr_M0(1)^2 - 1)/(
 % Volume Dependent Wave Drag
 CDw.beta = sqrt(req.cr_M0(1)^2 - 1);
 CDw.K_wv = 1.17 * ((1 + 0.75*CDw.beta * WING.geom.span / L_F)/(1+2*CDw.beta * WING.geom.span / L_F));
-CDw.vol_aircraft = 5153.3045; %ft^3
+CDw.vol_aircraft = 4956.42; %ft^3 -> obtained from solidworks
 CDw.volume = 128 * CDw.K_wv * CDw.vol_aircraft^2 / (pi * WING.geom.S_area * L_F^4);
 
 CDw.total = CDw.lift + CDw.volume;
