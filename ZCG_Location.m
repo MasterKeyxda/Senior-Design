@@ -3,13 +3,12 @@ clear CG_types
 clear mZcgi
 
 % All references and moment arms in ft 
-% Zcg calc performed with reference to bottom of fuselage
+% Zcg calc performed with reference to ground
 % Lifting Components - referenced to desired CG
 % Wing
-hWing = 0.5; % distance from bottom of fuselage to bottom of wing
 
 % Assume wing Zcg is at half of wing thickness
-mZcgi.Wing = [Wt.Struc.Wing, 0.5*trSub + 0.5 + hWing];
+mZcgi.Wing = [Wt.Struc.Wing, 0.5*trSub];
 
 % Horizontal Tail (NOTE: need to account for taper of fuselage -- ASK MATT)
 TAIL.thickRatio = 0.05; % Tail thickness ratio
@@ -40,39 +39,39 @@ mZcgi.Nacelle1 = [Wt.Struc.Nacelle*(1/3), (Dmax/2) + (0.5 * D_eng)];
 % Nose and Main Gear
 % Need estimated strut length (Zcg is 0.50 strut length)
 % Reference from bottom of fuselage 
-strutLength = 5; % Estimated strut length (UPDATE LATER)
-mZcgi.NoseGear = [Wt.Struc.NoseGear, -0.5 * strutLength];
-mZcgi.MainGear = [Wt.Struc.MainGear, -0.5 * strutLength];
+strutLength = 5.84; % Estimated strut length (UPDATE LATER)
+mZcgi.NoseGear = [Wt.Struc.NoseGear, -0.6 * strutLength];
+mZcgi.MainGear = [Wt.Struc.MainGear, -0.6 * strutLength];
 
 % Fuel System
 % Fuel tank should have minimal effect on CG loaded and empty
 LengthFuelTank = 12; % ft
 % Assume Fuel System at 0.66 Zcg 
-mZcgi.FuelSystem = [Wt.Pwr.FuelSystem, Dmax*0.66]; 
+mZcgi.FuelSystem = [Wt.Pwr.FuelSystem, Dmax*0.5]; 
 
 % Fixed Equipment Weight
 % Flight Control System
-z_cockpit = Dmax*0.75; % Based on CAD model; should be roughly 6 ft 
+z_cockpit = Dmax*0.65; % Based on CAD model; should be roughly 6 ft 
 mZcgi.FCsys = [Wt.Feq.FCsysGD, z_cockpit];
 
 % Hydraulic System for Landing Gear
 Nose_rat = Wt.Struc.NoseGear/(Wt.Struc.NoseGear+Wt.Struc.MainGear); % weight ratio of nose landing gear
 Main_rat = Wt.Struc.MainGear/(Wt.Struc.NoseGear+Wt.Struc.MainGear); % weight ratio of main landing gear
 % Slightly above the bottom of fuselage
-mZcgi.HydraulicNose = [Wt.Feq.Hydraulic*Nose_rat,1]; 
-mZcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,1];
+mZcgi.HydraulicNose = [Wt.Feq.Hydraulic*Nose_rat,0.75]; 
+mZcgi.HydraulicMain = [Wt.Feq.Hydraulic*Main_rat,0.75];
 
 % Instrumentation, Avionics
-mZcgi.Instrumentation = [Wt.Feq.Iae,Dmax*0.85]; % In cockpit (Roughly 7 ft)
+mZcgi.Instrumentation = [Wt.Feq.Iae,Dmax*0.75]; % In cockpit (Roughly 7 ft)
 
 % Electrical System 
-% NEED TO ADD
+mZcgi.ElecSys = [Wt.Feq.ElecSys,3.5]; % Under cockpit
 
-% Air Conditioning, Pressurazation, and de-icing systems
-mZcgi.Api = [Wt.Feq.ApiGD,-XLE_w - 0.25*cRootSub + cglocAC + x_engine + length_engine*.4]; % located at engine
+% Air Conditioning, Pressurization, and de-icing systems
+mZcgi.Api = [Wt.Feq.ApiGD,4.5]; % located at engine
 
 % Oxygen System
-mZcgi.Oxygen = [Wt.Feq.OxygenGD,-XLE_w - 0.25*cRootSub + cglocAC + (53.33+25)/2]; % CG placed in center of habitable cabin 
+mZcgi.Oxygen = [Wt.Feq.OxygenGD,7]; % CG placed in center of habitable cabin 
 
 % Auxiliary Power Unit
 % Placed at Engines
@@ -99,7 +98,6 @@ wt = 0;
 wtEmpty = wt; 
 ZcgEmpty = moment/wt;
 
-% If positive - nose heavy
-% If negative - tail heavy
-fprintf('The empty weight Zcg is %0.4f \n', abs(ZcgEmpty))
+% With reference to bottom of fuselage (ft
+fprintf('The empty weight Zcg is %0.2f ft from the bottom of the fuselage. \n', abs(ZcgEmpty))
 

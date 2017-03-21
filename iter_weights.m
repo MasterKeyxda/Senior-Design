@@ -142,8 +142,14 @@ if Wt.enginetype.thr*3 < constraints.req_Thr
 else
     fprintf('Thrust requirement met\n');
 end
-% Call XCGLocation Script 
+
+%-----Call XCGLocation Script-----%
 XCGLocation
+
+%-----Call ZCGLocation Script-----%
+ZCG_Location
+
+%-----Landing Gear-----% 
 
 % fprintf('The Required CG %0.2f ft\n', cglocAC);
 % save meta information about current script run
