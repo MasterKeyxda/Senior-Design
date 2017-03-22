@@ -58,7 +58,7 @@ figs.fig11 = dlmread('effective_AR_roskam_lam_fig10-11.txt', '%0.5f\t%0.5f\n', 2
 figs.fig11 = figs.fig11(find([diff(figs.fig11(:,1)); 1]),:);
 
 % Aircraft Properties
-h_start = 5; % ft above ground
+h_start = 5.54; % ft above ground
 AR_eff = @(h) WING.geom.AR / (spline(figs.fig11(:,1)', figs.fig11(:,2)', 2*h/WING.geom.span));
 alf0 = 2*pi/180; % 2 radians
 CD0 = 0.0196;
@@ -81,7 +81,7 @@ Xpos(1,:) = [0.0, 0.0, 0.0]; % [X0, V0, t]
 ii = 1; % iterate with this
 L_i = 0.0;
 
-while (L_i < Wt.WTO) || (Xpos(ii,2) < 1.2*constraints.Vstall)
+while (L_i < Wt.WTO)% || (Xpos(ii,2) < 1.2*constraints.Vstall)
     ii = ii + 1;
     
     % Lift coefficient model
@@ -134,7 +134,7 @@ iii = ii + 1;
 
 if (iii - ii) > length(alpha_schedule)
     alpha_i1 = alpha_schedule(end);
-else%if %h_trans >= 7
+else
     alpha_i1 = alpha_schedule(iii-ii);
 % else
 %     alpha_i1 = 0;
@@ -163,6 +163,7 @@ Xpos(iii, :) = [X_ii, V_ii, t_ii];
 h_trans = h_trans + (dt*V_ii)*sin(gamma(2));
 dS_trans = dS_trans + (dt*V_ii)*cos(gamma(2));
 cleared = 0;
+ii_a = 1;
 
 while h_trans < 35 
     iii = iii + 1;
@@ -172,7 +173,8 @@ while h_trans < 35
     elseif (iii - ii) > length(alpha_schedule)
         alpha_i1 = alpha_schedule(end);
     else
-        alpha_i1 = alpha_schedule(iii-ii);
+        alpha_i1 = alpha_schedule(ii_a);
+        ii_a = ii_a + 1;
     end
     
     % Lift coefficient model
@@ -206,6 +208,12 @@ while h_trans < 35
        cleared = 1;
     end
     
+    if (iii - ii - 1) == 1
+       fprintf('Lift-off Flight Path Angle: %0.5f deg \n', gamma(iii-ii)*180/pi); 
+       fprintf('Pitch Angle: %0.5f deg\n', (gamma(iii-ii) + alpha_i1)*180/pi);
+       fprintf('Wing Height: %0.3f ft\n', h_trans);
+    end
+    
 end
 
 fprintf('Time to Climb-Out: %0.5f\n', Xpos(end,3) - Xpos(ii, 3));
@@ -221,7 +229,7 @@ fprintf('\nLanding Calculations\n');
 V_A = 1.15*constraints.Vstall;
 V_TD = 1.1 * V_A;
 V_FL = 0.95*V_A;
-gam_A = -1.5*pi/180; % degrees, approach angle
+gam_A = -3.0*pi/180; % degrees, approach angle
 h_screen = 50;
 n_FL = 1.04;
 
@@ -280,11 +288,13 @@ while X_LR(end, 2) > 0
     if (L_i < WT_land) && (N_n == 0)
         fprintf('Main Landed for Touchdown at Time: %0.2fs\n', X_LR(ii, 3));
         fprintf('Main Landing Position from TD Point: %0.2f ft\n', X_LR(ii,1));
+        STD = X_LR(ii,1);
+        fprintf('Actual Touchdown Velocity: %0.2f ft\n', X_LR(ii, 2));
         N_n = 0.08 * WT_land;
     end
 end
 
 fprintf('Total Air Landing Distance: %0.2f ft\n', S_LTR + S_LDES);
-fprintf('Total Ground Landing Distance: %0.2f ft\n', X_LR(end,1));
+fprintf('Actual Ground Landing Distance: %0.2f ft\n', X_LR(end,1)-STD);
 S_L_tot = X_LR(end,1) + S_LTR + S_LDES;
 fprintf('Total Landing Distance: %0.2f ft\n', S_L_tot);
