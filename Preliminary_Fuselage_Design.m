@@ -98,7 +98,7 @@ L_n = 25; % arbitrary length of nose ft
 %% Rear Section
 % Will Include Tail and Wing as well for supersonic aircraft.
 
-L_R = 99; % arbitrary length of rear section ft
+L_R = 98.33; % arbitrary length of rear section ft
 
 
 %% Length to Diameter Ratio Fineness Ratio
@@ -127,7 +127,7 @@ fprintf('The bottom volume for the fuselage is %0.2f ft^3 \n',V_bot)
 L_F2 = L_F; % arbitrary length of nose ft
 % Looking at the SEARS-HACK Body Equation from WIKIPEDIA
 x = linspace(0,1,100); % range
-x_2 = linspace(0,140*12,100);
+x_2 = linspace(0,150*12,100);
 R_max = D_C/2; % arbitrary maximum nose radius ft
 V_n = (3*pi^2/16 * R_max^2*L_F2)/2;
 S_x = pi*R_max^2*(4*x.*(1-x)).^(3/2); % nose cross sectional area
@@ -142,6 +142,11 @@ line([L_n L_n], [-3.25 3.25]);
 line([x_CP x_CP], [-3.25 3.25]);
 line([x_C x_C], [-3.25 3.25]);
 
+
+text(32,0,'Passenger Cabin')
+text(26,0,'CP')
+text(15,0,'Nose')
+text(75,0,'Rear Section')
 %title('Haack Body Fuselage Design')
 %%
 % z = L_F*x;

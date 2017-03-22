@@ -128,4 +128,6 @@ function TAIL = TailCalc(alpha, Vh, Vv, Wt, rho, vel, Df, Kc, S, AR, Cmaf, sweep
     TAIL.hAngle = ih;
     TAIL.bv = bv;
     TAIL.LE_wt = Xcg+Lopt-0.25*cv;
+    TAIL.CLalphah = CL_alpha;
+    TAIL.Cm_alpha = Cm_alpha;
 end
