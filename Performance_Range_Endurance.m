@@ -72,25 +72,46 @@ fprintf('The maximum range (const altitude) is %0.2f nm. \n', Perf.Rng.ConsAlt)
 % Determine max range from const alt and const mach number methods
 Perf.Rng.max = max(Perf.Rng.ConsAlt,Perf.Rng.ConsM);
 % Useful Weight
+Wt.Useful = Wt.WTO - Wt.WOEW;
 % Linearly decrease from max payload to 0
 Wt.pld.linear = linspace(Wt.pld.w_tot, 0, 10); 
 % Linearly increase fuel to max useful weight
 Wt.fuel.linear = linspace(Wt.fuel.w_tot, Wt.Useful, 10); 
 % See Roskam and Lam p.560
-% Pt A --> R = 0 nm, Max payload
-figure()
-plot(0, Wt.pld.w_tot)
-hold on;
-title('Payload-Range Diagram')
-xlabel('Range, nm')
-ylabel('Payload Weight (lbs)')
 
-% Pt B --> R = Rmax, Max payload
-plot(Perf.Rng.max, Wt.pld.w_tot)
+
+
 
 % Pt C --> Rmax,fuel
 % Mission fuel fraction for various fuel weights
 Wt.mff.array = 1 - (Wt.fuel.linear / Wt.WTO);
 
-% Fuel Fraction array for cruise
-Wt.mff.array
+% Cruise Fuel Fraction Array
+Wt.fuel.cr_array = Wt.mff.array*(1/Wt.fuel.w2_1)*(1/Wt.fuel.w3_2)*(1/Wt.fuel.w5_4)*(1/Wt.fuel.w6_5)*(1/Wt.fuel.w7_6); 
+
+% Weight at end of cruise for varying cruise fuel fraction
+Wt.cr.end_array = Wt.fuel.cr_array * Wt.cr.begin; % weight at end of cruise phase
+
+Perf.Rng.ConsM_array = ((a.soundCr .* sqrt(atm.theta) .* req.cr_M0(1) .* L_D.cr.average) ./ cj) .* log(Wt.cr.begin./Wt.cr.end_array);
+
+
+% Pt B --> R = Rmax, Max payload
+Perf.Rng.Array = [0,Perf.Rng.max];
+Wt.pld.Array = [Wt.pld.w_tot,Wt.pld.w_tot];
+figure()
+title('Payload-Range Diagram')
+xlabel('Range, nm')
+ylabel('Payload Weight (lbs)')
+hold on;
+
+% Pt A --> R = 0 nm, Max payload
+%plot(Perf.Rng.Array(1), Wt.pld.w_tot, 'o', 'Color', [1 0.5 0], 'MarkerSize', 8)
+plot(Perf.Rng.Array(2), Wt.pld.w_tot, 's', 'Color', [1 0.5 0], 'MarkerSize', 8)
+
+
+% Pt D --> Rmax
+plot(Perf.Rng.ConsM_array(end), Wt.pld.linear(end),'x', 'Color', [1 0.5 0], 'MarkerSize', 8)
+% Linearly increase fuel, decrease payload linearly
+plot(Perf.Rng.ConsM_array, Wt.pld.linear,'b')
+legend('R_{design}', 'R_{ferry}','Location', 'Southwest')
+plot(Perf.Rng.Array, Wt.pld.Array,'b')

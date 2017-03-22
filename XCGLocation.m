@@ -117,7 +117,7 @@ wtOEW = wt;
 cgOEW = moment/wt;
 fprintf('The operating empty weight Xcg is %0.4f \n', cgOEW)
 %% Empty Weight + Crew + Fuel CG
-
+moment = 0; 
 wt = 0;
  for i = 1:numel(CG_types)
    moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
