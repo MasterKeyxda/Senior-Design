@@ -92,11 +92,11 @@ moment = 0;
 wt = 0;
 
 for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
+   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2) %Convert sign NEGATIVE = FLIP OVER
    wt = wt + mXcgi.(CG_types{i})(1);
 end
 
-wtEmpty = wt; 
+wtEmpty = wt;
 cgEmpty = moment/wt;
 
 % If positive - nose heavy
@@ -177,16 +177,20 @@ xlabel('CG Location (F.S.), ft')
 ylabel('Weight (lbs)')
 hold on;
 
+
+cgNoseArray = [91.41; 90.82; 90.22; 88.94; 88.51; 88.51];
+
 % Plot CG Diagram
-plot(cgArray(1), wtArray(1), 'ro', 'MarkerSize',10)
-plot(cgArray(2), wtArray(2), 'go', 'MarkerSize',10)
-plot(cgArray(3), wtArray(3), 'o', 'MarkerSize',10, 'Color',[0.5 0 1])
-plot(cgArray(4), wtArray(4), 'o', 'MarkerSize',10, 'Color',[0 0.4 0.3])
-plot(cgArray(5), wtArray(5), 'o', 'MarkerSize',10, 'Color',[1 0.5 0])
-plot(cgArray(6), wtArray(6), 'o', 'MarkerSize',10, 'Color',[0 1 1])
-plot(cgArray,wtArray, 'b--') % plot line through points
+plot(cgNoseArray(1), wtArray(1), 'ro', 'MarkerSize',10)
+plot(cgNoseArray(2), wtArray(2), 'go', 'MarkerSize',10)
+plot(cgNoseArray(3), wtArray(3), 'o', 'MarkerSize',10, 'Color',[0.5 0 1])
+plot(cgNoseArray(4), wtArray(4), 'o', 'MarkerSize',10, 'Color',[0 0.4 0.3])
+plot(cgNoseArray(5), wtArray(5), 'o', 'MarkerSize',10, 'Color',[1 0.5 0])
+plot(cgNoseArray(6), wtArray(6), 'o', 'MarkerSize',10, 'Color',[0 1 1])
+plot(cgNoseArray,wtArray, 'b--') % plot line through points
 legend('Empty Wt CG','OEW Wt CG','OEW Wt + Fuel CG', ...
-    'OEW Wt + Fuel + PAX (No Baggage) CG', ... 
-    'OEW Wt + Fuel + PAX (With Baggage) CG',...
-    'MTOW CG','Location','Northwest')
-legend('boxoff')
+    'OEW Wt + PAX (No Baggage) CG', ... 
+    'OEW Wt + PAX (With Baggage) CG',...
+    'MTOW CG','Location','Northeast')
+
+
