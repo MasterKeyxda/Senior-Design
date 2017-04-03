@@ -11,10 +11,27 @@ mdot = 248; % lb/s
 SFC = 0.74;
 Tt4 = 2700; % R
 Tt0 = 518.69; % R
+<<<<<<< Updated upstream
 Force = 17.8e3; %lbf
 BPR = 0.36; % bypass ratio
 FPR = 3.8; % Fan Pressure Ratio
 OPR = 16.0;
+=======
+Force = 21e3; %lbf
+BPR = 1.21; % bypass ratio
+FPR = 1.9; % Fan Pressure Ratio
+OPR = 16;
+
+
+Force = input('Enter Thrust (lbf): ');
+SFC = input('Enter TSFC: ');
+mdot = input('Enter Airflow:');
+OPR = input('Enter OPR: ');
+Tt4 = input('Enter Tt4 (R): ');
+BPR = input('Enter BPR: ');
+
+
+>>>>>>> Stashed changes
 
 % Air Properties
 cp_c = 0.24; %BTU/lbm R
@@ -64,6 +81,7 @@ fprintf('tau_t: %0.5f\n', tau_t);
 pi_t = tau_t ^ (gamma_t/((gamma_t - 1) * e_t));
 fprintf('pi_t: %0.5f\n', pi_t);
 
+<<<<<<< Updated upstream
 % Get exit conditions
 pi_t19_s = FPR * pi_n;
 M19 = sqrt((2/(gamma_c - 1)) * (pi_t19_s ^ ((gamma_c - 1)/gamma_c) - 1));
@@ -71,9 +89,65 @@ tau_19_0 = tau_f / (pi_t19_s ^ ((gamma_c - 1)/gamma_c));
 
 pi_t9_s = pi_c * pi_b * pi_t * pi_n;
 M9 = sqrt((2/(gamma_t - 1)) * (pi_t9_s ^ ((gamma_t - 1)/gamma_t) - 1));
+=======
+% area = pi * 0.25 * (54/12)^2;
+% rho = 0.000531556; % slugs/ft^3
+% press = 355.787; % lbf/ft^2
+% M0 = 1.6;
+% mdot_alt = rho * area * (1.6 * 968.076) * 32.174;
+% mdot_alt = 
+>>>>>>> Stashed changes
 
 % To use with EngineSimU 1.8a
 
+<<<<<<< Updated upstream
+=======
+% FC: flight conditions (P0, T0, M0, gamma, cp)
+% ENG: engine parameters (pi_c, pi_f, Tt4_max, hPR, ENG.p0_9, ENG.p0_19, d (diameter, ft), BPR)
+% THR: required thrust
+% TL: tech level
+
+FC.P0 = 2116.23*atm.delta; % lbf/ft^2
+FC.T0 = 518.67 * atm.theta; % Rankine
+FC.M0 = req.cr_M0(1);
+FC.gamma = 1.4;  % air
+FC.cp = 0.24; % BTU/lbm R
+FC.rho = 0.000531556; % slugs/ft^3
+
+ENG.pi_c = pi_c;
+ENG.pi_f = FPR;
+ENG.tau_t = tau_t;
+ENG.tau_f = tau_f;
+ENG.Tt4_sl = Tt4;
+ENG.Tt0 = Tt0;
+ENG.Tt4_max = 4000; % TECH LEVEL 5
+ENG.Tt4_min = Tt4;
+ENG.hPR = hPR_kerosene; % replace Jet Fuel B with Jet Fuel A
+ENG.p0_9 = 1.0;
+ENG.p0_19 = 1.0;
+ENG.d = 54/12; % in -> ft
+ENG.BPR = BPR;
+ENG.mdot_sl = mdot;
+
+
+n_eng = 1; % three engines
+thrust = (Wt.WTO * Wt.fuel.w2_1 * Wt.fuel.w3_2) / (LD_Max * n_eng);
+
+% TL level 5
+TL.d_max = 0.97; % supersonic aircraft
+TL.e_c = 0.91;
+TL.e_f = 0.92;
+TL.pi_b = 0.96;
+TL.eta_b = 0.999;
+TL.e_t = 0.91; % uncooled
+TL.pi_n = 0.99; % variable area convergent/divergent nozzle
+TL.eta_m = 0.996; % shaft only
+% TL
+
+[Tts4, f_ratio_T, SFC_T] = throttle_calcs(FC, ENG, TL, thrust);
+
+%%
+>>>>>>> Stashed changes
 
 %% Get New Engine Power Curves?
 fprintf('Thrust Specific Fuel Consumtion = %f \n',SFC_T*3600)
