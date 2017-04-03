@@ -92,7 +92,7 @@ moment = 0;
 wt = 0;
 
 for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2) %Convert sign NEGATIVE = FLIP OVER
+   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
    wt = wt + mXcgi.(CG_types{i})(1);
 end
 
@@ -156,7 +156,8 @@ cgPAX_Bag = moment/wt;
 fprintf('The Xcg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
 
 %% Empty Weight + Crew + PAX (w/ baggage) + Fuel (MTOW) CG
-
+moment = 0;
+wt = 0;
  for i = 1:numel(CG_types)
    moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); % Convert sign NEGATIVE = FLIP OVER
    wt = wt + mXcgi.(CG_types{i})(1);
@@ -192,5 +193,4 @@ legend('Empty Wt CG','OEW Wt CG','OEW Wt + Fuel CG', ...
     'OEW Wt + PAX (No Baggage) CG', ... 
     'OEW Wt + PAX (With Baggage) CG',...
     'MTOW CG','Location','Northeast')
-
 
