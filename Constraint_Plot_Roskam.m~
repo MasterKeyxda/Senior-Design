@@ -68,19 +68,9 @@ constraints.wingLoading_TO = constraints.wingLoading_Land / Wt.LandRatio;
 atm.alt_cr = 45; % cruise alt in kft; adjust to match main script
 [~,~,atm.sig_rho_cr,atm.asnd_cr] = AltTable(atm.alt_cr,'h'); 
 atm.rho_cr = atm.sig_rho_cr * atm.rho_sl;
+atm.Vcruise = atm.asnd_cr * req.cr_M0(1) * 1116; % ft/s
 
-% Parameters at service ceiling
-constraints.Vcruise = atm.asnd_cr * req.cr_M0(1) * 1116; % ft/s
-constraints.ROC = 500/60; % Rate of Climb at service ceiling
-constraints.L_D = 7; % assumed L/D max
-
-% Required thrust at service ceiling
-constraints.thrstService = (constraints.ROC/constraints.Vcruise) + (1/constraints.L_D);
-
-% Convert thrust at service ceiling to takeoff thrust
-constraints.thrstRatio = 0.23; % Estimate; need ratio of SL thrust to cruise thrust
-constraints.ceilingCurve = constraints.thrstService/constraints.thrstRatio;
-
+constraints.RC = 500/60; % Rate of Climb at service ceiling
 %% Cruise Speed Sizing (Section 3.6.4 - 3.6.5)
 
 % Zero Lift Drag Coefficient
@@ -90,12 +80,13 @@ AR = 3; % aspect ratio
 e = 0.8; % Oswald efficiency factor
 
 % Dynamic Pressure at specified cruise alt (psf)
-atm.dyn_press = 0.5*(atm.rho_cr)*(constraints.Vcruise^2); 
+atm.dyn_press = 0.5*(atm.rho_cr)*(Wt.fuel.V_max_cr^2); 
 
 % NOTE: Not required takeoff thrust (Eqn 3.60)
 constraints.thrstCruise = ((CD_0*atm.dyn_press)./constraints.wingLoading) + (constraints.wingLoading ./ (atm.dyn_press * pi * AR * e)); 
 
 % Takeoff thrust for Vmax Curve (p.182)
+constraints.thrstRatio = 0.23; % Estimate; need ratio of SL thrust to cruise thrust
 constraints.VmaxCurve = constraints.thrstCruise / constraints.thrstRatio;
 
 %% Generate Constraint Plot
@@ -106,17 +97,11 @@ title('Wing Area (S) and Engine Thrust (T) Constraint Plot')
 xlabel('Wing Loading, W/S (lbf / ft^2)')
 ylabel('Thrust-to-Weight Ratio, T/W (lbf/lbf)')
 
-% Landing Distance / Stall Curve
+% Landing Distance Curve
 plot([constraints.wingLoading_TO,constraints.wingLoading_TO],[0,1.5])
 
 % Takeoff Distance Curve 
 plot(constraints.wingLoading, constraints.TO_Curve)
-
-% Climb Curve
-
-
-% Service Ceiling Curve
-plot([constraints.wingLoading(1), constraints.wingLoading(end)],[constraints.ceilingCurve, constraints.ceilingCurve])
 
 % Vmax Curve
 plot(constraints.wingLoading, constraints.VmaxCurve)
