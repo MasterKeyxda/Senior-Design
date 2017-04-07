@@ -48,6 +48,7 @@ TL.eta_m = 0.996; % shaft only
 
 TF33_parts = reverse_engineer_engine(TF33, fuel, TL2, air);
 F100_parts = reverse_engineer_engine(F100_PW_229, fuel, TL2, air);
+F101_parts = reverse_engineer_engine(F101_GE_102, fuel, TL2, air);
 
 
 %% Engine Throttle Params & Get New Engine Power Curves?
