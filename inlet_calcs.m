@@ -89,3 +89,16 @@ fprintf('Ramp Angle 2: %0.5f\n', theta2_des);
 fprintf('Shock Angle 2: %0.5f\n', beta2_des);
 
 fprintf('Max Pressure Recovery Ratio: %0.5f\n', max(Pt_tot));
+
+
+%% Area
+mdotreq = 266.56; %Taken from PERF
+P0 =2.480729*144; %lbf/ft^2
+R = 53.34; %lbf/lbmR
+T = 389.97; % Rankine
+gamma = 1.4; % Cp/Cv
+gc = 32.174; % Fucking US Constants
+M0 =1.6; %Flight Mach Number
+area = mdotreq/(P0/(R*T)*sqrt(gamma*gc*R*T)*M0); %Inlet Area
+
+fprintf('Inlet Area Required = %0.2f ft^2 \n', area);
