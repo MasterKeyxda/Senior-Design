@@ -8,7 +8,7 @@ constraints.wingLoading = 40:0.5:200; % wing loading parameter (lb/ft^2)
 % CL for takeoff and landing Roskam Part I, p.91; 
 constraints.CLMax = 1.6; 
 constraints.CLMax_L = 2; % landing
-constraints.CLMax_TO = 2; % takeoff
+constraints.CLMax_TO = 1.8; % takeoff
 
 %% Stall Speed (Section 3.1)
 
@@ -33,7 +33,7 @@ constraints.Vstall_Crv = min(constraints.Vstall_Crv_Up, constraints.Vstall_Crv_D
 % FAR 25 takeoff parameter (lbs/ft^2)
 TOP_25 = req.takeoffRun / 37.5; % Eqn 3.8 Roskam Pt 1
 
-atm.alt_TO = 8; % alt for takeoff sizing (kft)
+atm.alt_TO = 0; % alt for takeoff sizing (kft)
 [~,~,atm.sig_rhoTO,~] = AltTable(atm.alt_TO,'h'); % sigma at takeoff
 
 % Takeoff field length (Eqn 3.7)
@@ -65,7 +65,7 @@ constraints.wingLoading_TO = constraints.wingLoading_Land / Wt.LandRatio;
 %% Ceiling Sizing (Section 3.4.10 & p.183)
 
 % Cruise air properties
-atm.alt_cr = 45; % cruise alt in kft; adjust to match main script
+atm.alt_cr = 46; % cruise alt in kft; adjust to match main script
 [~,~,atm.sig_rho_cr,atm.asnd_cr] = AltTable(atm.alt_cr,'h'); 
 atm.rho_cr = atm.sig_rho_cr * atm.rho_sl;
 
@@ -121,4 +121,4 @@ plot([constraints.wingLoading(1), constraints.wingLoading(end)],[constraints.cei
 % Vmax Curve
 plot(constraints.wingLoading, constraints.VmaxCurve)
 
-
+legend('Landing/Stall', 'Takeoff', 'Service Ceiling','Cruise')
