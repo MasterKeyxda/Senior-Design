@@ -190,7 +190,7 @@ LG.tire.MainWidth = LG.const.AWidth * (LG.load.MGwheel^LG.const.BWidth);
 
 % Nose Gear Assembly Tire Sizes (Dimensions in inches)
 % Raymer - "Nose tires can assumed to be 60-100% the size of main tires"
-LG.tire.scale = 0.70; % scale nose tires dimensions by 70% of main tires
+LG.tire.scale = 0.75; % scale nose tires dimensions by 70% of main tires
 LG.tire.NoseDiam = LG.tire.scale * LG.tire.MainDiam;
 LG.tire.NoseWidth = LG.tire.scale * LG.tire.MainWidth;
 
