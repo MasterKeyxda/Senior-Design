@@ -7,7 +7,7 @@
 constraints.wingLoading = 40:0.5:200; % wing loading parameter (lb/ft^2)
 % CL for takeoff and landing Roskam Part I, p.91; 
 constraints.CLMax = 1.6; 
-constraints.CLMax_L = 2; % landing
+constraints.CLMax_L = 1.6; % landing
 constraints.CLMax_TO = 1.8; % takeoff
 
 %% Stall Speed (Section 3.1)
@@ -61,6 +61,33 @@ Wt.LandRatio = 0.815; % Ratio of Landing Weight to WTO
 constraints.wingLoading_TO = constraints.wingLoading_Land / Wt.LandRatio;
 
 %% Climb Sizing (Section 3.4)
+% For turbofan engines, engine thrust must be 34% humidity and standard
+% temp + 50 deg F according to FAR 25 climb requirements
+tempCorr = 0.80; 
+
+% OEI = one engine inoperative
+% AEO = all engines operating
+% Drag Polar estimates
+% Low speed, clean
+polar.CDO = 0.0201; % preliminary estimate
+polar.CDO_TO = 0.015; % drag increment due to takeoff flaps
+polar.CD0_L = 0.065; % drag increment due to landing flaps
+polar.CDO_LG = 0.020; % drag increment due to landing gear
+polar.CDO_A = (polar.CDO_TO + polar.CDO_LG + polar.CD0_L + polar.CDO_LG)/2; 
+e.takeoff = 0.80; % takeoff efficiency factor
+e.land = 0.75; % landing efficiency factor
+AR = 3; % aspect ratio 
+
+% FAR 25.121 (OEI) - Balked Landing --> must critical of climb requirements
+CGR = 0.024;
+CLMax_A = constraints.CLMax_L / 1.17; % Approach CLmax 
+CL_A = CLMax_A / (1.5^2); % CL for approach
+CD_A = polar.CDO_A + (CL_A^2)/(pi*e.land*AR);
+L_D.approach = CL_A/CD_A;
+% Balked Landing (T/W)_L
+constraints.landBalked = (3/2)*((1/L_D.approach) + CGR);
+% Convert to (T/W)_TO w/ temp correction
+constraints.TOBalked = (constraints.landBalked * Wt.LandRatio) / tempCorr;
 
 %% Ceiling Sizing (Section 3.4.10 & p.183)
 
@@ -85,8 +112,6 @@ constraints.ceilingCurve = constraints.thrstService/constraints.thrstRatio;
 
 % Zero Lift Drag Coefficient
 CD_0 = 0.0200; % Estimate
-
-AR = 3; % aspect ratio 
 e = 0.8; % Oswald efficiency factor
 
 % Dynamic Pressure at specified cruise alt (psf)
@@ -107,13 +132,13 @@ xlabel('Wing Loading, W/S (lbf / ft^2)')
 ylabel('Thrust-to-Weight Ratio, T/W (lbf/lbf)')
 
 % Landing Distance / Stall Curve
-plot([constraints.wingLoading_TO,constraints.wingLoading_TO],[0,1.5])
+plot([constraints.wingLoading_TO,constraints.wingLoading_TO],[0,1.25])
 
 % Takeoff Distance Curve 
 plot(constraints.wingLoading, constraints.TO_Curve)
 
 % Climb Curve
-
+plot([constraints.wingLoading(1), constraints.wingLoading(end)], [constraints.TOBalked,constraints.TOBalked])
 
 % Service Ceiling Curve
 plot([constraints.wingLoading(1), constraints.wingLoading(end)],[constraints.ceilingCurve, constraints.ceilingCurve])
@@ -121,4 +146,4 @@ plot([constraints.wingLoading(1), constraints.wingLoading(end)],[constraints.cei
 % Vmax Curve
 plot(constraints.wingLoading, constraints.VmaxCurve)
 
-legend('Landing/Stall', 'Takeoff', 'Service Ceiling','Cruise')
+legend('Landing/Stall', 'Takeoff', 'Landing Climb (FAR 25.111 (OEI))','Service Ceiling','Cruise')
