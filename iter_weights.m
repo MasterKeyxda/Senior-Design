@@ -6,7 +6,7 @@ close all;
 
 % want to iterate weights to get new weight
 % set weight tolerance
-ctrl.tol = 0.001; % 0.1 percent
+ctrl.tol = 0.01; % 0.1 percent
 
 %% First Run of SAD.m
 
@@ -27,7 +27,7 @@ iterate = 1;
 
 % Recalculate fuel fraction for new engines
 % Cruise Fuel Consumption
-Wt.fuel.sfc_cr = 0.7/3600; %0.572/3600; % 1/hr -> 1/s cruise, Table 4.6 (Sadrey)
+Wt.fuel.sfc_cr = 0.725/3600; %1/s Cruise Modified TF33-P-7 PERF Results
 [atm.delta,atm.theta,atm.sig_rho,Wt.fuel.a_snd] = AltTable(atm.alt,'h'); % speed of sound ratio
 Wt.fuel.V_max_cr = Wt.fuel.a_snd * req.cr_M0(1) * 1116; % ft/s
 Wt.fuel.LD_ratio = 7; % based on past, real aircraft (e.g. concorde)

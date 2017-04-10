@@ -109,13 +109,13 @@ plot([VA,VA], [0,nlimPos],'k--')
 % Plot vertical line of design cruising speed, VC from nNeg to nlimPos
 plot([VC, VC], [min(nNeg), nlimPos],'k--')
 %% Gust Diagram
-
-CLalpha = 4.87; % lift-curve slope, 1/rad
+e = 0.8; 
+CLalpha = WING.biconvex(2).Clalpha / (1 + (WING.biconvex(2).Clalpha / pi * e * WING.geom.AR));
 h = (atm.alt * 10^3); % cruise altitude in ft
 g = 32.17; % acceleration of gravity ft/s^2
-
+atm.rho_VN = atm.rho_sl * sig_rho;
 % Mass Ratio (eqn 12.31)
-massRatio = (2 * wingLoading) / (atm.rho_sl * WING.geom.MAC * g * CLalpha);
+massRatio = (2 * wingLoading) / (atm.rho_VN * WING.geom.MAC * g * CLalpha);
 
 % Gust Alleviation Factor (eqn 12.30)
 Kg = (massRatio^1.03) / (6.9 + (massRatio^1.03));
@@ -128,8 +128,8 @@ VGustB = 0:1:VB; % gust line varies from 0 to VB
 jB = (Kg * UdeB * VGustB * CLalpha) / (498 * wingLoading); % limit factor
 nlimBPos = 1 + jB; % positive slope gust factor line
 nlimBNeg = 1 - jB; % negative slope gust factor line
-%plot(VGustB, nlimBPos)
-%plot(VGustB, nlimBNeg)
+plot(VGustB, nlimBPos)
+plot(VGustB, nlimBNeg)
 
 % VC gust line
 UdeC = 66.67 - (0.000833 * h); % derived gust velocity (ft/s)
@@ -138,8 +138,8 @@ VGustC = 0:1:VC; % gust line varies from 0 to VC
 jC = (Kg * UdeC * VGustC * CLalpha) / (498 * wingLoading); % limit factor
 nlimCPos = 1 + jC; % positive slope gust factor line
 nlimCNeg = 1 - jC; % negative slope gust factor line
-%plot(VGustC, nlimCPos)
-%plot(VGustC, nlimCNeg)
+plot(VGustC, nlimCPos)
+plot(VGustC, nlimCNeg)
 
 % VD gust line
 UdeD = 33.35 - (0.000417 * h); % derived gust velocity
@@ -148,5 +148,5 @@ VGustD = 0:1:VD; % gust line varies from 0 to VD
 jD = (Kg * UdeD * VGustD * CLalpha) / (498 * wingLoading); % limit factor
 nlimDPos = 1 + jD; % positive slope gust factor line
 nlimDNeg = 1 - jD; % negative slope gust factor line
-%plot(VGustD, nlimDPos)
-%plot(VGustD, nlimDNeg)
+plot(VGustD, nlimDPos)
+plot(VGustD, nlimDNeg)

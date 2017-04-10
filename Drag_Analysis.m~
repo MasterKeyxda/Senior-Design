@@ -123,9 +123,9 @@ nacL_D = 2; % ASSUMPTION nacelle fineness ratio
 % nacRadius = nacDMax / 2; % nacelle radius (ft)
 fLD_nac = 1 + (60 / (nacL_D^3)) + 0.0025*(nacL_D);
 nNacelle = 2;
-Swet.nacelle = 47.09; % from Solidworks (ft^2)
-CD0.nacelle = nNacelle * Cf.nacelleTurb*fLD_nac*fM*(Swet.nacelle/Sref);
-% CD0.nacelle = 0.0012; % APPROXIMATION; based on nacelle CD0 for Gates Learjet 25 business jet
+Swet.nacelle = (2*pi*nacRadius*nacLength) + (2*pi*(nacRadius^2)); % approx as cylinder surface area
+% CD0.nacelle = nNacelle * Cf.nacelle*fLD_nac*fM*(Swet.nacelle/Sref);
+CD0.nacelle = 0.0012; % APPROXIMATION; based on nacelle CD0 for Gates Learjet 25 business jet
 
 %-----High Lift Devices-----%
 
