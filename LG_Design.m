@@ -18,25 +18,32 @@ if ~exist('Wt', 'var')
    load('aircraft_vars.mat'); 
    close all;
 end
+clc;
 %% Inputs
 % Dimensions in ft
 % CG Locations
+% See figure 2 of https://arc.aiaa.org/doi/abs/10.2514/1.46564
 % Xcg locations referenced from nose of landing gear
-
-Xcg = abs(x_NoseGear -XLE_w - 0.25*cRootSub - cgEmpty);
+Xcg = abs(x_NoseGear - XLE_w - 0.25*cRootSub - cgEmpty);
 XcgAft = Xcg; % Most aft Xcg location 
-XcgFwd = Xcg - 3; % Most forward Xcg location
+XcgFwd = Xcg - cgRange; % Most forward Xcg location
 
 % Zcg locations 
-ZcgFuse = 4.83; % zcg from bottom of fuselage
-Zcg = 5 + ZcgFuse; % referenced from ground
+%LG.geom.hClear = 0.7; % min clearance with lowest object
+ZcgFuse = abs(ZcgEmpty); % Zcg from the bottom of the fuselage (ft)
+LG.geom.hClear = 5.54; % clearance between fuselage and ground (same as lowest pt of wing)(ft)
+Zcg = LG.geom.hClear + ZcgFuse; % referenced from ground
 
 % Landing Gear Geometry
-
-LG.geom.B = x_MainGear - x_NoseGear; % LG wheel base (dist between nose gear and main gear)
+LG.geom.B = 56.75;
+LG.geom.CO = LG.geom.B - XcgAft; % distance between MG wheels and CG;
+%LG.geom.B = x_MainGear - x_NoseGear; % LG wheel base (dist between nose gear and main gear)
 LG.geom.T = 9; % LG wheel track (dist between main gear wheels)
-% XLE_w = 80; % length from nose to leading edge of wing
 
+fprintf('The wheel base is %0.2f ft \n', LG.geom.B)
+fprintf('The distance between MG wheels and the CG is %0.2f ft \n', LG.geom.CO)
+fprintf('The wheel track is %0.2f ft \n', LG.geom.T)
+fprintf('\n')
 %% Lateral Tip-Over Criteria 
 
 % phi --> Angle (deg) from nose wheel to main wheel
@@ -59,7 +66,7 @@ fprintf('\n')
 %% Longitudinal Tip-Over Criteria
 
 LG.angle.zeta = atand((LG.geom.B - XcgAft) / Zcg);
-
+%LG.angle.zeta = atand((1.4) / Zcg);
 % Recommended that zeta is approx 15 deg (+-1 deg) for most aft cg location
 % However, it is acceptable for zeta to range from 10 to 20 deg
 fprintf('The longitudinal tip-over angle is %0.2f degrees. \n', LG.angle.zeta)
@@ -76,7 +83,6 @@ fprintf('\n')
 
 % Front View: distance from main gear wheel assembly to wing tip
 LG.geom.xLat = (WING.geom.span / 2) - (LG.geom.T / 2);
-LG.geom.hClear = 6; % distance from ground to wing
 LG.angle.beta = atand(LG.geom.hClear / LG.geom.xLat);
 
 % Beta must be greater than 5 degrees
@@ -91,16 +97,17 @@ fprintf('\n')
 %% Longitudinal Ground Clearance Criteria
 
 % Ensure aircraft tail does not strike ground during takeoff
-LG.angle.takeOff = 10; % aircraft take-off angle 
+LG.angle.takeOff = 8; % aircraft take-off angle 
 
 % x Distance from main gear to end of tail
-LG.geom.xMGAft = L_F - LG.geom.xNose - LG.geom.B; 
-LG.geom.hTail = 8; % distance from ground to tail of fuselage
+LG.geom.xMGAft = L_F - x_NoseGear - LG.geom.B; 
+LG.geom.hTail = LG.geom.hClear + (Dmax/2); % distance from ground to tail of fuselage
 
 % Longitudinal Ground Clearance Angle
 LG.angle.theta = atand(LG.geom.hTail / LG.geom.xMGAft);  
-fprintf('The longitudinal ground clearance angle, beta is %0.2f degrees. \n', LG.angle.theta)
-if (LG.angle.theta > LG.angle.takeOff + 1) && (LG.angle.theta <= 15)
+fprintf('The takeoff angle is %0.2f degrees. \n', LG.angle.takeOff)
+fprintf('The longitudinal ground clearance angle, theta is %0.2f degrees. \n', LG.angle.theta)
+if (LG.angle.theta >= LG.angle.takeOff + 0.15) && (LG.angle.theta <= 15)
     fprintf('The longitudinal ground clearance criterion is met. \n')
 else 
     fprintf('The longitudinal ground clearance criterion is NOT met. \n')
@@ -135,13 +142,13 @@ LG.load.NGMaxStatic = Wt.WTO * (LG.geom.Mf / LG.geom.B);
 LG.load.NGMaxStatic = LG.load.NGMaxStatic / LG.qty.Nosestruts; % Divide load by # of struts
 
 % Nose Gear Dynamic Braking Load --> eqn 11.4
-% Assumes braking coeff of 0.3 (hard runway); deceleartion of 10 ft/s^2
+% Assumes braking coeff of 0.3 (hard runway); size for deceleration of 10 ft/s^2
 g = 32.17; % accel of gravity (ft/s^2)
 LG.load.NGBrakeDyn = (10 * Zcg * Wt.WTO) / (g * LG.geom.B); 
 LG.load.NGBrakeDyn = LG.load.NGBrakeDyn / LG.qty.Nosestruts; % Divide load by # of struts
 
-% Determine whether to size nose gear for dynamic or static load
-LG.load.NG = max(LG.load.NGBrakeDyn, LG.load.NGMaxStatic);
+% Nose Gear Load --> Static + Dynamic load (see p.31 Roskam Pt4)
+LG.load.NG = LG.load.NGBrakeDyn + LG.load.NGMaxStatic;
 
 % Load on each nose wheel; mult by 1.07 for FAR 25 requirements
 LG.load.NGwheel = (LG.load.NG / LG.qty.NoseTire) * 1.07;
@@ -150,10 +157,18 @@ LG.load.NGwheel = (LG.load.NG / LG.qty.NoseTire) * 1.07;
 LG.geom.Bm = LG.geom.B - Xcg; % distance between Xcg and MLG (ft)
 
 % From statics 
-LG.load.NGpercent = ((LG.geom.Bm / LG.geom.B) * 100); % NG load percentage
-LG.load.MGpercent = ((Xcg / LG.geom.B) * 100); % MLG load percentage
-fprintf('The percentage of static load on the nose gear is %0.2f percent \n', LG.load.NGpercent)
-fprintf('The percentage of static load on the main gear is %0.2f percent \n', LG.load.MGpercent)
+% Load percentage for cg most aft
+LG.load.NGpercAft = ((LG.geom.Bm / LG.geom.B) * 100); % NG load percentage
+LG.load.MGpercAft = ((Xcg / LG.geom.B) * 100); % MLG load percentage
+fprintf('Most AFT CG: The percentage of static load on the nose gear is %0.2f percent \n', LG.load.NGpercAft)
+fprintf('Most AFT CG: The percentage of static load on the main gear is %0.2f percent \n', LG.load.MGpercAft)
+
+% Load percentage for cg most forward
+LG.geom.BmFwd = LG.geom.B - XcgFwd; 
+LG.load.NGpercFwd = ((LG.geom.BmFwd / LG.geom.B) * 100); % NG load percentage
+LG.load.MGpercFwd = ((XcgFwd / LG.geom.B) * 100); % MLG load percentage
+fprintf('Most FWD CG: The percentage of static load on the nose gear is %0.2f percent \n', LG.load.NGpercFwd)
+fprintf('Most FWD CG: The percentage of static load on the main gear is %0.2f percent \n', LG.load.MGpercFwd)
 fprintf('\n')
 
 %% Tire Sizing
@@ -175,7 +190,7 @@ LG.tire.MainWidth = LG.const.AWidth * (LG.load.MGwheel^LG.const.BWidth);
 
 % Nose Gear Assembly Tire Sizes (Dimensions in inches)
 % Raymer - "Nose tires can assumed to be 60-100% the size of main tires"
-LG.tire.scale = 0.70; % scale nose tires dimensions by 70% of main tires
+LG.tire.scale = 0.75; % scale nose tires dimensions by 70% of main tires
 LG.tire.NoseDiam = LG.tire.scale * LG.tire.MainDiam;
 LG.tire.NoseWidth = LG.tire.scale * LG.tire.MainWidth;
 
@@ -207,19 +222,20 @@ LG.strut.eff = 0.75; % Raymer p.242 Table 11.4 Oleo-pneumatic)
 LG.strut.WLMain =  LG.qty.Mainstruts * LG.load.MGMax; % MLG landing weight (lb) --> eqn 2.10
 % Shock absorber efficiency 
 % Shock absorber length (ft) --> eqn 2.12 Roskam Pt.4
-LG.strut.lengthMain = (0.5*(LG.strut.WLMain / g)*(LG.strut.Wtouch^2) / (LG.qty.Mainstruts * LG.load.MGMax * LG.strut.LdFactor)); 
-
+%LG.strut.lengthMain = (0.5*(LG.strut.WLMain / g)*(LG.strut.Wtouch^2) / (LG.qty.Mainstruts * LG.load.MGMax * LG.strut.LdFactor)); 
+LG.strut.lengthMain = LG.geom.hClear - LG.tire.MainDiam/12; % required fuselage clearance - tire diameter; 
 % Strut Diameter --> eqn 2.13 Roskam Pt.4
 LG.strut.diamMain = 0.041 + (0.0025 * (LG.load.MGMax)^0.5); % diameter of strut
 
 % Nose Landing Gear Strut
 LG.strut.WLNose = LG.qty.Nosestruts * LG.load.NG; % NLG landing weight (lb) --> eqn 2.10
-
+% Nose Strut Diameter
+LG.strut.diamNose = 0.041 + (0.0025 * (LG.load.NG)^0.5); % diameter of strut
 fprintf('Strut Sizing \n')
-fprintf('The main gear strut length is %0.2f ft\n')
 fprintf('The main gear strut diameter is %0.2f ft \n',LG.strut.diamMain)
-fprintf('The nose gear strut length is %0.2f ft \n')
-fprintf('The nose gear strut diameter is %0.2f ft \n')
+fprintf('The main gear strut length is %0.2f ft \n', LG.strut.lengthMain)
+% fprintf('The nose gear strut length is %0.2f ft \n')
+fprintf('The nose gear strut diameter is %0.2f ft \n', LG.strut.diamNose)
 
 
 

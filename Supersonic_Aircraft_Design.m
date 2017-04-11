@@ -48,7 +48,7 @@ req.range = 4000; % nmi, min
 req.f_eff = 1.0; % passenger-miles/lb of fuel (min)
 
 % FAR 25 Requirements
-req.takeoffRun = 6900; % NASA takeoff field length of less than 7000 ft; based
+req.takeoffRun = 7000; % NASA takeoff field length of less than 7000 ft; based
 % on FAR 25, aircraft must clear imaginary 35 ft obstacle
 
 %% Payload Weight (pld)
