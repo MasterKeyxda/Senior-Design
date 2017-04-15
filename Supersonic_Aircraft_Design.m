@@ -139,7 +139,7 @@ C = -0.1;
 y = linspace(80000,170000,1000);
 x1 = A*y.^C;
 x2 = 1- Wt.fuel.Wf_Wto - 1960./y;
-% plot(y,x1,y,x2) 
+plot(y,x1,y,x2) 
 dif = abs(x1 - x2);
 index = find(dif == min(abs(x1 - x2)));
 Wt.WE_WTO = x1(index);
