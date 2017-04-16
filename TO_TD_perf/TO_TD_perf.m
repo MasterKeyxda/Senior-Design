@@ -118,6 +118,7 @@ end
 
 fprintf('Take-Off Ground Roll Distance: %0.3f ft\n', Xpos(end, 1));
 fprintf('V_{LOF}: %0.3f ft/s\n', Xpos(end, 2));
+V_LOF = Xpos(end, 2);
 
 %% Takeoff Transition - bring vehicle to the right gamma
 
@@ -290,6 +291,7 @@ while X_LR(end, 2) > 0
         fprintf('Main Landing Position from TD Point: %0.2f ft\n', X_LR(ii,1));
         STD = X_LR(ii,1);
         fprintf('Actual Touchdown Velocity: %0.2f ft\n', X_LR(ii, 2));
+        VTDActual = X_LR(ii, 2);
         N_n = 0.08 * WT_land;
     end
 end
