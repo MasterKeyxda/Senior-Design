@@ -79,6 +79,7 @@ theta1_des = theta1_temp(Pt_tot == max(Pt_tot));
 theta2_des = theta2(Pt_tot == max(Pt_tot));
 beta1_des = beta1_temp(Pt_tot == max(Pt_tot));
 beta2_des = beta2(Pt_tot == max(Pt_tot));
+M2_des = M2(Pt_tot == max(Pt_tot));
 
 fprintf('\tFirst Shock\n\n');
 fprintf('Ramp Angle 1: %0.5f\n', theta1_des);
@@ -87,11 +88,12 @@ fprintf('Shock Angle 1: %0.5f\n', beta1_des);
 fprintf('\n\tSecond Shock\n\n');
 fprintf('Ramp Angle 2: %0.5f\n', theta2_des);
 fprintf('Shock Angle 2: %0.5f\n', beta2_des);
+fprintf('Mach Number 2: %0.5f\n', M2_des);
 
 fprintf('Max Pressure Recovery Ratio: %0.5f\n', max(Pt_tot));
 
 
-%% Area
+%% Inlet Area
 mdotreq = 266.56; %Taken from PERF
 P0 =2.480729*144; %lbf/ft^2
 R = 53.34; %lbf/lbmR
@@ -101,4 +103,15 @@ gc = 32.174; % Fucking US Constants
 M0 =1.6; %Flight Mach Number
 area = mdotreq/(P0/(R*T)*sqrt(gamma*gc*R*T)*M0); %Inlet Area
 
+fprintf('\n\tInlet Geometry\n');
 fprintf('Inlet Area Required = %0.2f ft^2 \n', area);
+fprintf('Side Length for Square: %0.2f ft\n', area^0.5);
+
+%% Exit Area into Fan/Compressor
+
+M_exit = 0.5; % mach 0.5 before entering into fans to reduce mitigate damage
+A_exit = area * ((0.5*(gam+1))^(-(gam+1)/(2*(gam-1)))*(1 + 0.5*(gam - 1)*M_exit^2)^((gam+1)/(2*(gam-1)))/M_exit)/((0.5*(gam+1))^(-(gam+1)/(2*(gam-1)))*(1 + 0.5*(gam - 1)*M2_des^2)^((gam+1)/(2*(gam-1)))/M2_des);
+fprintf('\n\tDiffuser Geometry\n');
+fprintf('Diffuser Mach Number: %0.2f\n', M_exit);
+fprintf('Diffuser Area: %0.2f ft^2\n', A_exit);
+fprintf('Diameter of Area: %0.2f ft\n', 2*(A_exit/pi)^0.5);
