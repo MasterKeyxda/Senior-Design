@@ -18,7 +18,7 @@ if ~exist('Wt', 'var')
 end
 
 %% Determine Number of Passengers and Crew
-n_p = 8; % number of passengers
+n_p = 10; % number of passengers
 n_c = 2; % number of crew members
 %% Establish Human Size and Target Passenger
 % Passengers will be from U.S.

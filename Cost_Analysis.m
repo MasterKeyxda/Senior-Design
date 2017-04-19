@@ -1,7 +1,5 @@
 %% Cost Analysis from Raymer CH 18 pg 501-517
 % Using Variable Notation from Raymer
-% How many cycles or flights will be conducted per year?
-% Work on Maintanence
 % Flyaway cost is approximately 49 million 2025 dollars-comparable to Gulfstream
 % asking price between 32 and 52 million in 2017. -Flyaway cost confirmed.
 %% Inflation Rate 1986-2025 US Bureau of Statistics and Calculator
@@ -93,41 +91,67 @@ title('Aircraft Production Learning Curve')
 legend('Production Learning Curve','Minimum Production Estimate', 'Maximum Production Estimate',...
     'Estimated Production Run')
 hold off
-%% Operations and Maintanence Costs
-% Two man crew cost Eq 18.10
-C_crew = 35*(V*WTO/10^5)^0.3 + 84;
+%% Operations and Maintenance Costs
+% Operations and Maintenance costs include mainly fuel, crew salaries, and
+% maintenance
 
-% Table 8.1 pg 511
+% Must find block time (time to travel using flight pathways) using flight distance to calculate
+
+% In order to obtain maintenance costs, flight hours per year are needed
+% Table 18.1 pg 511
 MMH_FH = 4.5; % Maintenance man hours per flight hour business jet (avg)
-FH_YR = 1250; % Flight hour per year per aircraft
+FH_YR = 500; % Flight hour per year per aircraft
 
+% Calculating Mission Flight Time pg 511.
+Range = 3000; % range of aircraft nmi based on suitable travel locations and distances
+Dist_mis = 1.02*Range; % distance traveled with federal routes
+FH = Dist_mis/V; % flight hours 
+
+% Cycles per aircraft calculated dividing FH/yr over FH 
+Cycle = FH_YR/FH; 
+% Two man crew cost per aircraft per cycle Eq 18.10
+C_crew = FH*(35*(V*WTO/10^5)^0.3 + 84);
+% Two man crew cost per block hour per aircraft per year
+C_crew_YR = C_crew*Cycle;
 
 % Calculating aircraft cost one less engine
-
-
-C_a =Inf*((H_M*R_M+H_T*R_T + C_F + C_Mat +  C_Eng*Q*(N_e-1) + C_avionics)/Q);
+C_a =(H_M*R_M+H_T*R_T + C_F + C_Mat +  C_Eng*Q*(N_e-1) + C_avionics)/Q;
 %fprintf('The aircraft cost minus one engine is %0.1f \n',C_a)
 
 % material cost per flight hour Eq 18.12
-MC_FH = Inf*(3.3*(C_a/10^6) + 7.04 + (58*(C_e/10^6) - 13)*N_e);
+MC_FH = 3.3*(C_a/10^6) + 7.04 + (58*(C_e/10^6) - 13)*N_e;
 %fprintf('The material cost per flight hour is %0.1f \n',MC_FH)
 
 % material cost per cycle Eq 18.13
-MC_cycle = Inf*(4.0*(C_a/10^6) + 4.6 + (7.5*(C_e/10^6) + 2.8)*N_e);
+MC_cycle = 4.0*(C_a/10^6) + 4.6 + (7.5*(C_e/10^6) + 2.8)*N_e;
 %fprintf('The material cost per cycle is %0.1f \n',MC_cycle)
 
-% "cycles" are the number of flights
+% "cycles" are the number of flights per year
 % The total materials cost is the cost per flight hour times the 
 % flight hours per year, plus the cost per cycle times the cycles per year.
+
+% Material Cost per aircraft per year
+Material_Cost = MC_FH*FH_YR + MC_cycle*Cycle;
+
+% Fuel
+Fuel_Hr = Wt.fuel.sfc_cr*3600; % lbm fuel consumption per hour per lbf thrust
+Fuel_price_gal = 4.59; % $/gallon local prices Airnav
+rho_f = 7; % Saedray density of fuel lbm/gallon
+Fuel_Cost_Yr = Fuel_price_gal/rho_f*Fuel_Hr*FH_YR*T_max;
+
+% Maintenance and Operation Cost (Yearly per aircraft)
+% Does not include insurance or depreciation
+M_O = Material_Cost + C_crew_YR;
+fprintf('The Operation and Maintenance Cost per year per aircraft is $%0.0f in 2025 \n',Inf*M_O)
 %% Bar Graph of All Costs
 
 figure()
-Cost = Inf*[H_E*R_E, H_T*R_T, H_Q*R_Q, H_M*R_M,C_Dev,C_F,C_Eng*N_Eng,C_avionics,C_Mat]/Q;  % array of costs'
+Cost = Inf*[H_E*R_E, H_T*R_T, H_Q*R_Q, H_M*R_M,C_Dev,C_F,C_Eng*N_Eng,C_avionics,C_Mat, Q*M_O,Q*Fuel_Cost_Yr]/Q;  % array of costs'
 x = 1:length(Cost); % number of costs to show
 barh(x,Cost) % bar graph
 Labels = {'Engineering', 'Tooling', 'Quality Assurance',...
     'Manufacturing','Development', 'Flight Testing','Turbofan Engines',...
-    'Avionics','Materials'};
+    'Avionics','Materials','Maintenance','Fuel'};
 
 set(gca, 'YTick', 1:length(Cost), 'YTickLabel', Labels);
 xlabel('Cost per Airplane (2025 $)')
@@ -137,4 +161,14 @@ for i1=1:numel(Cost)
                'HorizontalAlignment','left',...
                'VerticalAlignment','middle')
 end
-title('RDTE and Flyaway Cost Breakdown')
+title('RDTE and Flyaway Cost Breakdown') 
+%% Airplane Revenue
+% Determine Cost per ticket
+% Based on United Website, Tokyo to SF
+Ticket_i = 3000; % intial ticket cost dollars (business class)
+% assuming full plane of passengers every time
+Revenue_Cycle = Ticket_i*n_p; % revenue due to 10 passengers per flight
+Revenue_Yr = Revenue_Cycle*Cycle; % Annual revenue per aircraft
+Profit = Inf*(Revenue_Yr - M_O - Fuel_Cost_Yr); % Revenue - Expenses = Profit 
+fprintf('Annual Revenue per aircraft is $%0.0f in 2025 \n', Revenue_Yr) 
+fprintf('Annual Profit Margin per aircraft is $%0.0f in 2025 \n', Profit)
