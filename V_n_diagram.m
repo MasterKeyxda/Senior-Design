@@ -120,6 +120,7 @@ massRatio = (2 * wingLoading) / (atm.rho_VN * WING.geom.MAC * g * CLalpha);
 % Gust Alleviation Factor (eqn 12.30)
 Kg = (massRatio^1.03) / (6.9 + (massRatio^1.03));
 
+% Gust Lines
 % VB gust line
 VB = VC - 43; % Maximum Gust Intensity Speed (KEAS)
 UdeB = 84.67 - (0.000933 * h); % derived gust velocity
