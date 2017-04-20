@@ -69,14 +69,35 @@ fprintf('The total aircraft RDTE and Flyaway cost per aircraft is $%0.0f in 2025
 Flyaway = Inf*(H_M*R_M+H_T*R_T + C_F + C_Mat +  C_Eng*N_Eng + C_avionics)/Q;
 % Flyaway cost per aircraft
 fprintf('The Flyaway cost per aircraft is $%0.0f in 2025  \n',Flyaway)
-%% Learning Curve
-H_1 = H_E + H_T + H_M + H_Q; % total number of labor hours to produce aircraft
-Q_range = linspace(1,1000,1000); % range of quantity production
-x = 0.678; % 80% learning curve
-H = H_1*(Q_range).^(x-1); % hour learning curve equation Fig 18.1
+ %% Learning Curve
+% H_1 = H_E + H_T + H_M + H_Q; % total number of labor hours to produce aircraft
+% Q_range = linspace(1,500,500); % range of quantity production
+% x = 0.678; % 80% learning curve
+% H = H_1*(Q_range).^(x-1); % hour learning curve equation Fig 18.1
+% figure()
+% Qmin = 180; Qmax = 400; % Production Quantity range based on paper "Case for Small SS AC"
+% plot(Q_range,H,'LineWidth',1) % plot curve
+% hold on
+% % Plotting maximum, minimum, and estimated production quantities
+% plot(linspace(1,Qmin,100),H(Qmin)*ones(1,100),'r','LineWidth',0.5)
+% plot(linspace(1,Qmax,100),H(Qmax)*ones(1,100),'c','LineWidth',1)
+% plot(linspace(1,Q,100),H(Q)*ones(1,100),'g','LineWidth',1)
+% plot(Qmin*ones(1,100),linspace(0,H(Qmin),100),'r','LineWidth',0.5)
+% plot(Qmax*ones(1,100),linspace(0,H(Qmax),100),'c','LineWidth',0.5)
+% plot(Q*ones(1,100),linspace(0,H(Q),100),'g','LineWidth',0.5)
+% xlabel('Production Quantity (AC)')
+% ylabel('Production Labor Hours per Aircraft (Hrs)')
+% title('Aircraft Production Learning Curve')
+% legend('Production Learning Curve','Minimum Production Estimate', 'Maximum Production Estimate',...
+%     'Estimated Production Run')
+% hold off
+%% Production Cost vs Quantity Produced
+Q_range = linspace(1,500,500); % range of quantity production
+Qmin = 180; Qmax = 400; % Production Quantity range based on paper "Case for Small SS AC"
 figure()
-Qmin = 250; Qmax = 400; % Production Quantity range based on paper "Case for Small SS AC"
-plot(Q_range,H,'LineWidth',1) % plot curve
+Flyaway_range = Inf*(H_M*R_M+H_T*R_T + C_F + C_Mat +  C_Eng*N_Eng + C_avionics)./Q_range;
+plot(Q_range,Flyaway_range)
+H = Flyaway_range; % new H for plotting
 hold on
 % Plotting maximum, minimum, and estimated production quantities
 plot(linspace(1,Qmin,100),H(Qmin)*ones(1,100),'r','LineWidth',0.5)
@@ -86,10 +107,11 @@ plot(Qmin*ones(1,100),linspace(0,H(Qmin),100),'r','LineWidth',0.5)
 plot(Qmax*ones(1,100),linspace(0,H(Qmax),100),'c','LineWidth',0.5)
 plot(Q*ones(1,100),linspace(0,H(Q),100),'g','LineWidth',0.5)
 xlabel('Production Quantity (AC)')
-ylabel('Production Labor Hours per Aircraft (Hrs)')
+ylabel('Production Cost per Aircraft ($)')
 title('Aircraft Production Learning Curve')
 legend('Production Learning Curve','Minimum Production Estimate', 'Maximum Production Estimate',...
     'Estimated Production Run')
+ylim([0,Flyaway_range(50)])
 hold off
 %% Operations and Maintenance Costs
 % Operations and Maintenance costs include mainly fuel, crew salaries, and
@@ -140,13 +162,14 @@ rho_f = 7; % Saedray density of fuel lbm/gallon
 Fuel_Cost_Yr = Fuel_price_gal/rho_f*Fuel_Hr*FH_YR*T_max;
 
 % Maintenance and Operation Cost (Yearly per aircraft)
-% Does not include insurance or depreciation
+
 M_O = Material_Cost + C_crew_YR;
 fprintf('The Operation and Maintenance Cost per year per aircraft is $%0.0f in 2025 \n',Inf*M_O)
 %% Bar Graph of All Costs
 
 figure()
-Cost = Inf*[H_E*R_E, H_T*R_T, H_Q*R_Q, H_M*R_M,C_Dev,C_F,C_Eng*N_Eng,C_avionics,C_Mat, Q*M_O,Q*Fuel_Cost_Yr]/Q;  % array of costs'
+Cost = Inf*[H_E*R_E, H_T*R_T, H_Q*R_Q, H_M*R_M,C_Dev,C_F,C_Eng*N_Eng,...
+    C_avionics,C_Mat, Q*M_O,Q*Fuel_Cost_Yr]/Q;  % array of costs'
 x = 1:length(Cost); % number of costs to show
 barh(x,Cost) % bar graph
 Labels = {'Engineering', 'Tooling', 'Quality Assurance',...
@@ -172,3 +195,15 @@ Revenue_Yr = Revenue_Cycle*Cycle; % Annual revenue per aircraft
 Profit = Inf*(Revenue_Yr - M_O - Fuel_Cost_Yr); % Revenue - Expenses = Profit 
 fprintf('Annual Revenue per aircraft is $%0.0f in 2025 \n', Revenue_Yr) 
 fprintf('Annual Profit Margin per aircraft is $%0.0f in 2025 \n', Profit)
+%% Insurance and Deprecation
+% Insurance
+Insurance = 0.01*(C_crew_YR+ C_crew_YR); % 1% of operation cost
+
+% Depreciation 10% for airframe
+% Will do depreciation over 5 years
+Flyaway = Inf*(H_M*R_M+H_T*R_T + C_F + C_Mat +  C_Eng*N_Eng + C_avionics)/Q;
+% Depreciation Cost of airframe per year
+Dep_AF = 0.9*(Inf*(H_M*R_M+H_T*R_T + C_F + C_Mat)/Q)/5;
+
+% Depreciation Cost of engines per year
+Dep_ENG = (Inf*(C_Eng*N_Eng)/Q)/5;
