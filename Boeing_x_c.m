@@ -43,7 +43,12 @@ t_spar_bi = t_bi_dist((spar_loc*100)+1); % airfoil thickness in ft
 t_spar_bi = t_spar_bi * 12; % convert thickness to inches
 
 % Plot
+close all;
 figure(2)
 plot(x_c, t_dist_u)
+axis('equal')
+xlabel('x/c')
+ylabel('t/c')
+title('Biconvex Airfoil')
 hold on;
-plot(x_c, tdist_l)
+plot(x_c, -1.*t_dist_l)
