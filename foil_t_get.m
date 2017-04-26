@@ -30,11 +30,11 @@ else
     top = coords(1:nose, :);
     bot = coords((nose+1):end, :);
 
-%     figure();plot(top(:,1), top(:,2));
-%     hold on;
-%     plot(bot(:,1), bot(:,2));
-%     legend('Top', 'Bottom');
-%     axis equal;
+figure();plot(top(:,1), top(:,2));
+hold on;
+plot(bot(:,1), bot(:,2));
+legend('Top', 'Bottom');
+axis equal;
 
     tu_val = abs(spline(top(:,1), top(:,2), x_c));
     tl_val = abs(spline(bot(:,1), bot(:,2), x_c));
