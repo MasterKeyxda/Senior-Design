@@ -5,8 +5,8 @@ if strcmp(fname, 'biconvex')
     tau_u = WING.biconvex(2).tc_u;
     tau_l = WING.biconvex(2).tc_l;
     
-    tu_val = 2*tau_u*x_c*(1 - x_c);
-    tl_val = 2*tau_l*x_c*(1-x_c);
+    tu_val = 2.*tau_u.*x_c.*(1 - x_c);
+    tl_val = 2.*tau_l.*x_c.*(1-x_c);
     
 else
     fid = fopen([fname '.dat'], 'r');
@@ -30,13 +30,13 @@ else
     top = coords(1:nose, :);
     bot = coords((nose+1):end, :);
 
-%     figure();plot(top(:,1), top(:,2));
-%     hold on;
-%     plot(bot(:,1), bot(:,2));
-%     legend('Top', 'Bottom');
-%     axis equal;
+figure();plot(top(:,1), top(:,2));
+hold on;
+plot(bot(:,1), bot(:,2));
+legend('Top', 'Bottom');
+axis equal;
 
-    tu_val = abs(spline(top(:,1), top(:,2), x_c))
+    tu_val = abs(spline(top(:,1), top(:,2), x_c));
     tl_val = abs(spline(bot(:,1), bot(:,2), x_c));
 end
 
