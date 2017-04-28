@@ -162,6 +162,6 @@ text(75,0,'Rear Section')
 % colormap hsv
 % axis equal
 %% Egress
-% By FAR 25 Rules, aircraft with passengers between 10 and 19
+% By FAR 25 Rules, aircraft with passengers between 10 and 18
 % passengers must have emergency egress of rectangular shape no less than
-% 20" wide and 36" tall with stepup no greater that 20" (27" if above wing)
+% 20" wide and 36" tall with stepup no greater that 20" 
