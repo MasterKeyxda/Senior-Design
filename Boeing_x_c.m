@@ -22,7 +22,6 @@ spar_loc = [0.20, 0.36, 0.52, 0.68];
 t_spar = t_built_dist((spar_loc*100)+1); % airfoil thickness in ft
 t_spar = t_spar * 12; % convert thickness to inches
 
-
 %% Biconvex Airfoil
 
 fname = 'biconvex';
@@ -41,9 +40,3 @@ t_bi_dist = t_bi_u + t_bi_l;
 % Determine airfoil thickness at spar locations 
 t_spar_bi = t_bi_dist((spar_loc*100)+1); % airfoil thickness in ft
 t_spar_bi = t_spar_bi * 12; % convert thickness to inches
-
-% Plot
-figure(2)
-plot(x_c, t_dist_u)
-hold on;
-plot(x_c, tdist_l)
