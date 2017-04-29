@@ -7,8 +7,8 @@
 constraints.wingLoading = 40:0.5:200; % wing loading parameter (lb/ft^2)
 % CL for takeoff and landing Roskam Part I, p.91; 
 constraints.CLMax = 1.6; 
-constraints.CLMax_L = 1.6; % landing
-constraints.CLMax_TO = 1.8; % takeoff
+constraints.CLMax_L = 1.75; % landing
+constraints.CLMax_TO = 1.5; % takeoff
 
 %% Stall Speed (Section 3.1)
 
@@ -92,7 +92,7 @@ constraints.TOBalked = (constraints.landBalked * Wt.LandRatio) / tempCorr;
 %% Ceiling Sizing (Section 3.4.10 & p.183)
 
 % Cruise air properties
-atm.alt_cr = 46; % cruise alt in kft; adjust to match main script
+atm.alt_cr = 42; % cruise alt in kft; adjust to match main script
 [~,~,atm.sig_rho_cr,atm.asnd_cr] = AltTable(atm.alt_cr,'h'); 
 atm.rho_cr = atm.sig_rho_cr * atm.rho_sl;
 

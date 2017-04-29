@@ -86,111 +86,43 @@ mXcgi.Oper = [Wt.Feq.Oper,-XLE_w - 0.25*cRootSub + cglocAC + L_N + L_CP]; % CG p
 % Paint Weight
 mXcgi.Paint = [Wt.Feq.Paint,-XLE_w - 0.25*cRootSub + cglocAC + 0.40*L_F]; % Fuselage CG paint
 
-% Empty Weight CG
-CG_types = fieldnames(mXcgi);
-moment = 0;
-wt = 0;
-
-for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
-   wt = wt + mXcgi.(CG_types{i})(1);
-end
-
-wtEmpty = wt;
-cgEmpty = moment/wt;
-
-% If positive - nose heavy
-% If negative - tail heavy
-fprintf('The empty weight Xcg is %0.4f \n', cgEmpty)
-fprintf('The Difference Between Required and Actual XCG %0.4f ft \n', cgEmpty);
-
-%% Empty Weight + Crew CG (OEW CG)
-mXcgi.Crew = [Wt.oew.crew,-XLE_w - 0.25*cRootSub + cglocAC + x_cockpit]; % crew in cockpit 
-CG_types = fieldnames(mXcgi);
-moment = 0;
-wt = 0;
- for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
-   wt = wt + mXcgi.(CG_types{i})(1);
- end
-wtOEW = wt; 
-cgOEW = moment/wt;
-fprintf('The operating empty weight Xcg is %0.4f \n', cgOEW)
-%% Empty Weight + Crew + Fuel CG
-moment = 0; 
-wt = 0;
- for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
-   wt = wt + mXcgi.(CG_types{i})(1);
- end
-wtFuel = wt + Wt.fuel.w_tot; 
-cgFuel = moment/wt;
-fprintf('The Xoew + fuel cg is %0.4f \n', cgFuel)
-%% Empty Weight + Crew + PAX (No baggage) CG
-
-% Assume passenger distribution places cg at cabin center
-mXcgi.pldNoBag = [Wt.pld.n_pass * Wt.pld.apw, -XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP]; 
-CG_types = fieldnames(mXcgi);
-moment = 0;
-wt = 0;
- for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); %Convert sign NEGATIVE = FLIP OVER
-   wt = wt + mXcgi.(CG_types{i})(1);
- end
-wtPAX_NoBag = wt; 
-cgPAX_NoBag = moment/wt;
-fprintf('The Xcg for OEW + PAX (No baggage) is %0.4f \n', cgPAX_NoBag)
-%% Empty Weight + Crew + PAX (w/ baggage) CG
-x_baggage = 4; % distance of baggage from end of cabin
-% Assume passenger distribution places cg at cabin center
-mXcgi.pldBag = [Wt.pld.lug * Wt.pld.n_pass, -XLE_w - 0.25*cRootSub + cglocAC + (L_C/2) + L_N + L_CP + x_baggage]; 
-CG_types = fieldnames(mXcgi);
-moment = 0;
-wt = 0;
- for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); % Convert sign NEGATIVE = FLIP OVER
-   wt = wt + mXcgi.(CG_types{i})(1);
- end
-wtPAX_Bag = wt; 
-cgPAX_Bag = moment/wt;
-fprintf('The Xcg for OEW + PAX (with baggage) is %0.4f \n', cgPAX_Bag)
-
-%% Empty Weight + Crew + PAX (w/ baggage) + Fuel (MTOW) CG
-moment = 0;
-wt = 0;
- for i = 1:numel(CG_types)
-   moment = moment - mXcgi.(CG_types{i})(1) .* mXcgi.(CG_types{i})(2); % Convert sign NEGATIVE = FLIP OVER
-   wt = wt + mXcgi.(CG_types{i})(1);
- end
-wtMTOW = wt + Wt.fuel.w_tot; 
-cgMTOW = moment/wt;
-fprintf('The Xcg for MTOW is %0.4f \n', cgMTOW)
-
 %% CG Excursion Diagram
 
-wtArray = [wtEmpty; wtOEW; wtPAX_NoBag; wtPAX_Bag; wtFuel; wtMTOW];
-cgArray = [cgEmpty; cgOEW; cgPAX_NoBag; cgPAX_Bag; cgFuel; cgMTOW]; 
-cgRange = max(cgArray) - min(cgArray); 
-fprintf('The cg range is %0.2f ft \n', cgRange)
+filename = 'CG_Calc_Copy.xlsx';
+
+% Read in data from 'CG_Calc_Copy.xlsx' spreadsheet
+Wt.Excel = xlsread(filename,'G34:G39'); 
+cgExcel = xlsread(filename,'I34:I39'); 
+close all;
 figure()
-title('Aircraft CG Excursion')
+title('CG Excursion Diagram')
 xlabel('CG Location (F.S.), ft')
 ylabel('Weight (lbs)')
+xMin = min(cgExcel-1);
+xMax = max(cgExcel+1);
+xlim([xMin, xMax])
 hold on;
 
-
-cgNoseArray = [91.41; 90.82; 90.22; 88.94; 88.51; 88.51];
+% Print range of most fwd and aft cg locations
+cgRange = max(cgExcel) - min(cgExcel);
+fprintf('The cg range is %0.2f ft \n', cgRange)
 
 % Plot CG Diagram
-plot(cgNoseArray(1), wtArray(1), 'ro', 'MarkerSize',10)
-plot(cgNoseArray(2), wtArray(2), 'go', 'MarkerSize',10)
-plot(cgNoseArray(3), wtArray(3), 'o', 'MarkerSize',10, 'Color',[0.5 0 1])
-plot(cgNoseArray(4), wtArray(4), 'o', 'MarkerSize',10, 'Color',[0 0.4 0.3])
-plot(cgNoseArray(5), wtArray(5), 'o', 'MarkerSize',10, 'Color',[1 0.5 0])
-plot(cgNoseArray(6), wtArray(6), 'o', 'MarkerSize',10, 'Color',[0 1 1])
-plot(cgNoseArray,wtArray, 'b--') % plot line through points
-legend('Empty Wt CG','OEW Wt CG','OEW Wt + Fuel CG', ...
-    'OEW Wt + PAX (No Baggage) CG', ... 
-    'OEW Wt + PAX (With Baggage) CG',...
-    'MTOW CG','Location','Northeast')
+plot(cgExcel, Wt.Excel,'b')
+plot(cgExcel, Wt.Excel,'s', 'MarkerSize',5,...
+    'MarkerEdgeColor','b',...
+    'MarkerFaceColor',[0.5,0.5,0.5])
 
+yMin = 35000; 
+yMax = 100000;
+ylim([yMin,yMax]) % set y-axis limits
+ 
+% Annotate and plot horizontal line from xMin to cg at MTOW
+plot([xMin, cgExcel(4)], [Wt.Excel(4), Wt.Excel(4)],'k--') 
+str = 'MTOW';
+text(cgExcel(4)-1.5,Wt.Excel(4)+2000,str)
+
+% Annotate and plot horizontal line from xMin to cg at Empty Weight
+plot([xMin, cgExcel(1)], [Wt.Excel(1), Wt.Excel(1)],'k--')
+str = 'W_E';
+text(cgExcel(4)-1.5,Wt.Excel(1)-2000,str)
