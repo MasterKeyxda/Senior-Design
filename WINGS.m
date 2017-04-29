@@ -264,6 +264,8 @@ WING.biconvex(2).chord = 1.0;
 WING.biconvex(2).Cl = 4.* WING.biconvex(2).alpha ./ sqrt(req.cr_M0(1)^2 - 1); % section lift coefficient
 WING.biconvex(2).Cd = WING.biconvex(2).Cl .* WING.biconvex(2).alpha + ((WING.biconvex(2).tc_u^2 + WING.biconvex(2).tc_l^2) * pi^2 / (WING.biconvex(2).chord^2 * sqrt(req.cr_M0(1)^2 - 1))) + WING.CD0;
 WING.biconvex(2).L_D = WING.biconvex(2).Cl ./WING.biconvex(2).Cd;
+WING.biconvex(2).Clalpha = (WING.biconvex(2).Cl(3) - WING.biconvex(2).Cl(2)) / ((WING.biconvex(2).alpha(3) - WING.biconvex(2).alpha(2)*180/pi)); % modified biconvex 2D lift curve slope
+WING.biconvex(1).Clalpha = WING.biconvex(2).Clalpha;
 
 figure(); % lift polars
 <<<<<<< Updated upstream

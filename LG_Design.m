@@ -24,7 +24,7 @@ clc;
 % CG Locations
 % See figure 2 of https://arc.aiaa.org/doi/abs/10.2514/1.46564
 % Xcg locations referenced from nose of landing gear
-Xcg = abs(x_NoseGear - XLE_w - 0.25*cRootSub - cgEmpty);
+Xcg = cgExcel(1) - x_NoseGear;
 XcgAft = Xcg; % Most aft Xcg location 
 XcgFwd = Xcg - cgRange; % Most forward Xcg location
 
@@ -35,7 +35,7 @@ LG.geom.hClear = 5.54; % clearance between fuselage and ground (same as lowest p
 Zcg = LG.geom.hClear + ZcgFuse; % referenced from ground
 
 % Landing Gear Geometry
-LG.geom.B = 56.75;
+LG.geom.B = 63.75;
 LG.geom.CO = LG.geom.B - XcgAft; % distance between MG wheels and CG;
 %LG.geom.B = x_MainGear - x_NoseGear; % LG wheel base (dist between nose gear and main gear)
 LG.geom.T = 9; % LG wheel track (dist between main gear wheels)
@@ -190,7 +190,7 @@ LG.tire.MainWidth = LG.const.AWidth * (LG.load.MGwheel^LG.const.BWidth);
 
 % Nose Gear Assembly Tire Sizes (Dimensions in inches)
 % Raymer - "Nose tires can assumed to be 60-100% the size of main tires"
-LG.tire.scale = 0.70; % scale nose tires dimensions by 70% of main tires
+LG.tire.scale = 0.75; % scale nose tires dimensions by 70% of main tires
 LG.tire.NoseDiam = LG.tire.scale * LG.tire.MainDiam;
 LG.tire.NoseWidth = LG.tire.scale * LG.tire.MainWidth;
 

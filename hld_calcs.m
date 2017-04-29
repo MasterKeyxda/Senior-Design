@@ -33,21 +33,19 @@ k1 = 1.2; % for flap-chord of 30%
 k2 = 1; % 40 degree flap deflection
 k3 = 1; % assumes actual flap angle equals reference flap angle
 dcl_max_f = k1*k2*k3*dcl_max_b; % trailing edge flaps c_l
-
-cl_d_max = 1.7; % with nose flap-chord ratio, cf/c = 0.30
-n_max = 0.45; % corresponding to 0 leading edge radius
-n_delta = 0.58; % corresponding to 30 degree deflection angle
-delta_f = 30; % degree deflection from airfoil chord plane
-chord_RAT = .30; % ratio of the chord with and without deflection of slat
-dcl_max_s = cl_d_max * n_max * n_delta * delta_f * (chord_RAT); % lead edge slats c_l
-
 % p. 8-18
 %reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
 K_lambda = 0.92; % corresponding to wing sweep of 10 degrees
-S_RAT_f = 0.58; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
+S_RAT_f = 0.625; % 0.2*1 + 0.8*(y) = 0.7 flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
 dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
 
-S_RAT_s = 0.20; % slat-wing wetted area ratio 
+cl_d_max = 1.6; % with nose flap-chord ratio, cf/c = 0.30
+n_max = 0.45; % corresponding to 0 leading edge radius
+n_delta = 0.58; % corresponding to 30 degree deflection angle
+delta_f = 20; % degree deflection from airfoil chord plane
+chord_RAT = .10; % ratio of the chord with and without deflection of slat
+dcl_max_s = cl_d_max * n_max * n_delta * delta_f * (chord_RAT); % lead edge slats c_l
+S_RAT_s = 0.80; % slat-wing wetted area ratio 
 phi_HL = 10; %sweep angle of the hinge line of flap
 d_CL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
 
@@ -60,7 +58,7 @@ fprintf('dCL = %f for supersonic wing \n',dC_L1)
 %percentFlap = dCL_max_f/dC_L1
 %percentSlat = 1-percentFlap
 
-%% DATCOM 1978: HLD for supersonic airfoil 
+%% DATCOM 1978: HLD for subsonic airfoil 
 
 % p. 8-13 
 dcl_max_b = 1.22; %for t/c = 10 
@@ -68,6 +66,11 @@ k1 = 1.2; % for flap-chord of 30%
 k2 = 1; % 40 degree flap deflection
 k3 = 1; % assumes actual flap angle equals reference flap angle
 dcl_max_f = k1*k2*k3*dcl_max_b; % trailing edge flaps c_l
+% p. 8-18
+%reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
+K_lambda = 0.57; % corresponding to wing sweep of 60 degrees
+S_RAT_f = 1; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
+dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
 
 cl_d_max = 1.7; % with nose flap-chord ratio, cf/c = 0.30
 n_max = 0.45; % corresponding to 0 leading edge radius
@@ -75,18 +78,11 @@ n_delta = 0.58; % corresponding to 30 degree deflection angle
 delta_f = 30; % degree deflection from airfoil chord plane
 chord_RAT = .30; % ratio of the chord with and without deflection of slat
 dcl_max_s = cl_d_max * n_max * n_delta * delta_f * (chord_RAT); % lead edge slats c_l
-
-% p. 8-18
-%reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
-K_lambda = 0.57; % corresponding to wing sweep of 60 degrees
-S_RAT_f = 0.58; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
-dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
-
 S_RAT_s = 0.20; % slat-wing wetted area ratio 
 phi_HL = 60; %sweep angle of the hinge line of flap
 d_CL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
 
-dC_L2 = dCL_max_f + d_CL_max_s;
+dC_L2 = dCL_max_f; %+ d_CL_max_s;
 fprintf('dCL = %f for subsonic wing \n',dC_L2)
 % For Reference...
 % dC_L = 1.55 for DC-9-30

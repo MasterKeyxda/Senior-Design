@@ -44,6 +44,7 @@ CLMaxPos = 2.2; % max positive coefficient of lift
 CNMaxPos = 1.1*CLMaxPos; % eqn 12.17, preliminary value; update once CD is known at CLmax
 Vs1 = sqrt(2*(wingLoading) / (atm.rho_sl * CNMaxPos));  % ft/s, eqn 12.15
 Vs1 = Vs1 * 0.592484; % convert to knots
+fprintf('The positive +1g stall speed is %0.2f KEAS \n', Vs1)
 
 % Negative 1g stall speed
 CLMaxNeg = -1; % max negative coefficient of lift
@@ -51,6 +52,7 @@ CNMaxNeg = 1.1*CLMaxNeg; % eqn 12.24, preliminary value; update once CD is known
 nNeg = -1:0.05:0; % negative load factor range, eqn 12.41
 Vsneg = sqrt((2*nNeg*wingLoading) / (atm.rho_sl * CNMaxNeg));
 Vsneg = Vsneg * 0.592484; % convert to knots
+fprintf('The negative +1g stall speed is %0.2f KEAS \n', max(Vsneg))
 
 % Positive Design limit load factor, nlim
 nlimPos = 2.1 + (24000 / (Wt.WTO + 10000));
@@ -71,6 +73,7 @@ Vspos = Vspos * 0.592484; % convert to knots
 
 % Design Maneuvering Speed, VA
 VA = Vs1*sqrt(nlimPos); % knots, eqn 12.40 
+fprintf('The design maneuvering speed is %0.2f KEAS \n', VA)
 
 % Design Cruise Speed, VC
 M = req.cr_M0(1); % cruise Mach Number
@@ -79,10 +82,11 @@ aSound = 1116.5 * aRatio; % speed of sound at cruise alt, ft/s
 Vtrue = M * aSound; % cruise speed (TAS), ft/s
 Vtrue = Vtrue * 0.592484; % convert true airspeed to knots (KTAS)
 VC = sqrt(sigma) * Vtrue; % cruise speed (KEAS)
+fprintf('The design cruise speed is %0.2f KEAS \n', VC )
 
 % Design Diving Speed, VD
 VD = 1.25*VC; % knots (KEAS)
-
+fprintf('The design diving speed is %0.2f KEAS \n', VD)
 % Linear Curve from VC to VD, eqn 12.42
 m = 0 - min(nNeg) / (VD - VC); % slope of line
 x = VC:1:VD; % vector from VC to VD
@@ -91,9 +95,9 @@ y = m*x - 4.9934; % equation of line
 % Plot 
 figure()
 ylim([min(nNeg)-0.5, nlimPos+0.5])
-xlabel('Speed, V (KEAS)')
+xlabel('Equivalent Airspeed (KEAS)')
 ylabel('Load factor, n')
-title('Maneuver V-n Diagram')
+title('V-n Diagram')
 hold on; 
 % Plot positive stall speed curve
 plot(Vspos, nPos,'b') 
@@ -117,52 +121,67 @@ plot([VD,VD],[0,nlimPos],'b')
 plot([0, VD],[0,0],'k')
 
 % Plot vertical line of 1g stall speed, Vs1
-plot([Vs1,Vs1],[0,1],'k--')
+plot([Vs1,Vs1],[0,1],'k:', 'LineWidth',1.35)
 
 % Plot vertical line of design maneuvering speed, VA to nlimPos
-plot([VA,VA], [0,nlimPos],'k--')
+plot([VA,VA], [0,nlimPos],'k:', 'LineWidth',1.35)
 
 % Plot vertical line of design cruising speed, VC from nNeg to nlimPos
-plot([VC, VC], [min(nNeg), nlimPos],'k--')
+plot([VC, VC], [min(nNeg), nlimPos],'k:', 'LineWidth',1.35)
 %% Gust Diagram
-
-CLalpha = 4.87; % lift-curve slope, 1/rad
+e = 0.8; 
+CLalpha = WING.biconvex(2).Clalpha / (1 + (WING.biconvex(2).Clalpha / pi * e * WING.geom.AR));
 h = (atm.alt * 10^3); % cruise altitude in ft
 g = 32.17; % acceleration of gravity ft/s^2
-
+atm.rho_VN = atm.rho_sl * sig_rho;
 % Mass Ratio (eqn 12.31)
-massRatio = (2 * wingLoading) / (atm.rho_sl * WING.geom.MAC * g * CLalpha);
+massRatio = (2 * wingLoading) / (atm.rho_VN * WING.geom.MAC * g * CLalpha);
 
 % Gust Alleviation Factor (eqn 12.30)
 Kg = (massRatio^1.03) / (6.9 + (massRatio^1.03));
 
+% Gust Lines
 % VB gust line
-VB = VC - 43; % Maximum Gust Intensity Speed (KEAS)
-UdeB = 84.67 - (0.000933 * h); % derived gust velocity
-UdeB = UdeB * 0.592484; % convert to knots
-VGustB = 0:1:VB; % gust line varies from 0 to VB
-jB = (Kg * UdeB * VGustB * CLalpha) / (498 * wingLoading); % limit factor
-nlimBPos = 1 + jB; % positive slope gust factor line
-nlimBNeg = 1 - jB; % negative slope gust factor line
-%plot(VGustB, nlimBPos)
-%plot(VGustB, nlimBNeg)
+%VB = VC - 43; % Maximum Gust Intensity Speed (KEAS)
+%UdeB = 84.67 - (0.000933 * h); % derived gust velocity
+%UdeB = UdeB * 0.592484; % convert to knots
+%VGustB = 0:1:VB; % gust line varies from 0 to VB
+%VGustB = VGustB * 1.68781; % convert to ft/s
+%jB = (Kg * UdeB * VGustB * CLalpha) / (498 * wingLoading); % limit factor
+%nlimBPos = 1 + jB; % positive slope gust factor line
+%nlimBNeg = 1 - jB; % negative slope gust factor line
+%plot(VGustB*0.592484, nlimBPos, 'b')
+%plot(VGustB*0.592484, nlimBNeg, 'b')
 
 % VC gust line
 UdeC = 66.67 - (0.000833 * h); % derived gust velocity (ft/s)
-UdeC = UdeC * 0.592484; % convert to knots
+% UdeC = UdeC * 0.592484; % convert to knots
 VGustC = 0:1:VC; % gust line varies from 0 to VC
+VGustC = VGustC * 1.68781;
 jC = (Kg * UdeC * VGustC * CLalpha) / (498 * wingLoading); % limit factor
 nlimCPos = 1 + jC; % positive slope gust factor line
 nlimCNeg = 1 - jC; % negative slope gust factor line
-%plot(VGustC, nlimCPos)
-%plot(VGustC, nlimCNeg)
+plot(VGustC*0.592484, nlimCPos, 'b--')
+plot(VGustC*0.592484, nlimCNeg, 'b--')
 
 % VD gust line
 UdeD = 33.35 - (0.000417 * h); % derived gust velocity
-UdeD = UdeD * 0.592484; % convert to knots
+%UdeD = UdeD * 0.592484; % convert to knots
 VGustD = 0:1:VD; % gust line varies from 0 to VD
+VGustD = VGustD * 1.68781;
 jD = (Kg * UdeD * VGustD * CLalpha) / (498 * wingLoading); % limit factor
 nlimDPos = 1 + jD; % positive slope gust factor line
 nlimDNeg = 1 - jD; % negative slope gust factor line
-%plot(VGustD, nlimDPos)
-%plot(VGustD, nlimDNeg)
+plot(VGustD*0.592484, nlimDPos, 'b--')
+plot(VGustD*0.592484, nlimDNeg, 'b--')
+
+% Extend line from VC to VD
+m = (min(nlimDNeg) - min(nlimCNeg)) / (VD - VC);
+x = VC:1:VD; % vector from VC to VD
+y = m*x - 0.02; % equation of line
+% Plot linear Curve from VC to VD for gust diagram
+plot(x,y,'b--') 
+
+y = -m*x + 2.02; % equation of line
+plot(x,y,'b--') 
+
