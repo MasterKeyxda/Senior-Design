@@ -150,6 +150,60 @@ text(26,0,'CP')
 text(15,0,'Nose')
 text(75,0,'Rear Section')
 %title('Haack Body Fuselage Design')
+
+% close all;
+Xloc = [0, 13.33155, 100/3, 41.66667, 66.667, 100, 120.83333, 129.1667, 131.25, 141.6667, L_F2];
+Z_UP = [0, 1.16652, 10/3, 3.62475, 10/3, 3.46122, 3.45386, 3.39437, 3.36786, 3.52812, 0];
+ZX1_u = (Z_UP(2) - Z_UP(1))/(Xloc(2) - Xloc(1));
+ZXn_u = (Z_UP(end) - Z_UP(end-1))/(Xloc(end) - Xloc(end-1));
+Zdat_u = spline(Xloc, [ZX1_u, Z_UP, ZXn_u]);
+
+Z_LOW = [0.0, 0.91758, 10/3, 4.65953, 5.00052, 5.03238, 4.98319, 4.98680, 4.99473, 3.77775, 0]; 
+ZX1_l = (Z_LOW(2) - Z_LOW(1))/(Xloc(2) - Xloc(1));
+ZXn_l = (Z_LOW(end) - Z_LOW(end-1))/(Xloc(end) - Xloc(end-1));
+Zdat_l = spline(Xloc, [ZX1_l Z_LOW ZXn_l]);
+
+figure();plot(1:L_F2, spline(Xloc, [ZX1_u, Z_UP, ZXn_u], 1:L_F2));
+hold on;
+plot(1:L_F2, -1.*spline(Xloc, [ZX1_l Z_LOW ZXn_l], 1:L_F2));
+axis equal
+
+edit_vsp = 0; % change this one if you want to modify the VSP file!
+
+if edit_vsp == 1
+    for i = 1:length(Xloc)
+        [R_val, R_nx, R_nxx] = fuselage_geom(Xloc(i), R_max, L_F2);
+       fprintf('X = %0.5f, Station %i\n', Xloc(i), i-1);
+       fprintf('Height: %0.5f\n', Z_UP(i) + Z_LOW(i));
+       fprintf('Z_Disp: %0.5f\n', Z_UP(i)-0.5*(Z_UP(i)+Z_LOW(i)));
+       fprintf('MaxWLoc: %0.5f\n', 1 - Z_UP(i)/(0.5*(Z_UP(i)+Z_LOW(i))));
+       fprintf('\n');
+       fprintf('Radius (Right) = %0.5f\n', R_val*2);
+       fprintf('Angle (Right) = %0.5f\n', R_nx);
+       fprintf('Curvature (Right) = %0.5f\n', R_nxx);
+       fprintf('\n');
+       if i == length(Xloc)
+    %        fprintf('Radius (Top) = %0.5f\n', Z_UP(i-1));
+           fprintf('Angle (Top) = %0.5f\n', atand(Zdat_u.coefs(i-1,3)));
+           fprintf('Curvature (Top) = %0.5f\n', 2*Zdat_u.coefs(i-1,2));
+           fprintf('\n');
+    %        fprintf('Radius (Bottom) = %0.5f\n', Z_UP(i-1));
+           fprintf('Angle (Bottom) = %0.5f\n', atand(Zdat_l.coefs(i-1,3)));
+           fprintf('Curvature (Bottom) = %0.5f\n', 2*Zdat_l.coefs(i-1,2));
+       else
+           fprintf('Angle (Top) = %0.5f\n', atand(Zdat_u.coefs(i,3)));
+           fprintf('Curvature (Top) = %0.5f\n', 2*Zdat_u.coefs(i,2));
+           fprintf('\n');
+    %        fprintf('Radius (Bottom) = %0.5f\n', Z_UP(i));
+           fprintf('Angle (Bottom) = %0.5f\n', atand(Zdat_l.coefs(i,3)));
+           fprintf('Curvature (Bottom) = %0.5f\n', 2*Zdat_l.coefs(i,2));
+       end
+
+       fprintf('\n\n');
+    end
+end
+% [R_cp, R_cpx, R_cpxx] = fuselage_geom(x_CP, R_max, L_F2);
+% [R_c, R_cx, R_cxx] = fuselage_geom(x_C, R_max, L_F2);
 %%
 % z = L_F*x;
 % Z = meshgrid(z,z);
