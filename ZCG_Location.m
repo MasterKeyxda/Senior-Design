@@ -3,7 +3,7 @@ clear CG_types
 clear mZcgi
 
 % All references and moment arms in ft 
-% Zcg calc performed with reference to ground
+% Zcg calc performed with reference to bottom of fuselage
 % Lifting Components - referenced to desired CG
 % Wing
 
