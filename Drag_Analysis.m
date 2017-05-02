@@ -135,9 +135,18 @@ Cf_fuse = Cf_Turb(1) + Re_Ratio(1)*Cf_lam - Re_Ratio(1)*Cf_Turb(1);
 CD0.fuse = Cf_fuse*fLD*fM*(Swet.fuse/Sref);
 
 %-----Wing-----%
+% Transonic drag predictions for wing are based on Ch 5 of Roskam Airplane
+% Aero and Perf.
+RNw = 2.9368e7; % RE of wing
+Rwf =  1.02; % wing-fuselage interference factor (Figure 5.11 Roskam)
+RLS = 1.25; % lifting surface correction factor (Figure 5.12 Roskam) 
+Cfw = 0.455 / (((log10(RNw))^2.58)*((1 + 0.144*(M^2))^0.58)); % turbulent flat plate friction coefficient of the wing
+Lprime = 1.2; % thickness location parameter; 1.2 for at (t/c)max >= 0.30c
+tcWing = 0.0525; % thickness to camber ratio wing (NACA 0012 Airfoil)
+CD0.wing = Rwf * RLS * Cfw * (1 + (Lprime * tcWing) + 100* ((tcWing)^4))*(Swet.wing/Sref);  
 % Eqn 3.19
-Cf_wing = Cf_Turb(2) + Re_Ratio(2)*Cf_lam - Re_Ratio(2)*Cf_Turb(2); % Cf laminar/turb mixed flow
-CD0.wing = Cf_wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
+% Cf_wing = Cf_Turb(2) + Re_Ratio(2)*Cf_lam - Re_Ratio(2)*Cf_Turb(2); % Cf laminar/turb mixed flow
+% CD0.wing = Cf_wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
 
 %-----Horizontal Tail-----%
 % Eqn 3.20
