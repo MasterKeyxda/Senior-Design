@@ -11,7 +11,7 @@
 % end
 
 clc;
-clearvars -except Wt atm req ctrl
+clearvars -except Wt atm req ctrl pass
 close all;
 
 %% File META - Preliminary Design Elements
@@ -58,7 +58,13 @@ req.takeoffRun = 7000; % NASA takeoff field length of less than 7000 ft; based
 
 fprintf('\t\t PRELIMINARY WEIGHT ESTIMATES: \n');
 
-Wt.pld.n_pass = 10; % Number of Passengers
+if ~exist('pass', 'var')
+    Wt.pld.n_pass = 10; % Number of Passengers
+    fprintf('Passenger study not on!\n');
+else
+    Wt.pld.n_pass = pass.num;
+    warning('Pasenger study on!\n');
+end
 Wt.pld.apw = 170; % lbf, average passenger weight (apw)
 Wt.pld.lug = 45; % lbf, luggage
 Wt.pld.w_tot = Wt.pld.n_pass * (Wt.pld.apw + Wt.pld.lug); % lbf
@@ -149,7 +155,7 @@ fprintf('WE_WTO: %0.3f \n',Wt.WE_WTO);
 fprintf('W_TO: %.2f lbs \n',Wt.WTO);
 
 % Clear out other variables except for Wt
-clearvars -except Wt atm req ctrl
+clearvars -except Wt atm req ctrl pass
 
 % Empty weight (lbs)
 % Wt.WE = Wt.WTO - Wt.fuel.w_tot - Wt.pld.w_tot - Wt.oew.crew;
