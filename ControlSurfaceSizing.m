@@ -51,36 +51,42 @@ phi_1 = I_xx / (rho*y_D^3*(S_w + S_h + S_vt)*C_D_R) * log(P_ss^2);
 P_dot = P_ss^2 / (2*phi_1); % aircraft rate of roll rate
 
 phi_des = 30; %degrees
-t = sqrt((2*phi_des)/(P_dot)) % time in seconds
+t = sqrt((2*phi_des)/(P_dot)); % time in seconds
 
 % Geometry of each aileron
-C_w = 16.6 % MAC
-b_A = y_out - y_in % span of aileron
-c_A = 0.3*C_w % chord of aileron
-A_A = 2*b_A*c_A % area of both ailerons 
+C_w = 16.6; % MAC
+b_A = y_out - y_in; % span of aileron
+c_A = 0.3*C_w; % chord of aileron
+A_A = 2*b_A*c_A; % area of both ailerons 
 
+fprintf('Time to rotate 30 degrees (s) = %0.5f \n',t)
+fprintf('Span of each Aileron = %0.5f \n',b_A)
+fprintf('Aileron chord = %0.5f \n',c_A)
+fprintf('Area of both Ailerons = %0.5f \n',A_A)
 
 %% Elevator Sizing
 
 C_L_cruise = 2*85000 / (0.00067595*(0.8*968)^2*825);
 C_L_TO = 1.75;
-
 C_D_TO = 0.0458;
 V_s = 211; %ft/s
 
+%Longitudinal Aerodynamic Forces
 Drag_TO = 0.5*0.0002378*V_s^2*S*C_D_TO;
 Lift_TO = 0.5*0.0002378*V_s^2*S*C_L_TO;
-
 M_ac_wf =  0.5*0.002378*211^2*825*-.0085*16.6;
 
-mu = 0.04; % assume concrete runway
+mu = 0.04; % friction coefficient of runway. assume concrete runway
 W = 87000;
 F_runway = mu*(W - Lift_TO);
-
 mass = W; % lbf
 T = 21900*3; % lbf
+
+% Aircraft Linear Acceleration at the time of take-off rotation
 a = (T - Drag_TO - F_runway) / mass
 
+% Step 7: Calculation of the contributing pitching moments in the take-off
+% rotation
 x_mg = 94.75; % ft
 x_cg = 88.5; % ft
 z_Dmg = 9.54; 
@@ -88,18 +94,26 @@ z_Tmg = 10.83;
 x_mgacwf = 9.31;
 z_cgmg = 10.08;
 
+rho = 23.77*10^(-4); %sea level
+v = 231; % ft/s
+A = ; %Reference area
+% must run iter_weights
+D = 0.5 * Cd_TO * rho * v^2 * A
+
 M_W = W*(x_mg - x_cg);
 M_D = D*(z_Dmg);
 M_T = T*(z_Tmg);
 M_L_wf = L_wf*(x_mgacwf);
 M_a = m*a*(z_cgmg);
 
-theta_ddot = 7/(180/pi); % take off pitch angular accleration for small...
-                % transport aircraft,  rad/s^2, Table 12.9
-I_yymg = 
+% take off pitch angular accleration for small transport aircraft,  
+% rad/s^2, Table 12.9
+theta_ddot = 7/(180/pi); 
+
+I_yymg = 7040260.3;
                 
 L_h = (L*(x_mg-x_ac_wf) + M_ac_wf + m*a*(z_cg-z_mg) + W*(x_mg-x_cg) + ...
-    D*(z_D-z_mg) + T*(z_T-z_mg) - I_yymg*theta_ddot) / (x_ac_h - x_mg)
+    D*(z_D-z_mg) + T*(z_T-z_mg) - I_yymg*theta_ddot) / (x_ac_h - x_mg);
 C_L_h = (2*L_h) / (rho*V_R^2*S_h);
 
 delta_E_max = -25 / (180/pi); % recommended maximum deflection angle, Table 12.3
@@ -107,16 +121,14 @@ alpha_h = TAIL.hAngle; %from iter_weights, TAIL.AlphaVt
 tau_e = (alpha_h + (C_L_h/C_L_alpha_h)) / (delta_E_max);
 
 % Step 11
-
-CE_Ch = ; % from tau from Figure 12.12
+%CE_Ch = ; % from tau from Figure 12.12
 Dalpha_oe = -1.14*CE_Ch*(-25);
 
 % Step 16
-
 V_H = (l_h * S_h) / (S* C_bar);
 
-bE_bh = 
-eta_h = ; %horizontal tail efficiency ,horizontal tail dynamic pressure ratio
+%bE_bh = 
+%eta_h = ; %horizontal tail efficiency ,horizontal tail dynamic pressure ratio
 C_mdeltaE = -C_Lalphah * eta_h * V_H * bE_bh * tau_e; % 1/rad
 C_LdeltaE = C_Lalphah * eta_h * S_h/S*bE_bh * tau_e;
 C_LhdeltaE = C_Lalphah * tau_e; % 1/rad
@@ -126,11 +138,11 @@ rho = 23.77*10^(-4); %sea level
 v = 231; % ft/s
 q_bar = 0.5 * rho*v^2
 C_malpha = TAIL.Cm_alpha
-delta_E = - (((T*z_T/(q_bar * S * C_bar) + C_mo)*C_Lalpha + (C_L1-C_L0)*C_malpha) / (C_Lalpha*C_mdeltaE -C_malpha*C_LdeltaE)
+delta_E = - (((T*z_T/(q_bar * S * C_bar) + C_mo)*C_Lalpha + (C_L1-C_L0)*C_malpha) / (C_Lalpha*C_mdeltaE -C_malpha*C_LdeltaE))
 
 
 bE = bE_Bh * B_h
-C_h = 
+%C_h = 
 
 % SOLUTION
 C_E = CE_Ch * C_h;
