@@ -34,7 +34,7 @@ mXcgi.Nacelle2 = [Wt.Struc.Nacelle*(2/3),-XLE_w - 0.25*cRootSub + cglocAC + x_en
 mXcgi.Nacelle1 = [Wt.Struc.Nacelle*(1/3),-XLE_w - 0.25*cRootSub + cglocAC + x_engine + 0.2*length_engine + nacLength*.38];
 
 % Nose and Main Gear
-x_NoseGear = 32; % ft nosegear distance from nose
+x_NoseGear = 31; % ft nosegear distance from nose
 x_MainGear = 95.92; % ft main gear distance from nose
 mXcgi.NoseGear = [Wt.Struc.NoseGear,-XLE_w - 0.25*cRootSub + cglocAC + x_NoseGear];
 mXcgi.MainGear = [Wt.Struc.MainGear,-XLE_w - 0.25*cRootSub + cglocAC + x_MainGear];
