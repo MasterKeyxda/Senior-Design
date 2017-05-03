@@ -5,7 +5,7 @@
 % by M. Sadraey Ch 3
 % Date Created: 3/17/17
 
-% Run iter_weights.m and TO_TD_perf.m before running this script
+% Run iter_weights.m before running this script
 %% Common Equation Parameters
 Sref = WING.geom.S_area; % Wing planform area chosen as reference area
 
@@ -189,7 +189,7 @@ CD0.total.sub = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nace
 
 %% Takeoff 
 h = 0; % sea level
-M = V_LOF/1116.5; 
+M = constraints.Vstall * 1.2/1116.5; 
 visc = 0.374E-6; % viscosity (slugs/ft-s)
 [V, rho, q ,Cf_Turb,Cf_lam,Re_Ratio] = dragCalc(h, M, visc, L_F, WING.geom.MAC, TAIL.ch, TAIL.cv, nacLength);
 
@@ -262,7 +262,7 @@ CD0.total.TO = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacel
 %% Landing
 
 h = 0; % sea level
-M = VTDActual/1116.5;
+M = constraints.Vstall * 1.15/1116.5;
 visc = 0.374E-6; % viscosity (slugs/ft-s)
 [V, rho, q ,Cf_Turb,Cf_lam,Re_Ratio] = dragCalc(h, M, visc, L_F, WING.geom.MAC, TAIL.ch, TAIL.cv, nacLength);
 

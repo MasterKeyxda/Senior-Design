@@ -2,8 +2,9 @@ clc;
 clear;
 close all;
 
-% load('aircraft_vars');
+load('aircraft_vars');
 hld_calcs;
+Drag_Analysis;
 addpath('TO_TD_perf\');
 
 %% Notes (from Roskam and Lam)
@@ -61,7 +62,7 @@ figs.fig11 = figs.fig11(find([diff(figs.fig11(:,1)); 1]),:);
 h_start = 5.54; % ft above ground
 AR_eff = @(h) WING.geom.AR / (spline(figs.fig11(:,1)', figs.fig11(:,2)', 2*h/WING.geom.span));
 alf0 = 2*pi/180; % 2 radians
-CD0 = 0.0196;
+CD0_TO = CD0.total.TO;
 N_nose = 0.25;
 Nose_arm = 50; % ft from CG
 % Main_arm = 
@@ -94,7 +95,7 @@ while (L_i < Wt.WTO)% || (Xpos(ii,2) < 1.2*constraints.Vstall)
     L_i = L_g(CLi, Xpos(ii-1, 2)+  1.5*Vw);
     
     % Drag Coefficient Model
-    Cdi = CD0 + CLi^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLi, AR_eff(h_start));
+    Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLi, AR_eff(h_start));
     D_i = D_g(Cdi, Xpos(ii-1, 2) + 1.5*Vw);
     
     % Ground friction force
@@ -151,7 +152,7 @@ CLi = CL_ag*(alpha_i1 + alf0 -dAlf_0g_i) + dCL;
 L_i = L_g(CLi, Xpos(iii-1, 2));
 
 % Drag Coefficient Model
-Cdi = CD0 + CLi^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLi, AR_eff(h_trans));
+Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLi, AR_eff(h_trans));
 D_i = D_g(Cdi, Xpos(iii-1, 2));
 
 gamma(2) = gc / (Xpos(iii - 1,2)*Wt.WTO) * (Thr * sin(alpha_i1) + L_i - Wt.WTO*cos(gamma(1)));
@@ -188,7 +189,7 @@ while h_trans < 35
     L_i = L_g(CLi, Xpos(iii-1, 2));
     
     % Drag Coefficient Model
-    Cdi = CD0 + CLi^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLi, AR_eff(h_trans));
+    Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLi, AR_eff(h_trans));
     D_i = D_g(Cdi, Xpos(iii-1, 2));
     
     gamma(iii - ii) = gc / (Xpos(iii - 1,2)*Wt.WTO) * (Thr * sin((alpha_i1-gamma(iii-ii-1))) + L_i - Wt.WTO*cos(gamma(iii-ii-1)));
@@ -242,7 +243,7 @@ fprintf('Approach Angle: %0.2f deg\n', -gam_A*180/pi);
 % Approach Calculations
 WT_land = Wt.WTO * Wt.fuel.w2_1 * Wt.fuel.w3_2 * Wt.fuel.w4_3 * Wt.fuel.w5_4 * Wt.fuel.w6_5;
 CL_A = 2* WT_land /(rho * WING.geom.S_area * V_A^2);
-CD_A = CD0 + CL_A^2 / (pi * WING.geom.AR * 0.9);
+CD_A = CD0.total.Land + CL_A^2 / (pi * WING.geom.AR * 0.9);
 Thr_land = (CD_A/CL_A - gam_A ) * WT_land;
 fprintf('Required Landing Thrust: %0.2f lbf\n', Thr_land);
 R_flare = V_FL^2 / (gc * (n_FL - 1));
@@ -270,7 +271,7 @@ while X_LR(end, 2) > 0
     L_i = L_g(CLi, X_LR(ii-1, 2)+  1.5*Vw);
     
     % Drag Coefficient Model
-    Cdi = CD0 + CLi^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLi, AR_eff(h_start));
+    Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLi, AR_eff(h_start));
     D_i = D_g(Cdi, X_LR(ii-1, 2) + 1.5*Vw);
     
     if L_i > WT_land
