@@ -62,22 +62,45 @@ A_A = 2*b_A*c_A % area of both ailerons
 
 %% Elevator Sizing
 
-% C_L_cruise = 
-% C_L_TO = 
-% 
-% C_D_TO = 
-% V_s = 
-% 
-% Drag_TO = 
-% Lift_TO = 
-% 
-% M_ac_wf =  
-% 
-% mu = 0.4; % assume concrete runway
-% F_runway = mu*(W - Lift_TO);
-% 
-% mass = 
-% a = (T - Drag_TO - F_runway) / mass
-% 
-% 
-% 
+C_L_cruise = 2*85000 / (0.00067595*(0.8*968)^2*825);
+C_L_TO = 1.75;
+
+C_D_TO = 0.0458;
+V_s = 211; %ft/s
+
+Drag_TO = 0.5*0.0002378*V_s^2*S*C_D_TO;
+Lift_TO = 0.5*0.0002378*V_s^2*S*C_L_TO;
+
+M_ac_wf =  0.5*0.002378*211^2*825*-.0085*16.6;
+
+mu = 0.04; % assume concrete runway
+W = 87000;
+F_runway = mu*(W - Lift_TO);
+
+mass = W; % lbf
+T = 21900*3; % lbf
+a = (T - Drag_TO - F_runway) / mass
+
+M_W = W*(x_mg - x_cg);
+M_D = D*(z_D - z_mg);
+M_T = T*(z_T - z_mg);
+M_L_wf = L_wf*(x_mg - x_ac_wf);
+M_a = m*a*(z_cg - z_mg);
+
+theta_ddot = 7/(180/pi); % take off pitch angular accleration for small...
+                % transport aircraft,  rad/s^2, Table 12.9
+I_yymg = 
+                
+L_h = (L*(x_mg-x_ac_wf) + M_ac_wf + m*a*(z_cg-z_mg) + W*(x_mg-x_cg) + ...
+    D*(z_D-z_mg) + T*(z_T-z_mg) - I_yymg*theta_ddot) / (x_ac_h - x_mg)
+C_L_h = (2*L_h) / (rho*V_R^2*S_h);
+
+delta_E_max = -25 / (180/pi); % recommended maximum deflection angle, Table 12.3
+alpha_h = TAIL.hAngle; %from iter_weights, TAIL.AlphaVt
+tau_e = (alpha_h + (C_L_h/C_L_alpha_h)) / (delta_E_max);
+
+% Step 11
+
+
+
+
