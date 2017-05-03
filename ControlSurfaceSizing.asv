@@ -130,9 +130,6 @@ delta_E = - (((T*z_T/(q_bar * S * C_bar) + C_mo)*C_Lalpha + (C_L1-C_L0)*C_malpha
 
 
 bE = bE_Bh * B_h
-C_h = 
+S_h = b_
 
-% SOLUTION
-C_E = CE_Ch * C_h;
-S_E = b_E * C_E;
 
