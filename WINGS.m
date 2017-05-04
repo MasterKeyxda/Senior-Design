@@ -225,9 +225,50 @@ title('LIFT/DRAG RATIO - BICONVEX');
 xlabel('ANGLE OF ATTACK (\alpha)');
 ylabel('L/D');
 saveas(gcf, [pwd '\aero_results\bicon_LD_polar.png']);
-%% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
+%% STEP 13: Calculate Lift Distribution at Cruise (ANSYS)
 
 % Plot Results from ANSYS analysis of the lift and drag polars
+WING.CFD.SUP.CD = [0.016085729;
+0.028136796;
+0.047713925;
+0.07356389;
+0.10641106;
+0.14319308;
+0.16464471;
+0.18766876];
+
+WING.CFD.SUP.CL = [0.12068674;
+                            0.21502044;...
+                            0.31313017;...
+                            0.40465641;...
+                            0.50061587;...
+                            0.5846736;...
+                            0.62898818;...
+                            0.67355644];
+
+WING.CFD.SUP.alpha = [0:2:10, 11, 12];
+temp_aoa = 0:0.1:12;
+figure();plot(WING.CFD.SUP.alpha, WING.CFD.SUP.CL./WING.CFD.SUP.CD, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUP.alpha, WING.CFD.SUP.CL./WING.CFD.SUP.CD, temp_aoa));
+title('Ansys L/D - Supersonic');
+xlabel('AOA (deg)');
+ylabel('L/D');
+
+figure();plot(WING.CFD.SUP.alpha, WING.CFD.SUP.CL, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUP.alpha, WING.CFD.SUP.CL, temp_aoa));
+title('ANSYS C_L - Supersonic)');
+xlabel('AOA (deg)');
+ylabel('C_L');
+
+WING.CFD.SUB.alpha = [0 2 11 12];
+WING.CFD.SUB.CL = [0.15476, 0.30141772, 0.81034042, 0.87281998];
+WING.CFD.SUB.CD = [0.012576, 0.029104, 0.20564, 0.23383];
+figure();plot(WING.CFD.SUB.alpha, WING.CFD.SUB.CL./WING.CFD.SUB.CD, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUB.alpha, WING.CFD.SUB.CL./WING.CFD.SUB.CD, temp_aoa));
+
 
 %% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
