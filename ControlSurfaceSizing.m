@@ -1,5 +1,5 @@
-clear all
-close all
+%clear all
+%close all
 clc
 
 %% Aileron Design
@@ -60,11 +60,17 @@ c_A = 0.3*C_w; % chord of aileron
 A_A = 2*b_A*c_A; % area of both ailerons 
 
 fprintf('Time to rotate 30 degrees (s) = %0.5f \n',t)
-fprintf('Span of each Aileron = %0.5f \n',b_A)
-fprintf('Aileron chord = %0.5f \n',c_A)
-fprintf('Area of both Ailerons = %0.5f \n',A_A)
+fprintf('Aileron Span (ft) = %0.5f \n',b_A)
+fprintf('Aileron Chord (ft) = %0.5f \n',c_A)
+fprintf('Aileron Area  (ft^2)  = %0.5f \n\n',A_A)
 
 %% Elevator Sizing
+% Satisifes take-off angular acceleration requirement of 7 deg/s^2 for small
+% transport 
+
+% Follows Sadraey's elevator-chord and span ratio recommendations
+% Longitudinal Trim requirements for given flight envelope
+
 
 C_L_cruise = 2*85000 / (0.00067595*(0.8*968)^2*825);
 C_L_TO = 1.75;
@@ -83,7 +89,7 @@ mass = W; % lbf
 T = 21900*3; % lbf
 
 % Aircraft Linear Acceleration at the time of take-off rotation
-a = (T - Drag_TO - F_runway) / mass
+a = (T - Drag_TO - F_runway) / mass;
 
 % Step 7: Calculation of the contributing pitching moments in the take-off
 % rotation
@@ -93,12 +99,16 @@ z_Dmg = 9.54;
 z_Tmg = 10.83;
 x_mgacwf = 9.31;
 z_cgmg = 10.08;
+x_ac_h = 104; % UPDATE
+z_mg = 10; %UPDATE
+z_T = z_Tmg + z_mg;
 
 rho = 23.77*10^(-4); %sea level
 v = 231; % ft/s
-A = ; %Reference area
+A = WING.geom.S_area; %Reference area
 % must run iter_weights
-D = 0.5 * Cd_TO * rho * v^2 * A
+D = 0.5 * Cd_TO * rho * v^2 * A;
+L_wf = C_L_TO * 0.5 * rho * v^2 * A;
 
 M_W = W*(x_mg - x_cg);
 M_D = D*(z_Dmg);
@@ -110,41 +120,48 @@ M_a = m*a*(z_cgmg);
 % rad/s^2, Table 12.9
 theta_ddot = 7/(180/pi); 
 
-I_yymg = 7040260.3;
-                
-L_h = (L*(x_mg-x_ac_wf) + M_ac_wf + m*a*(z_cg-z_mg) + W*(x_mg-x_cg) + ...
-    D*(z_D-z_mg) + T*(z_T-z_mg) - I_yymg*theta_ddot) / (x_ac_h - x_mg);
+I_yymg = 21000000.0;
+V_R = v; % aircraft linear speed at instant of rotation at TO             
+L_h = (L_wf*(x_mgacwf) + M_ac_wf + m*a*(z_cgmg) + W*(x_mg-x_cg) + ...
+    D*(z_Dmg) + T*(z_Tmg) - I_yymg*theta_ddot) / (x_ac_h - x_mg);
 C_L_h = (2*L_h) / (rho*V_R^2*S_h);
 
+C_L_alpha_h = TAIL.CLalphah;
 delta_E_max = -25 / (180/pi); % recommended maximum deflection angle, Table 12.3
-alpha_h = TAIL.hAngle; %from iter_weights, TAIL.AlphaVt
+alpha_h = TAIL.hAngle; %from iter_weights
 tau_e = (alpha_h + (C_L_h/C_L_alpha_h)) / (delta_E_max);
 
 % Step 11
-%CE_Ch = ; % from tau from Figure 12.12
+CE_Ch = 0.68; % from tau from Figure 12.12
 Dalpha_oe = -1.14*CE_Ch*(-25);
 
+l_h = x_mg;
 % Step 16
-V_H = (l_h * S_h) / (S* C_bar);
+V_H = (l_h * S_h) / (S* WING.geom.MAC);
 
-%bE_bh = 
-%eta_h = ; %horizontal tail efficiency ,horizontal tail dynamic pressure ratio
-C_mdeltaE = -C_Lalphah * eta_h * V_H * bE_bh * tau_e; % 1/rad
-C_LdeltaE = C_Lalphah * eta_h * S_h/S*bE_bh * tau_e;
-C_LhdeltaE = C_Lalphah * tau_e; % 1/rad
+bE_bh = 1;
+eta_h = 0.9 ; %horizontal tail efficiency ,horizontal tail dynamic pressure ratio
+C_mdeltaE = -TAIL.CLalphah * eta_h * V_H * bE_bh * tau_e; % 1/rad
+C_LdeltaE = TAIL.CLalphah * eta_h * S_h/S*bE_bh * tau_e;
+C_LhdeltaE = TAIL.CLalphah * tau_e; % 1/rad
 
-
+C_L0 = 0.127;
+C_L1 = C_L_cruise;
+C_mo = 0.05; %UPDATE
 rho = 23.77*10^(-4); %sea level
 v = 231; % ft/s
-q_bar = 0.5 * rho*v^2
-C_malpha = TAIL.Cm_alpha
-delta_E = - (((T*z_T/(q_bar * S * C_bar) + C_mo)*C_Lalpha + (C_L1-C_L0)*C_malpha) / (C_Lalpha*C_mdeltaE -C_malpha*C_LdeltaE))
+q_bar = 0.5 * rho*v^2;
+C_malpha = TAIL.Cm_alpha;
+delta_E = - (((T*z_T/(q_bar * S * WING.geom.MAC) + C_mo)*C_L_alphaWing...
+    + (C_L1-C_L0)*C_malpha) / (C_L_alphaWing*C_mdeltaE -C_malpha*C_LdeltaE));
 
-
-bE = bE_Bh * B_h
-%C_h = 
+b_E = bE_bh * TAIL.bh;
+C_h = TAIL.ch;
 
 % SOLUTION
 C_E = CE_Ch * C_h;
 S_E = b_E * C_E;
+fprintf('Elevator chord (ft) = %0.5f \n',C_E)
+fprintf('Elevator Span (ft^2) = %0.5f \n',b_E)
+fprintf('Elevator Area (ft^2) = %0.5f \n',S_E)
 
