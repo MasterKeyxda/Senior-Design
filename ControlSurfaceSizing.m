@@ -1,4 +1,4 @@
-%clear all
+    %clear all
 %close all
 clc
 
@@ -121,6 +121,7 @@ M_a = m*a*(z_cgmg);
 theta_ddot = 7/(180/pi); 
 
 I_yymg = 21000000.0;
+% I_yymg = 2.1e7;
 V_R = v; % aircraft linear speed at instant of rotation at TO             
 L_h = (L_wf*(x_mgacwf) + M_ac_wf + m*a*(z_cgmg) + W*(x_mg-x_cg) + ...
     D*(z_Dmg) + T*(z_Tmg) - I_yymg*theta_ddot) / (x_ac_h - x_mg);
@@ -132,7 +133,7 @@ alpha_h = TAIL.hAngle; %from iter_weights
 tau_e = (alpha_h + (C_L_h/C_L_alpha_h)) / (delta_E_max);
 
 % Step 11
-CE_Ch = 0.68; % from tau from Figure 12.12
+CE_Ch = 0.3; % from tau from Figure 12.12
 Dalpha_oe = -1.14*CE_Ch*(-25);
 
 l_h = x_mg;
