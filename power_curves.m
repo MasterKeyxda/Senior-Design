@@ -10,7 +10,7 @@ temp_sub = importdata('DifferentAltitude-FullThrottle-stdDay-0.8M.xlsx');
 temp_sup = importdata('AltitudeData-FullThrottle-stdDay.xlsx');
 temp_climb = importdata('SpeedData-FullThrottle-stdDay-42ft.xlsx');
 
-thrust_data = struct('sub', [], 'sup', []);
+thrust_data = struct('sub', [], 'sup', [], 'climb', []);
 thrust_data.sub = struct('alt', temp_sub.data(:,1), 'thr', temp_sub.data(:,2).*3);
 thrust_data.sup = struct('alt', temp_sup.data(:,1), 'thr', temp_sup.data(:,2).*3);
 thrust_data.climb = struct('mach', temp_climb.data(:,1), 'thr', temp_climb.data(:,2).*3);
@@ -48,7 +48,18 @@ xlabel('ft/s');
 ylabel('ft \cdot lbf');
 plot([V_inf(1), V_inf(1)], [min(ylim), max(P_avail)], 'linestyle', ':', 'color', 'k');
 plot([V_RCmax, V_RCmax], [P_req(RC == max(RC)), P_avail(RC == max(RC))], 'linestyle', '--', 'color', 'k'); 
-strmax = ['    Max RC = ',num2str(max(RC)*60), ' fpm'];
+strmax = sprintf('\tMax RC = %0.2f fpm',(max(RC)*60));
 text(V_inf(RC== max(RC)), P_req(RC== max(RC)), strmax, 'HorizontalAlignment', 'left');
+saveas(gcf, 'climb_curve_42.png');
 
 %% Thrust v. Altitude Plots
+
+figure();
+plot(thrust_data.sub.alt./1000, thrust_data.sub.thr);
+hold on;
+plot(thrust_data.sup.alt./1000, thrust_data.sup.thr);
+title('Thrust vs. Altitude');
+ylabel('Thrust (lbf)');
+xlabel('Alt (kft)');
+legend('Subsonic Cruise (Mach 0.8)', 'Supersonic Cruise (Mach 1.6)');
+saveas(gcf, 'alt_thr.png');
