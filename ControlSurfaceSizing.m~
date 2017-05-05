@@ -142,11 +142,13 @@ alpha_S_TO = 10; % degrees
 alpha_TO = alpha_S_TO - 2; % assumed fueselage is lifted up 2 deg. below the wing stall angle
 %Horizontal Tail Take-off Angle with elevator
 alpha_h_TO = alpha_TO * (1 - TAIL.deps) + TAIL.ih - TAIL.eps0;
+
 %compare with Tail stall angle of attack during takeoff rotation
 alpha_hs_deltaE0 = 13; % horizontal tail stall angle with no deflection
 delta_alpha_hE = 5.3; % Table 12.19
 % horizontal tail stall angle during takeoff rotation
 alpha_h_s = (alpha_hs_deltaE0 - delta_alpha_hE); 
+
 e_diff = alpha_h_s-alpha_h_TO;
 fprintf('Horizontal tail take-off angle is less than\n the tail stall angle, thus the elevator is\n acceptable = %0.5f \n',e_diff)
 
