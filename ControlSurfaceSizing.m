@@ -17,7 +17,7 @@ S_h = 164.6;
 S_vt = 74;
 V_s = 211 ;% Vstall ft/s
 C_L_alphaWing = 2*pi; % per rad
-I_xx = 7040260.3;
+I_xx = 6730260.3;
 tau = 0.48; %25 percent chord
 
 y_out = b/2;

@@ -17,7 +17,7 @@ S_h = 164.6;
 S_vt = 74;
 V_s = 211 ;% Vstall ft/s
 C_L_alphaWing = 2*pi; % per rad
-I_xx = 7040260.3;
+I_xx = 6730260.3;
 tau = 0.48; %25 percent chord
 
 y_out = b/2;
@@ -64,8 +64,8 @@ fprintf('Aileron Span (ft) = %0.5f \n',b_A)
 fprintf('Aileron Chord (ft) = %0.5f \n',c_A)
 fprintf('Aileron Area  (ft^2)  = %0.5f \n\n',A_A)
 
-% Plot tau
-n = 50
+% Plot: Variations of bank angle versus time
+n = 50;
 phi2 = linspace(0,40,n);
 t2 = sqrt((2*phi2)/(P_dot));
 xx1 = t*ones(n);
@@ -75,9 +75,9 @@ yy2 = 30*ones(n);
 
 figure
 plot(t2,phi2,'o', xx1,yy1,'r',xx2,yy2,'r')
-xlabel('time (sec)')
-ylabel('\phi (deg)')
-title('')
+xlabel('time (sec)','fontsize',20)
+ylabel('\phi (deg)','fontsize',20)
+
 %% Elevator Sizing
 % Satisifes take-off angular acceleration requirement of 7 deg/s^2 for small
 % transport 
