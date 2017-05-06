@@ -98,8 +98,8 @@ figure()
 title('CG Excursion Diagram')
 xlabel('CG Location (F.S.), ft')
 ylabel('Weight (lbs)')
-xMin = min(cgExcel-1);
-xMax = max(cgExcel+1);
+xMin = min(cgExcel-3);
+xMax = max(cgExcel+4);
 xlim([xMin, xMax])
 hold on;
 
@@ -114,7 +114,7 @@ plot(cgExcel, Wt.Excel,'s', 'MarkerSize',5,...
     'MarkerFaceColor',[0.5,0.5,0.5])
 
 yMin = 35000; 
-yMax = 100000;
+yMax = 101000;
 ylim([yMin,yMax]) % set y-axis limits
  
 % Annotate and plot horizontal line from xMin to cg at MTOW
@@ -126,3 +126,4 @@ text(cgExcel(4)-1.5,Wt.Excel(4)+2000,str)
 plot([xMin, cgExcel(1)], [Wt.Excel(1), Wt.Excel(1)],'k--')
 str = 'W_E';
 text(cgExcel(4)-1.5,Wt.Excel(1)-2000,str)
+
