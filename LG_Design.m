@@ -35,7 +35,7 @@ LG.geom.hClear = 5.54; % clearance between fuselage and ground (same as lowest p
 Zcg = LG.geom.hClear + ZcgFuse; % referenced from ground
 
 % Landing Gear Geometry
-LG.geom.B = 63.75;
+LG.geom.B = 64;
 LG.geom.CO = LG.geom.B - XcgAft; % distance between MG wheels and CG;
 %LG.geom.B = x_MainGear - x_NoseGear; % LG wheel base (dist between nose gear and main gear)
 LG.geom.T = 9; % LG wheel track (dist between main gear wheels)
