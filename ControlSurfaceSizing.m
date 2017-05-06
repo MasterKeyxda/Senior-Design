@@ -65,7 +65,7 @@ fprintf('Aileron Chord (ft) = %0.5f \n',c_A)
 fprintf('Aileron Area  (ft^2)  = %0.5f \n\n',A_A)
 
 % Plot: Variations of bank angle versus time
-n = 50
+n = 50;
 phi2 = linspace(0,40,n);
 t2 = sqrt((2*phi2)/(P_dot));
 xx1 = t*ones(n);
