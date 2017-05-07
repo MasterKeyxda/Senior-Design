@@ -69,159 +69,176 @@ Nose_arm = 50; % ft from CG
 L_arm = 0.3*WING.geom.sup.Cr;
 
 % Define some temporary functions
-CL_alf = @(AR, Ma) (2*pi * AR)/(2 + sqrt(AR^2 * sqrt(abs(Ma^2 - 1)) * (1 + tand(10)^2/abs(Ma^2 - 1) + 4)));
+CL_alf = @(AR, Ma) (2.*pi .* AR)./(2 + sqrt(AR^2 .* sqrt(abs(Ma.^2 - 1)) .* (1 + (tand(10)^2)./abs(Ma.^2 - 1) + 4)));
 % d_Alf_0g = @(h) (0.5*(WING.biconvex.tc_u + WING.biconvex.tc_l)) * (-0.1177/((h/WING.geom.MAC)^2) + 3.5655/((h / WING.geom.MAC)^2));
-d_CDi_g = @(h, Cl, AR) -1* (1 - 1.32*(h/WING.geom.span))/(1.05 + 7.4*(h/WING.geom.span)) * Cl^2 / (pi * AR);
+d_CDi_g = @(h, Cl, AR) -1.* (1 - 1.32.*(h./WING.geom.span))./(1.05 + 7.4.*(h./WING.geom.span)) .* Cl.^2 ./ (pi .* AR);
 L_g = @(Cl, V) 0.5*rho*WING.geom.S_area*V^2 * Cl;
 D_g = @(Cd, V) 0.5*rho*WING.geom.S_area*V^2 * Cd;
 d_Alf_0g = @(h)(WING.biconvex(1).tc_u + WING.biconvex(1).tc_l) * (-0.1177/((h/WING.geom.MAC)^2) + 3.5655/((h / WING.geom.MAC)^2)) * pi / 180;
 
 % Initialize boundary conditions
-dt = 0.05; % seconds
-Xpos(1,:) = [0.0, 0.0, 0.0]; % [X0, V0, t]
-ii = 1; % iterate with this
-L_i = 0.0;
+% dt = 0.05; % seconds
+dV = 0.1;
+V_TO = (1:3).*dV;
 
-while (L_i < Wt.WTO)% || (Xpos(ii,2) < 1.2*constraints.Vstall)
+% Lift  
+CL_ag = CL_alf(AR_eff(h_start), V_TO./a0); % Ground effect lift coefficient
+dAlf_0g_i = d_Alf_0g(h_start);
+CLg = CL_ag*(alf0-dAlf_0g_i) + dC_L1; 
+
+% Drag 
+Cdg = CD0_TO + (CLg.^2) ./ (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLg, AR_eff(h_start));
+
+Ag_TO = gc.*((Thr/Wt.WTO - mu_g) - (Cdg - mu_g .* CLg).*(0.5*atm.rho_sl.*V_TO.^2)./(Wt.WTO./WING.geom.S_area) - phi);
+ii = 1; % iterate with this
+f_ii = (V_TO - Vw)./Ag_TO;
+Sg_TO(ii) = (dV./3).*(f_ii(ii) + 4*f_ii(ii+1) + f_ii(ii+2));
+
+while (L_g(CLg(end), V_TO(end)-Vw) < Wt.WTO)% || (Xpos(ii,2) < 1.2*constraints.Vstall)
+    % renew consistent variables
     ii = ii + 1;
+    V_TO(end+1) = V_TO(end) + dV;
     
     % Lift coefficient model
-    CL_ag = CL_alf(AR_eff(h_start), Xpos(ii-1,2)/a0); % Ground effect lift coefficient
+    CL_ag = CL_alf(AR_eff(h_start), V_TO(ii:(ii+2))./a0); % Ground effect lift coefficient
     dAlf_0g_i = d_Alf_0g(h_start);
+    CLg = CL_ag*(alf0-dAlf_0g_i) + (dC_L1 + dC_L2); 
     
-    CLi = CL_ag*(alf0-dAlf_0g_i) + dCL; 
     % missing dCl for flaps at various AOA
     % Also missing loss of ground effect due to flaps
-    L_i = L_g(CLi, Xpos(ii-1, 2)+  1.5*Vw);
     
     % Drag Coefficient Model
-    Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLi, AR_eff(h_start));
-    D_i = D_g(Cdi, Xpos(ii-1, 2) + 1.5*Vw);
+    Cdg = CD0_TO + (CLg.^2) ./ (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLg, AR_eff(h_start));
+%     D_i = D_g(Cdi, Xpos(ii-1, 2) + 1.5*Vw);
     
+    Ag_TO = gc.*((Thr/Wt.WTO - mu_g) - (Cdg - mu_g .* CLg).*(0.5*atm.rho_sl.*V_TO(ii:(ii+2)).^2)./(Wt.WTO./WING.geom.S_area) - phi);
+    f_ii = (V_TO(ii:(ii+2)) - Vw)./Ag_TO;
+    Sg_TO(ii) = (dV./3).*(f_ii(1) + 4*f_ii(2) + f_ii(3)) + Sg_TO(ii-1);
     % Ground friction force
-    if Wt.WTO > L_i
-        GF = Wt.WTO - L_i;
-    else
-        GF = 0; % want zero if not touching the ground 
-    end
+%     if Wt.WTO > L_i
+%         GF = Wt.WTO - L_i;
+%     else
+%         GF = 0; % want zero if not touching the ground 
+%     end
     
-    dV = dt*(gc/Wt.WTO)*(Thr - D_i - (mu_g * GF) - Wt.WTO*sin(phi));
-    V_ii = Xpos(ii-1,2) + dV;
-    t_ii = dt + Xpos(ii-1, 3);
-    X_ii = Xpos(ii-1, 1) + dt * Xpos(ii-1, 2);
-    
-    Xpos(ii, :) = [X_ii, V_ii, t_ii];
-    
-    if (L_i * L_arm > (N_nose * Wt.WTO * Nose_arm)) || (L_i > Wt.WTO)
-        fprintf('Nose Lifted for Take-Off at Time %0.5f\n', Xpos(ii, 3));
-    end
+%     dV = dt*(gc/Wt.WTO)*(Thr - D_i - (mu_g * GF) - Wt.WTO*sin(phi));
+%     V_ii = Xpos(ii-1,2) + dV;
+%     t_ii = dt + Xpos(ii-1, 3);
+%     X_ii = Xpos(ii-1, 1) + dt * Xpos(ii-1, 2);
+%     
+%     Xpos(ii, :) = [X_ii, V_ii, t_ii];
+%     
+%     if (L_i * L_arm > (N_nose * Wt.WTO * Nose_arm)) || (L_i > Wt.WTO)
+%         fprintf('Nose Lifted for Take-Off at Time %0.5f\n', Xpos(ii, 3));
+%     end
 end
 
-fprintf('Take-Off Ground Roll Distance: %0.3f ft\n', Xpos(end, 1));
-fprintf('V_{LOF}: %0.3f ft/s\n', Xpos(end, 2));
-V_LOF = Xpos(end, 2);
+V_LOF = V_TO(end);
+
+fprintf('Take-Off Ground Roll Distance: %0.3f ft\n', Sg_TO(end));
+fprintf('V_{LOF}: %0.3f ft/s\n', V_LOF);
 
 %% Takeoff Transition - bring vehicle to the right gamma
 
-gamma = 0.0;
-Thr = constraints.req_Thr*0.8; % ASSUMPTION HERE... CONSTANT THRUST! 
-
-% Change alpha scheduling to clear obstacle... 1deg / 1 sec
-alpha_schedule = 0:(dt*pi/180):hld.alpha_TO;
-
-dS_trans = 0.0; % calculate incremental distance for transition period
-h_trans = h_start;
-
-iii = ii + 1;
-
-if (iii - ii) > length(alpha_schedule)
-    alpha_i1 = alpha_schedule(end);
-else
-    alpha_i1 = alpha_schedule(iii-ii);
+% gamma = 0.0;
+% Thr = constraints.req_Thr*0.8; % ASSUMPTION HERE... CONSTANT THRUST! 
+% 
+% % Change alpha scheduling to clear obstacle... 1deg / 1 sec
+% alpha_schedule = 0:(dt*pi/180):hld.alpha_TO;
+% 
+% dS_trans = 0.0; % calculate incremental distance for transition period
+% h_trans = h_start;
+% 
+% iii = ii + 1;
+% 
+% if (iii - ii) > length(alpha_schedule)
+%     alpha_i1 = alpha_schedule(end);
 % else
-%     alpha_i1 = 0;
-end
-
-% Lift coefficient model
-CL_ag = CL_alf(AR_eff(h_trans), Xpos(iii-1,2)/a0); % Ground effect lift coefficient
-dAlf_0g_i = d_Alf_0g(h_trans);
-
-CLi = CL_ag*(alpha_i1 + alf0 -dAlf_0g_i) + dCL; 
-% missing dCl for flaps at various AOA
-% Also missing loss of ground effect due to flaps
-L_i = L_g(CLi, Xpos(iii-1, 2));
-
-% Drag Coefficient Model
-Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLi, AR_eff(h_trans));
-D_i = D_g(Cdi, Xpos(iii-1, 2));
-
-gamma(2) = gc / (Xpos(iii - 1,2)*Wt.WTO) * (Thr * sin(alpha_i1) + L_i - Wt.WTO*cos(gamma(1)));
-dV = dt*(gc/Wt.WTO)*(Thr*cos(alpha_i1) - D_i - Wt.WTO*sin(gamma(1)));
-V_ii = Xpos(iii-1,2) + dV;
-t_ii = dt + Xpos(iii-1, 3);
-X_ii = Xpos(iii-1, 1) + dt * Xpos(iii-1, 2);
-
-Xpos(iii, :) = [X_ii, V_ii, t_ii];
-h_trans = h_trans + (dt*V_ii)*sin(gamma(2));
-dS_trans = dS_trans + (dt*V_ii)*cos(gamma(2));
-cleared = 0;
-ii_a = 1;
-
-while h_trans < 35 
-    iii = iii + 1;
-    
-    if (iii - ii) > length(alpha_schedule) && cleared
-        alpha_i1 = 0.0;
-    elseif (iii - ii) > length(alpha_schedule)
-        alpha_i1 = alpha_schedule(end);
-    else
-        alpha_i1 = alpha_schedule(ii_a);
-        ii_a = ii_a + 1;
-    end
-    
-    % Lift coefficient model
-    CL_ag = CL_alf(AR_eff(h_trans), Xpos(iii-1,2)/a0); % Ground effect lift coefficient
-    dAlf_0g_i = d_Alf_0g(h_trans);
-    
-    CLi = CL_ag*((alpha_i1-gamma(iii-ii-1)) + alf0 -dAlf_0g_i) + dCL; 
-    % missing dCl for flaps at various AOA
-    % Also missing loss of ground effect due to flaps
-    L_i = L_g(CLi, Xpos(iii-1, 2));
-    
-    % Drag Coefficient Model
-    Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLi, AR_eff(h_trans));
-    D_i = D_g(Cdi, Xpos(iii-1, 2));
-    
-    gamma(iii - ii) = gc / (Xpos(iii - 1,2)*Wt.WTO) * (Thr * sin((alpha_i1-gamma(iii-ii-1))) + L_i - Wt.WTO*cos(gamma(iii-ii-1)));
-    dV = dt*(gc/Wt.WTO)*(Thr*cos((alpha_i1-gamma(iii-ii-1))) - D_i - Wt.WTO*sin(gamma(iii-ii-1)));
-    V_ii = Xpos(iii-1,2) + dV;
-    t_ii = dt + Xpos(iii-1, 3);
-    X_ii = Xpos(iii-1, 1) + dt * Xpos(iii-1, 2);
-    
-    Xpos(iii, :) = [X_ii, V_ii, t_ii];
-    
-    h_trans = h_trans + (dt*V_ii)*sin(gamma(iii-ii));
-    dS_trans = dS_trans + (dt*V_ii)*cos(gamma(iii-ii));
-    
-    if h_trans > 35 && ((h_trans - (dt*V_ii)*sin(gamma(iii-ii))) < 35)
-       fprintf('Vehicle clears 35ft screen at Time: %0.5f\n', Xpos(iii,3));
-       XTO = Xpos(ii,1) + dS_trans;
-       fprintf('Total Take-off Distance Covered: %0.5f ft\n', Xpos(ii,1) + dS_trans);
-       cleared = 1;
-    end
-    
-    if (iii - ii - 1) == 1
-       fprintf('Lift-off Flight Path Angle: %0.5f deg \n', gamma(iii-ii)*180/pi); 
-       fprintf('Pitch Angle: %0.5f deg\n', (gamma(iii-ii) + alpha_i1)*180/pi);
-       fprintf('Wing Height: %0.3f ft\n', h_trans);
-    end
-    
-end
-
-fprintf('Time to Climb-Out: %0.5f\n', Xpos(end,3) - Xpos(ii, 3));
-fprintf('V_INCL: %0.5f\n', Xpos(end, 2));
-fprintf('Transition Distance: %0.5f\n', dS_trans);
-fprintf('Final flight path angle: %0.5f deg\n', gamma(end)*180/pi);
+%     alpha_i1 = alpha_schedule(iii-ii);
+% % else
+% %     alpha_i1 = 0;
+% end
+% 
+% % Lift coefficient model
+% CL_ag = CL_alf(AR_eff(h_trans), Xpos(iii-1,2)/a0); % Ground effect lift coefficient
+% dAlf_0g_i = d_Alf_0g(h_trans);
+% 
+% CLg = CL_ag*(alpha_i1 + alf0 -dAlf_0g_i) + dCL; 
+% % missing dCl for flaps at various AOA
+% % Also missing loss of ground effect due to flaps
+% L_i = L_g(CLg, Xpos(iii-1, 2));
+% 
+% % Drag Coefficient Model
+% Cdg = CD0_TO + CLg^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLg, AR_eff(h_trans));
+% D_i = D_g(Cdg, Xpos(iii-1, 2));
+% 
+% gamma(2) = gc / (Xpos(iii - 1,2)*Wt.WTO) * (Thr * sin(alpha_i1) + L_i - Wt.WTO*cos(gamma(1)));
+% dV = dt*(gc/Wt.WTO)*(Thr*cos(alpha_i1) - D_i - Wt.WTO*sin(gamma(1)));
+% V_ii = Xpos(iii-1,2) + dV;
+% t_ii = dt + Xpos(iii-1, 3);
+% X_ii = Xpos(iii-1, 1) + dt * Xpos(iii-1, 2);
+% 
+% Xpos(iii, :) = [X_ii, V_ii, t_ii];
+% h_trans = h_trans + (dt*V_ii)*sin(gamma(2));
+% dS_trans = dS_trans + (dt*V_ii)*cos(gamma(2));
+% cleared = 0;
+% ii_a = 1;
+% 
+% while h_trans < 35 
+%     iii = iii + 1;
+%     
+%     if (iii - ii) > length(alpha_schedule) && cleared
+%         alpha_i1 = 0.0;
+%     elseif (iii - ii) > length(alpha_schedule)
+%         alpha_i1 = alpha_schedule(end);
+%     else
+%         alpha_i1 = alpha_schedule(ii_a);
+%         ii_a = ii_a + 1;
+%     end
+%     
+%     % Lift coefficient model
+%     CL_ag = CL_alf(AR_eff(h_trans), Xpos(iii-1,2)/a0); % Ground effect lift coefficient
+%     dAlf_0g_i = d_Alf_0g(h_trans);
+%     
+%     CLg = CL_ag*((alpha_i1-gamma(iii-ii-1)) + alf0 -dAlf_0g_i) + dCL; 
+%     % missing dCl for flaps at various AOA
+%     % Also missing loss of ground effect due to flaps
+%     L_i = L_g(CLg, Xpos(iii-1, 2));
+%     
+%     % Drag Coefficient Model
+%     Cdg = CD0_TO + CLg^2 / (pi * AR_eff(h_trans) * 0.9) + d_CDi_g(h_trans, CLg, AR_eff(h_trans));
+%     D_i = D_g(Cdg, Xpos(iii-1, 2));
+%     
+%     gamma(iii - ii) = gc / (Xpos(iii - 1,2)*Wt.WTO) * (Thr * sin((alpha_i1-gamma(iii-ii-1))) + L_i - Wt.WTO*cos(gamma(iii-ii-1)));
+%     dV = dt*(gc/Wt.WTO)*(Thr*cos((alpha_i1-gamma(iii-ii-1))) - D_i - Wt.WTO*sin(gamma(iii-ii-1)));
+%     V_ii = Xpos(iii-1,2) + dV;
+%     t_ii = dt + Xpos(iii-1, 3);
+%     X_ii = Xpos(iii-1, 1) + dt * Xpos(iii-1, 2);
+%     
+%     Xpos(iii, :) = [X_ii, V_ii, t_ii];
+%     
+%     h_trans = h_trans + (dt*V_ii)*sin(gamma(iii-ii));
+%     dS_trans = dS_trans + (dt*V_ii)*cos(gamma(iii-ii));
+%     
+%     if h_trans > 35 && ((h_trans - (dt*V_ii)*sin(gamma(iii-ii))) < 35)
+%        fprintf('Vehicle clears 35ft screen at Time: %0.5f\n', Xpos(iii,3));
+%        XTO = Xpos(ii,1) + dS_trans;
+%        fprintf('Total Take-off Distance Covered: %0.5f ft\n', Xpos(ii,1) + dS_trans);
+%        cleared = 1;
+%     end
+%     
+%     if (iii - ii - 1) == 1
+%        fprintf('Lift-off Flight Path Angle: %0.5f deg \n', gamma(iii-ii)*180/pi); 
+%        fprintf('Pitch Angle: %0.5f deg\n', (gamma(iii-ii) + alpha_i1)*180/pi);
+%        fprintf('Wing Height: %0.3f ft\n', h_trans);
+%     end
+%     
+% end
+% 
+% fprintf('Time to Climb-Out: %0.5f\n', Xpos(end,3) - Xpos(ii, 3));
+% fprintf('V_INCL: %0.5f\n', Xpos(end, 2));
+% fprintf('Transition Distance: %0.5f\n', dS_trans);
+% fprintf('Final flight path angle: %0.5f deg\n', gamma(end)*180/pi);
 
 
 %% Landing Calcs -> Approach
@@ -265,14 +282,14 @@ while X_LR(end, 2) > 0
     CL_ag = CL_alf(AR_eff(h_start), X_LR(ii-1,2)/a0); % Ground effect lift coefficient
     dAlf_0g_i = d_Alf_0g(h_start);
     
-    CLi = CL_ag*(alf0-dAlf_0g_i) + dCL; 
+    CLg = CL_ag*(alf0-dAlf_0g_i) + dCL; 
     % missing dCl for flaps at various AOA
     % Also missing loss of ground effect due to flaps
-    L_i = L_g(CLi, X_LR(ii-1, 2)+  1.5*Vw);
+    L_i = L_g(CLg, X_LR(ii-1, 2)+  1.5*Vw);
     
     % Drag Coefficient Model
-    Cdi = CD0_TO + CLi^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLi, AR_eff(h_start));
-    D_i = D_g(Cdi, X_LR(ii-1, 2) + 1.5*Vw);
+    Cdg = CD0_TO + CLg^2 / (pi * AR_eff(h_start) * 0.9) + d_CDi_g(h_start, CLg, AR_eff(h_start));
+    D_i = D_g(Cdg, X_LR(ii-1, 2) + 1.5*Vw);
     
     if L_i > WT_land
         GF = 0;
