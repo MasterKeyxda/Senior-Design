@@ -161,8 +161,8 @@ Range.cr_climb.array = Range.cr_climb.array * 0.000164579;
 
 % L/D for transonic cruise climb conditions 
 % See Roskam Airplane Aero and Perf Sect 11.1.2.1 (eqns 11.10 & 11.11)
-L_D.cr_sub.avg = 0.5*sqrt((pi*e*WING.geom.AR)/CD0.total.sub); % this is max possible, what do I actually set this to?
-
+%L_D.cr_sub.avg = 0.5*sqrt((pi*e*WING.geom.AR)/CD0.total.sub); % this is max possible, what do I actually set this to?
+L_D.cr_sub.avg = 12;
 % Pt. B
 Range.climb_trans.B = ((atm.snd_trans * 1116.5) / Wt.trans.sfc_cr) * 0.8 * L_D.cr_sub.avg * log((0.97 * Wt.WTO) / Wt.W1.B);
 
