@@ -23,6 +23,7 @@ K_perf = 1 / (pi * e * WING.geom.AR);
 b1 = sqrt(D_0);
 b2 = sqrt((K_perf / WING.geom.S_area) * (1/q_cr));
 
+%%
 % Pt. B
 Wt.fuel.reserve = Wt.fuel.w_max - Wt.fuel.w_tot; % Amount of reserve fuel
 Wt.W1.B = Wt.WOEW + Wt.pld.w_tot + Wt.fuel.reserve; % W1 = OEW + Max Pld + Fuel reserve
@@ -138,9 +139,13 @@ legend([hLine1,hLine2],'Supersonic Cruise (M=1.6)','Transonic Cruise (M=0.8)', '
 % Range at cruise climb conditions (constant lift coefficient, CL, and Mach number, M) and
 % assuming thrust specific fuel consumption, c, remains constant throughout the mission
 
+% Determine L/D from WING.CFD arrays
+CL.cr.CFD = spline(WING.CFD.SUP.alpha,WING.CFD.SUP.CL, 2.86); 
+CD.cr.CFD = spline(WING.CFD.SUP.alpha,WING.CFD.SUP.CD, 2.86);
+
 % See Roskam Airplane Aero and Perf Sect 11.1.2.1 (eqns 11.10 & 11.11)
-%L_D.cr_super.avg = 0.5*sqrt((pi*e*WING.geom.AR)/CD0.total.super); 
-L_D.cr_super.avg = 7.5;
+L_D.cr_super.avg = CL.cr.CFD / CD.cr.CFD;
+%L_D.cr_super.avg = 7.5;
 
 % Pt. B
 Range.cr_climb.B = ((Wt.fuel.a_snd * 1116.5) / Wt.fuel.sfc_cr) * req.cr_M0(1) * L_D.cr_super.avg * log((0.97 * Wt.WTO) / Wt.W1.B);
@@ -161,8 +166,10 @@ Range.cr_climb.array = Range.cr_climb.array * 0.000164579;
 
 % L/D for transonic cruise climb conditions 
 % See Roskam Airplane Aero and Perf Sect 11.1.2.1 (eqns 11.10 & 11.11)
-%L_D.cr_sub.avg = 0.5*sqrt((pi*e*WING.geom.AR)/CD0.total.sub); % this is max possible, what do I actually set this to?
-L_D.cr_sub.avg = 12;
+CL.cr_trans.CFD = spline(WING.CFD.SUB.alpha,WING.CFD.SUB.CL, 2.86); 
+CD.cr_trans.CFD = spline(WING.CFD.SUB.alpha,WING.CFD.SUB.CD, 2.86); 
+L_D.cr_sub.avg = CL.cr_trans.CFD / CD.cr_trans.CFD;
+% L_D.cr_sub.avg = 12;
 % Pt. B
 Range.climb_trans.B = ((atm.snd_trans * 1116.5) / Wt.trans.sfc_cr) * 0.8 * L_D.cr_sub.avg * log((0.97 * Wt.WTO) / Wt.W1.B);
 
@@ -243,4 +250,5 @@ title('Payload Range Diagram (Cruise-Climb)')
 xlabel('Range (nmi)')
 ylabel('Payload (lb)')
 legend([hline3, hline4],'Supersonic Cruise (M=1.6)','Transonic Cruise (M=0.8)', 'Location', 'Southwest')
+
 
