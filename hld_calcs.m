@@ -49,7 +49,7 @@ K_lambda = 0.92; % corresponding to wing sweep of 10 degrees
 S_RAT_f = 0.40; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
 dCL_max_flaperon = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
 
-%% Slats CL calcs from Raymer 1992
+%% Slats delta CL calcs from Raymer 1992
 
 cl_d_max = 1.2; % with nose flap-chord ratio, cf/c = 0.10
 n_max = 0.55; % corresponding to 0 leading edge radius
@@ -57,16 +57,16 @@ n_delta = 0.9; % corresponding to 20 degree deflection angle
 delta_f = 20; % degree deflection from airfoil chord plane
 chord_RAT = .10; % ratio of the chord with and without deflection of slat
 dcl_max_s = cl_d_max * n_max * n_delta * delta_f * (chord_RAT); % lead edge slats c_l
-S_RAT_s = 0.2; % slat-wing wetted area ratio 
+S_RAT_s = 0.5; % slat-wing wetted area ratio 
 phi_HL = 10; %sweep angle of the hinge line of flap
 d_CL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
 
 
 dC_L1 = dCL_max_f ;%+ d_CL_max_s;
 fprintf('dCL = %f from flaps on supersonic wing \n',dC_L1)
-fprintf('dCL = %f from flaperons on supersonic wing  \n',dCL_max_flaperon)
+%fprintf('dCL = %f from flaperons on supersonic wing  \n',dCL_max_flaperon)
 fprintf('dCL = %f from slats on subsonic wing \n',d_CL_max_s)
-fprintf('Total dCL = %f  \n',dCL_max_flaperon+dC_L1+d_CL_max_s)
+fprintf('Total dCL = %f  \n',dC_L1+d_CL_max_s)
 
 %slats on subsonic wing
 %slats wing-fuselage interation. expect to lose efficiency
