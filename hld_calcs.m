@@ -55,7 +55,7 @@ dC_L1 = dCL_max_f ;%+ d_CL_max_s;
 fprintf('dCL = %f for supersonic wing \n',dC_L1)
 fprintf('dCL = %f for supersonic wing flaperon \n',dCL_max_flaperon)
 fprintf('Total dCL = %f  \n',dCL_max_flaperon+dC_L1)
-
+fprintf('However, to meet our thrust requirements, the Emperor must have a\n maximum $C_L$ of 1.50 for take-off and 1.75 for landing.\n')
 % cl_d_max = 1.7; % with nose flap-chord ratio, cf/c = 0.30
 % n_max = 0.45; % corresponding to 0 leading edge radius
 % n_delta = 0.58; % corresponding to 30 degree deflection angle
