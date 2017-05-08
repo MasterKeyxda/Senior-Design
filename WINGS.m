@@ -278,6 +278,17 @@ xlabel('AOA (deg)');
 ylabel('C_L');
 
 
+%% VSP RESULTS - FULL AIRCRAFT
+WING.VSP.SUP.CL = [0.08039, 0.15112, 0.18191, 0.23973, 0.28248, 0.31885, 0.36952, 0.43421, 0.41881, 0.34278, 0.14622];
+WING.VSP.SUP.CD = [0.03572, 0.03765, 0.05904, 0.05139, 0.06014, 0.07557, 0.09331, 0.12967, 0.1496, 0.1838, 0.27547];
+WING.VSP.SUP.ALPHA = 0:10;
+
+figure();plot(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 'o');
+hold on;
+plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 0:0.01:10));
+title('Lift Curve - Full Aircraft, Supercruise (Mach 1.6)');
+xlabel('Alpha (Deg)');
+ylabel('C_L');
 %% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
 % coefficient
