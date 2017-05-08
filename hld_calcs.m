@@ -33,7 +33,7 @@ dcl_max_f = k1*k2*k3*dcl_max_b; % trailing edge flaps c_l
 % p. 8-18
 %reference--> http://adg.stanford.edu/aa241/highlift/clmaxest.html
 K_lambda = 0.92; % corresponding to wing sweep of 10 degrees
-S_RAT_f = 0.470; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
+S_RAT_f = 0.40; % flaps-wing wetted area ratio, referenced to DC-6 which had ratio of 0.58
 dCL_max_f = dcl_max_f * S_RAT_f * K_lambda; %  change in coefficient of lift from flaps
 
 % FLAPERON
@@ -62,11 +62,12 @@ phi_HL = 10; %sweep angle of the hinge line of flap
 d_CL_max_s = dcl_max_s * S_RAT_s * cosd(phi_HL);
 
 
-dC_L1 = dCL_max_f ;%+ d_CL_max_s;
+dC_L1 = dCL_max_f ;%+ d_C L_max_s;
 fprintf('dCL = %f from flaps on supersonic wing \n',dC_L1)
 %fprintf('dCL = %f from flaperons on supersonic wing  \n',dCL_max_flaperon)
 fprintf('dCL = %f from slats on subsonic wing \n',d_CL_max_s)
 fprintf('Total dCL = %f  \n',dC_L1+d_CL_max_s)
+dCL_tot = dC_L1+d_CL_max_s;
 
 %slats on subsonic wing
 %slats wing-fuselage interation. expect to lose efficiency
