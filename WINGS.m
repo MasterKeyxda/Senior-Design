@@ -258,16 +258,24 @@ ylabel('L/D');
 figure();plot(WING.CFD.SUP.alpha, WING.CFD.SUP.CL, 'o');
 hold on;
 plot(temp_aoa, spline(WING.CFD.SUP.alpha, WING.CFD.SUP.CL, temp_aoa));
-title('ANSYS C_L - Supersonic)');
+title('ANSYS C_L - Supersonic');
 xlabel('AOA (deg)');
 ylabel('C_L');
 
-WING.CFD.SUB.alpha = [0 2 11 12];
-WING.CFD.SUB.CL = [0.15476, 0.30141772, 0.81034042, 0.87281998];
-WING.CFD.SUB.CD = [0.012576, 0.029104, 0.20564, 0.23383];
+WING.CFD.SUB.alpha = [0 2 11 12 15];
+temp_aoa = min(WING.CFD.SUB.alpha):0.05:max(WING.CFD.SUB.alpha);
+WING.CFD.SUB.CL = [0.15476, 0.30141772, 0.81034042, 0.87281998, 0.88035];
+WING.CFD.SUB.CD = [0.012576, 0.029104, 0.20564, 0.23383, 0.29134];
 figure();plot(WING.CFD.SUB.alpha, WING.CFD.SUB.CL./WING.CFD.SUB.CD, 'o');
 hold on;
 plot(temp_aoa, spline(WING.CFD.SUB.alpha, WING.CFD.SUB.CL./WING.CFD.SUB.CD, temp_aoa));
+
+figure();plot(WING.CFD.SUB.alpha, WING.CFD.SUB.CL, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUB.alpha, WING.CFD.SUB.CL, temp_aoa));
+title('ANSYS C_L - Subsonic');
+xlabel('AOA (deg)');
+ylabel('C_L');
 
 
 %% WING OPTIMIZATION
