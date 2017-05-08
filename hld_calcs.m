@@ -67,6 +67,7 @@ fprintf('dCL = %f from flaps on supersonic wing \n',dC_L1)
 %fprintf('dCL = %f from flaperons on supersonic wing  \n',dCL_max_flaperon)
 fprintf('dCL = %f from slats on subsonic wing \n',d_CL_max_s)
 fprintf('Total dCL = %f  \n',dC_L1+d_CL_max_s)
+dCL_tot = dC_L1+d_CL_max_s;
 
 %slats on subsonic wing
 %slats wing-fuselage interation. expect to lose efficiency
