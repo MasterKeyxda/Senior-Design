@@ -289,6 +289,19 @@ plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 0:0.01:10));
 title('Lift Curve - Full Aircraft, Supercruise (Mach 1.6)');
 xlabel('Alpha (Deg)');
 ylabel('C_L');
+saveas(gcf, 'supersonic_lift_curve.png');
+
+WING.VSP.SUB.CL = [0.16057, 0.25951, 0.37048, 0.49533, 0.63565, 0.79531, 0.97734, 1.18295, 1.41921, 1.67874, 1.9964];
+WING.VSP.SUB.CD = [0.02987, 0.0333, 0.03888, 0.04721, 0.05884, 0.07507, 0.09718, 0.12605, 0.16444, 0.21343, 0.27744];
+WING.VSP.SUB.ALPHA = 0:10;
+
+figure();plot(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 'o');
+hold on;
+plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 0:0.01:10));
+title('Lift Curve - Full Aircraft, Subosnic (Mach 0.8)');
+xlabel('Alpha (Deg)');
+ylabel('C_L');
+saveas(gcf, 'subsonic_lift_curve.png');
 %% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
 % coefficient
