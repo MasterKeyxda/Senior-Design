@@ -1,14 +1,15 @@
 %% Cost Analysis from Raymer CH 18 pg 501-517
-% Updated with Respect to RAYMER 5th EDITION $ 2012 to 2025 $
+% Updated with Respect to RAYMER 5th EDITION $ 2012 to 2017 $
+% Run Iter Weights!
 % Using Variable Notation from Raymer
-% Flyaway cost is approximately 49 million 2025 dollars-comparable to Gulfstream
+% Flyaway cost is approximately 49 million 2017 dollars-comparable to Gulfstream
 % asking price between 32 and 52 million in 2017. -Flyaway cost confirmed.
-%% Inflation Rate 1986-2025 US Bureau of Statistics and Calculator
-% 1986-2025
-%Inf = 2.65; % inflation rate calcuated from avg 2.2 rate from 2017-2025
-Inf = 1.263; % inflation between 2012 and 2025
-%% Inital Parameters
-% Must Run Iter Weights before 
+%% Inflation Rate 1986-2017 US Bureau of Statistics and Calculator
+% 1986-2017
+%Inf = 2.65; % inflation rate calcuated from avg 2.2 rate from 1986-2025
+%Inf = 1.263; % inflation between 2012 and 2025
+Inf = 1.06; %inflation parameter between 2012 and 2017
+%% Inital Parameters 
 % (*) symbol indicates things that need to be changed
 WTO = Wt.WTO; % lbf
 W_E = Wt.WE; % lbf
@@ -66,11 +67,11 @@ C_Eng = 1.15*(3112*(0.043*T_max+ 243.25*M_max + 0.969*T_4 - 2228));
 RDTE = Inf*((H_E*R_E + H_T*R_T + H_Q*R_Q + H_M*R_M + C_Dev + C_F + C_Mat + ...
     C_Eng*N_Eng + C_avionics)/Q);
 
-fprintf('The total aircraft RDTE and Flyaway cost per aircraft is $%0.0f in 2025  \n',RDTE)
-
+fprintf('The total aircraft RDTE and Flyaway cost per aircraft is $%0.0f in 2017  \n',RDTE)
+fprintf('The total RDTE and Flyaway  is $%0.0f in 2017  \n',RDTE * Q)
 Flyaway = Inf*(H_M*R_M+H_T*R_T + C_F + C_Mat +  C_Eng*N_Eng + C_avionics)/Q;
 % Flyaway cost per aircraft
-fprintf('The Flyaway cost per aircraft is $%0.0f in 2025  \n',Flyaway)
+fprintf('The Flyaway cost per aircraft is $%0.0f in 2017  \n',Flyaway)
  %% Learning Curve
 % H_1 = H_E + H_T + H_M + H_Q; % total number of labor hours to produce aircraft
 % Q_range = linspace(1,500,500); % range of quantity production
@@ -124,7 +125,7 @@ hold off
 % In order to obtain maintenance costs, flight hours per year are needed
 % Table 18.1 pg 511
 MMH_FH = 4.5; % Maintenance man hours per flight hour business jet (avg)
-FH_YR = 500; % Flight hour per year per aircraft
+FH_YR = 500; % Flight hour per year per aircraft (Table 18.1 Raymer)
 
 % Calculating Mission Flight Time pg 511.
 Range = 3000; % range of aircraft nmi based on suitable travel locations and distances
@@ -166,7 +167,7 @@ Fuel_Cost_Yr = Fuel_price_gal/rho_f*Fuel_Hr*FH_YR*T_max;
 % Maintenance and Operation Cost (Yearly per aircraft)
 
 M_O = Material_Cost + C_crew_YR;
-fprintf('The Operation and Maintenance Cost per year per aircraft is $%0.0f in 2025 \n',Inf*M_O)
+fprintf('The Operation and Maintenance Cost per year per aircraft is $%0.0f in 2017 \n',Inf*M_O)
 %% Bar Graph of All Costs
 
 figure()
@@ -179,7 +180,7 @@ Labels = {'Engineering', 'Tooling', 'Quality Assurance',...
     'Avionics','Materials','Maintenance','Fuel'};
 
 set(gca, 'YTick', 1:length(Cost), 'YTickLabel', Labels);
-xlabel('Cost per Airplane (2025 $)')
+xlabel('Cost per Airplane (2017 $)')
 xlim([0,30e6]);
 for i1=1:numel(Cost)
     text(Cost(i1),x(i1),num2str(Cost(i1),'%0.1d'),...
@@ -187,7 +188,7 @@ for i1=1:numel(Cost)
                'VerticalAlignment','middle')
 end
 title('RDTE and Flyaway Cost Breakdown') 
-%% Airplane Revenue
+ %% Airplane Ticket Revenue
 % Determine Cost per ticket
 % Based on United Website, Tokyo to SF
 Ticket_i = 3000; % intial ticket cost dollars (business class)
@@ -195,8 +196,9 @@ Ticket_i = 3000; % intial ticket cost dollars (business class)
 Revenue_Cycle = Ticket_i*n_p; % revenue due to 10 passengers per flight
 Revenue_Yr = Revenue_Cycle*Cycle; % Annual revenue per aircraft
 Profit = Inf*(Revenue_Yr - M_O - Fuel_Cost_Yr); % Revenue - Expenses = Profit 
-fprintf('Annual Revenue per aircraft is $%0.0f in 2025 \n', Revenue_Yr) 
-fprintf('Annual Profit Margin per aircraft is $%0.0f in 2025 \n', Profit)
+fprintf('Annual Revenue per aircraft is $%0.0f in 2017 \n', Revenue_Yr) 
+fprintf('Annual Profit Margin per aircraft is $%0.0f in 2017 \n', Profit)
+
 %% Insurance and Deprecation
 % Insurance
 Insurance = 0.01*(C_crew_YR+ C_crew_YR); % 1% of operation cost
@@ -209,3 +211,12 @@ Dep_AF = 0.9*(Inf*(H_M*R_M+H_T*R_T + C_F + C_Mat)/Q)/5;
 
 % Depreciation Cost of engines per year
 Dep_ENG = (Inf*(C_Eng*N_Eng)/Q)/5;
+%% Selling Price of Airplane and Breakeven Point
+% How many do we have to sell to breakeven?
+% Assume we sell with 40% markup
+Timespan = 5; % 5 years
+Selling_Price = 1.4*Flyaway; % selling price per aircraft 10% markup of production cost
+Break_Even = ceil((Q*RDTE - Q*Profit*Timespan + Q*Dep_AF + Q*Dep_ENG)/Selling_Price); % quantity to sell to breakeven
+fprintf('The amount of aircraft we need to sell to breakeven is %0.0f in %0.0f years\n',Break_Even,Timespan)
+Profit2 = (Q - Break_Even)* Selling_Price; % Total Program Profit
+fprintf('The total profit after breaking even is $%0.0f in %0.0f years\n',Profit2,Timespan)
