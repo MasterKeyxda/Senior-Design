@@ -33,35 +33,53 @@ CL.cr.begin = Wt.cr.begin / (q_cr * WING.geom.S_area);
 CL.cr.end = Wt.cr.end / (q_cr * WING.geom.S_area); 
 
 % Interpolate CD values from drag polar
-CD.cr.begin = spline(CL.overall, CD.total.super, CL.cr.begin);
-CD.cr.end = spline(CL.overall, CD.total.super, CL.cr.end);
+CD.cr.begin = spline(CL.array, CD.total.super, CL.cr.begin);
+CD.cr.end = spline(CL.array, CD.total.super, CL.cr.end);
 L_D.cr.begin = CL.cr.begin / CD.cr.begin;
 L_D.cr.end = CL.cr.end / CD.cr.end;
 
+% Determine L/D from WING.CFD arrays
+CL.cr.CFD = spline(WING.CFD.SUP.alpha,WING.CFD.SUP.CL, 2.86); 
+CD.cr.CFD = spline(WING.CFD.SUP.alpha,WING.CFD.SUP.CD, 2.86);
+L_D.cr.CFD = CL.cr.CFD / CD.cr.CFD;
+
 % Average start and end CL/CD values
 %L_D.cr.average = (L_D.cr.begin + L_D.cr.end) / 2;
-L_D.cr.average = 7; 
+L_D.cr.average = 7.5; 
 
 % Determine range (nm) of aircraft for constant Mach number (eqn 11.62)
 cj = Wt.fuel.sfc_cr * 3600; % lbs/h/lbs GET UPDATED VALUE FROM PARA ANALYSIS
-Perf.Rng.ConsM = ((a.soundCr * sqrt(atm.theta) * req.cr_M0(1) * L_D.cr.average) / cj) * log(Wt.cr.begin/Wt.cr.end);
+Perf.Rng.ConsM = ((a.soundCr * sqrt(atm.theta) * req.cr_M0(1) * L_D.cr.CFD) / cj) * log(Wt.cr.begin/Wt.cr.end);
 fprintf('The maximum range (Constant Mach Number) is %0.2f nm. \n', Perf.Rng.ConsM)
-%% Determine Endurance (Const Mach Number)
+%% Determine Endurance
 
-Wt.ltr.start = Wt.cr.end; % start loiter at end of cruise phase
-Wt.ltr.end = Wt.fuel.w5_4 * Wt.ltr.start; % end of loiter weight
+%Wt.ltr.start = Wt.cr.end; % start loiter at end of cruise phase
+%Wt.ltr.end = Wt.fuel.w5_4 * Wt.ltr.start; % end of loiter weight
+Wt.end = Wt.start - Wt.fuel.w_tot; 
 
-% Loiter set to 1h?
-% different cj
-% Determine Endurance (hours) for constant Mach number (eqn 11.63)
-Perf.End.ConsM = (1/cj)*(L_D.cr.average)*log(Wt.ltr.start/Wt.ltr.end);
-fprintf('The maximum endurance (const Mach number) is %0.2f hours. \n', Perf.End.ConsM)
+% Transonic Endurance
+cj_trans = 0.484/3600; 
+Kend = 1 / (pi*0.8*3); 
+CL.trans.ed = sqrt(CD0.total.sub / Kend);
+CD.trans.ed = 2*CD0.total.sub;
+L_D.trans.ed = CL.trans.ed / CD.trans.ed;
+Perf.End.ConsAOA.sub = (1 / cj_trans) * (L_D.trans.ed) * (log(Wt.start / Wt.end));
+fprintf('The maximum endurance (cruise climb) is %0.2f hours. \n', Perf.End.ConsAOA.sub/3600)
 
+% Supersonic Endurance
+CL.super.ed = sqrt(CD0.total.super / Kend);
+CD.super.ed = 2*CD0.total.super;
+L_D.super.ed = CL.super.ed / CD.super.ed;
+Perf.End.ConsAOA.super = (1 / Wt.fuel.sfc_cr) * (L_D.super.ed) * (log(Wt.start / Wt.end));
+fprintf('The maximum endurance (cruise climb) is %0.2f hours. \n', Perf.End.ConsAOA.super/3600)
+
+% % Determine Endurance (hours) for constant AOA
+% Perf.End.ConsM = (1/cj_trans)*(L_D.cr.average)*log(Wt.ltr.start/Wt.ltr.end);
 
 %% Determine Range (Const Altitude)
 
-CL.alt.max = sqrt((pi*WING.geom.AR * e_Oswald * CD0.total.cruise)/3); % eqn 11.66
-CD.alt.max = (4/3)*CD0.total.cruise; % eqn 11.66
+CL.alt.max = sqrt((pi*WING.geom.AR * e_Oswald * CD0.total.super)/3); % eqn 11.66
+CD.alt.max = (4/3)*CD0.total.super; % eqn 11.66
 sqrtCL_CD = sqrt(CL.alt.max) / CD.alt.max; 
 
 Perf.Rng.ConsAlt = (1.675 / (cj * sqrt(atm.crRange * WING.geom.S_area)))*(sqrtCL_CD) * (sqrt(Wt.cr.begin) - sqrt(Wt.cr.end));
