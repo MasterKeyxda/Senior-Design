@@ -338,7 +338,7 @@ figure();plot(V_inf, P_req);
 hold on;
 plot(V_inf, P_avail);
 legend('P_{req}', 'P_{avail}', 'Location', 'Best');
-title('Aborted Landing (1 Engine Out) - 0ft, Std. Day');
+title('Aborted Landing (1 Engine Out) - Sea Level, Std. Day');
 xlabel('ft/s');
 ylabel('ft \cdot lbf');
 plot([V_TD, V_TD], [min(ylim), max(P_avail)], 'linestyle', ':', 'color', 'k');
