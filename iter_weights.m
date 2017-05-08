@@ -1,6 +1,9 @@
-clc;
-clear;
-close all;
+if ~exist('pass', 'var')
+    clc;
+    clear;
+    close all;
+    fprintf('Passenger Study Not on\n');
+end
 
 %% INFO:
 
@@ -22,7 +25,7 @@ Wt.WOEW = Wt.WE + Wt.pld.w_tot + Wt.oew.crew;
 % Calculate Residual
 ctrl.res(1) = WeightDiff / 100; %
 
-clearvars -except Wt atm req ctrl
+clearvars -except Wt atm req ctrl pass
 iterate = 1;
 
 % Recalculate fuel fraction for new engines
@@ -128,7 +131,7 @@ while ctrl.res(end) > ctrl.tol
     ctrl.res(iterate) = WeightDiff / 100; %
     
     if ctrl.res(iterate) > ctrl.tol
-        clearvars -except Wt atm req ctrl iterate
+        clearvars -except Wt atm req ctrl iterate pass
         close all;
     end
     
