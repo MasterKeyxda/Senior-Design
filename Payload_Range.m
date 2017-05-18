@@ -139,9 +139,9 @@ legend([hLine1,hLine2],'Supersonic Cruise (M=1.6)','Transonic Cruise (M=0.8)', '
 % Range at cruise climb conditions (constant lift coefficient, CL, and Mach number, M) and
 % assuming thrust specific fuel consumption, c, remains constant throughout the mission
 
-% Determine L/D from WING.CFD arrays
-CL.cr.CFD = spline(WING.CFD.SUP.alpha,WING.CFD.SUP.CL, 2.86); 
-CD.cr.CFD = spline(WING.CFD.SUP.alpha,WING.CFD.SUP.CD, 2.86);
+% Determine L/D 
+CL.cr.CFD = spline(WING.VSP.SUP.ALPHA,WING.VSP.SUP.CL, 2.86); 
+CD.cr.CFD = spline(CL.array,CD.total.super, CL.cr.CFD);
 
 % See Roskam Airplane Aero and Perf Sect 11.1.2.1 (eqns 11.10 & 11.11)
 L_D.cr_super.avg = CL.cr.CFD / CD.cr.CFD;

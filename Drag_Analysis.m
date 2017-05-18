@@ -351,8 +351,8 @@ CD0.total.Land = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nac
 %% Plot Drag Polars
 
 % Induced drag
-e_Oswald = 0.8; % efficiency factor
-CL.array = linspace(0, 1.5, 20);
+e_Oswald = 0.81; % efficiency factor
+CL.array = linspace(0, 1.5, 11);
 CD.induced = (CL.array.^2) ./ (pi * e_Oswald * WING.geom.AR);
 
 % Supersonic Cruise Configuration
