@@ -5,7 +5,7 @@
 % by M. Sadraey Ch 3
 % Date Created: 3/17/17
 
-% Run iter_weights.m and TO_TD_perf.m before running this script
+% Run iter_weights.m before running this script
 %% Common Equation Parameters
 Sref = WING.geom.S_area; % Wing planform area chosen as reference area
 
@@ -189,7 +189,7 @@ CD0.total.sub = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nace
 
 %% Takeoff 
 h = 0; % sea level
-M = V_LOF/1116.5; 
+M = constraints.Vstall * 1.2/1116.5; 
 visc = 0.374E-6; % viscosity (slugs/ft-s)
 [V, rho, q ,Cf_Turb,Cf_lam,Re_Ratio] = dragCalc(h, M, visc, L_F, WING.geom.MAC, TAIL.ch, TAIL.cv, nacLength);
 
@@ -200,9 +200,17 @@ Cf_fuse = Cf_Turb(1) + Re_Ratio(1)*Cf_lam - Re_Ratio(1)*Cf_Turb(1);
 CD0.fuse = Cf_fuse*fLD*fM*(Swet.fuse/Sref);
 
 %-----Wing-----%
+%Aero and Perf.
+RNw = 2.671E7; % RE of wing
+Rwf =  1.06; % wing-fuselage interference factor (Figure 5.11 Roskam)
+RLS = 1.08; % lifting surface correction factor (Figure 5.12 Roskam) 
+Cfw = 0.455 / (((log10(RNw))^2.58)*((1 + 0.144*(M^2))^0.58)); % turbulent flat plate friction coefficient of the wing
+Lprime = 1.2; % thickness location parameter; 1.2 for at (t/c)max >= 0.30c
+tcWing = 0.0525; % thickness to camber ratio wing (NACA 0012 Airfoil)
+CD0.wing = Rwf * RLS * Cfw * (1 + (Lprime * tcWing) + 100* ((tcWing)^4))*(Swet.wing/Sref);  
 % Eqn 3.19
-Cf_wing = Cf_Turb(2) + Re_Ratio(2)*Cf_lam - Re_Ratio(2)*Cf_Turb(2); % Cf laminar/turb mixed flow
-CD0.wing = Cf_wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
+% Cf_wing = Cf_Turb(2) + Re_Ratio(2)*Cf_lam - Re_Ratio(2)*Cf_Turb(2); % Cf laminar/turb mixed flow
+% CD0.wing = Cf_wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
 
 %-----Horizontal Tail-----%
 % Eqn 3.20
@@ -262,7 +270,7 @@ CD0.total.TO = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nacel
 %% Landing
 
 h = 0; % sea level
-M = VTDActual/1116.5;
+M = constraints.Vstall * 1.15/1116.5;
 visc = 0.374E-6; % viscosity (slugs/ft-s)
 [V, rho, q ,Cf_Turb,Cf_lam,Re_Ratio] = dragCalc(h, M, visc, L_F, WING.geom.MAC, TAIL.ch, TAIL.cv, nacLength);
 
@@ -273,9 +281,17 @@ Cf_fuse = Cf_Turb(1) + Re_Ratio(1)*Cf_lam - Re_Ratio(1)*Cf_Turb(1);
 CD0.fuse = Cf_fuse*fLD*fM*(Swet.fuse/Sref);
 
 %-----Wing-----%
+%Aero and Perf.
+RNw = 2.5597E7; % RE of wing
+Rwf =  1.07; % wing-fuselage interference factor (Figure 5.11 Roskam)
+RLS = 1.08; % lifting surface correction factor (Figure 5.12 Roskam) 
+Cfw = 0.455 / (((log10(RNw))^2.58)*((1 + 0.144*(M^2))^0.58)); % turbulent flat plate friction coefficient of the wing
+Lprime = 1.2; % thickness location parameter; 1.2 for at (t/c)max >= 0.30c
+tcWing = 0.0525; % thickness to camber ratio wing (NACA 0012 Airfoil)
+CD0.wing = Rwf * RLS * Cfw * (1 + (Lprime * tcWing) + 100* ((tcWing)^4))*(Swet.wing/Sref);  
 % Eqn 3.19
-Cf_wing = Cf_Turb(2) + Re_Ratio(2)*Cf_lam - Re_Ratio(2)*Cf_Turb(2); % Cf laminar/turb mixed flow
-CD0.wing = Cf_wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
+% Cf_wing = Cf_Turb(2) + Re_Ratio(2)*Cf_lam - Re_Ratio(2)*Cf_Turb(2); % Cf laminar/turb mixed flow
+% CD0.wing = Cf_wing * ftc_w * fM * (Swet.wing/Sref)*((Cdmin.wing / 0.004)^0.4);
 
 %-----Horizontal Tail-----%
 % Eqn 3.20
@@ -336,7 +352,7 @@ CD0.total.Land = CD0.correction*(CD0.wing + CD0.ht + CD0.vt + CD0.fuse + CD0.nac
 
 % Induced drag
 e_Oswald = 0.8; % efficiency factor
-CL.array = linspace(0, 2, 20);
+CL.array = linspace(0, 1.5, 20);
 CD.induced = (CL.array.^2) ./ (pi * e_Oswald * WING.geom.AR);
 
 % Supersonic Cruise Configuration
@@ -352,11 +368,11 @@ CD.total.TO = CD0.total.TO + CD.induced;
 CD.total.Land = CD0.total.Land + CD.induced;
 
 figure()
-plot(CL.array, CD.total.super,'b--') % Supersonic Cruise Configuration
+plot(CL.array, CD.total.super,'-c') % Supersonic Cruise Configuration
 hold on;
-plot(CL.array, CD.total.sub,'g') % Subsonic Cruise Configuration
-plot(CL.array, CD.total.TO) % Takeoff Configuration 
-plot(CL.array, CD.total.Land) % Landing Configuration
+plot(CL.array, CD.total.sub, 'Color', [1 0.2 0]) % Subsonic Cruise Configuration
+plot(CL.array, CD.total.TO, 'Color', [0 0.75 0]) % Takeoff Configuration 
+plot(CL.array, CD.total.Land,'-b') % Landing Configuration
 xlabel('Lift Coefficient, C_L')
 ylabel('Drag Coefficient, C_D')
 title('Drag Polars')

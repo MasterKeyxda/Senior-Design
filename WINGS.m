@@ -225,10 +225,83 @@ title('LIFT/DRAG RATIO - BICONVEX');
 xlabel('ANGLE OF ATTACK (\alpha)');
 ylabel('L/D');
 saveas(gcf, [pwd '\aero_results\bicon_LD_polar.png']);
-%% STEP 13: Calculate Lift Distribution at Cruise (Lifting Line Theory?)
+%% STEP 13: Calculate Lift Distribution at Cruise (ANSYS)
 
 % Plot Results from ANSYS analysis of the lift and drag polars
+WING.CFD.SUP.CD = [0.016085729;
+0.028136796;
+0.047713925;
+0.07356389;
+0.10641106;
+0.14319308;
+0.16464471;
+0.18766876];
 
+WING.CFD.SUP.CL = [0.12068674;
+                            0.21502044;...
+                            0.31313017;...
+                            0.40465641;...
+                            0.50061587;...
+                            0.5846736;...
+                            0.62898818;...
+                            0.67355644];
+
+WING.CFD.SUP.alpha = [0:2:10, 11, 12];
+temp_aoa = 0:0.1:12;
+figure();plot(WING.CFD.SUP.alpha, WING.CFD.SUP.CL./WING.CFD.SUP.CD, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUP.alpha, WING.CFD.SUP.CL./WING.CFD.SUP.CD, temp_aoa));
+title('Ansys L/D - Supersonic');
+xlabel('AOA (deg)');
+ylabel('L/D');
+
+figure();plot(WING.CFD.SUP.alpha, WING.CFD.SUP.CL, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUP.alpha, WING.CFD.SUP.CL, temp_aoa));
+title('ANSYS C_L - Supersonic');
+xlabel('AOA (deg)');
+ylabel('C_L');
+
+WING.CFD.SUB.alpha = [0 2 11 12 15];
+temp_aoa = min(WING.CFD.SUB.alpha):0.05:max(WING.CFD.SUB.alpha);
+WING.CFD.SUB.CL = [0.15476, 0.30141772, 0.81034042, 0.87281998, 0.88035];
+WING.CFD.SUB.CD = [0.012576, 0.029104, 0.20564, 0.23383, 0.29134];
+figure();plot(WING.CFD.SUB.alpha, WING.CFD.SUB.CL./WING.CFD.SUB.CD, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUB.alpha, WING.CFD.SUB.CL./WING.CFD.SUB.CD, temp_aoa));
+
+figure();plot(WING.CFD.SUB.alpha, WING.CFD.SUB.CL, 'o');
+hold on;
+plot(temp_aoa, spline(WING.CFD.SUB.alpha, WING.CFD.SUB.CL, temp_aoa));
+title('ANSYS C_L - Subsonic');
+xlabel('AOA (deg)');
+ylabel('C_L');
+
+
+%% VSP RESULTS - FULL AIRCRAFT
+WING.VSP.SUP.CL = [0.08039, 0.15112, 0.18191, 0.23973, 0.28248, 0.31885, 0.36952, 0.43421, 0.41881, 0.34278, 0.14622];
+WING.VSP.SUP.CD = [0.03572, 0.03765, 0.05904, 0.05139, 0.06014, 0.07557, 0.09331, 0.12967, 0.1496, 0.1838, 0.27547];
+WING.VSP.SUP.ALPHA = 0:10;
+
+figure();plot(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 'o');
+hold on;
+plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 0:0.01:10));
+title('Lift Curve - Full Aircraft, Supercruise (Mach 1.6)');
+xlabel('Alpha (Deg)');
+ylabel('C_L');
+saveas(gcf, 'supersonic_lift_curve.png');
+
+WING.VSP.SUB.CL = [0.16057, 0.25951, 0.37048, 0.49533, 0.63565, 0.79531, 0.97734, 1.18295, 1.41921, 1.67874, 1.9964];
+WING.VSP.SUB.CD = [0.02987, 0.0333, 0.03888, 0.04721, 0.05884, 0.07507, 0.09718, 0.12605, 0.16444, 0.21343, 0.27744];
+WING.VSP.SUB.ALPHA = 0:10;
+
+figure();plot(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 'o');
+hold on;
+plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 0:0.01:10));
+title('Lift Curve - Full Aircraft, Subosnic (Mach 0.8)');
+xlabel('Alpha (Deg)');
+ylabel('C_L');
+saveas(gcf, 'subsonic_lift_curve.png');
 %% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
 % coefficient

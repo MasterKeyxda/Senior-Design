@@ -129,10 +129,10 @@ figure();
 hold on; 
 title('Wing Area (S) and Engine Thrust (T) Constraint Plot')
 xlabel('Wing Loading, W/S (lbf / ft^2)')
-ylabel('Thrust-to-Weight Ratio, T/W (lbf/lbf)')
+ylabel('Thrust-to-Weight Ratio, T/W')
 
 % Landing Distance / Stall Curve
-plot([constraints.wingLoading_TO,constraints.wingLoading_TO],[0,1.25])
+plot([constraints.wingLoading_TO,constraints.wingLoading_TO],[0,1.5])
 
 % Takeoff Distance Curve 
 plot(constraints.wingLoading, constraints.TO_Curve)
@@ -146,4 +146,4 @@ plot([constraints.wingLoading(1), constraints.wingLoading(end)],[constraints.cei
 % Vmax Curve
 plot(constraints.wingLoading, constraints.VmaxCurve)
 
-legend('Landing/Stall', 'Takeoff', 'Landing Climb (FAR 25.111 (OEI))','Service Ceiling','Cruise')
+legend('Landing/Stall', 'Takeoff', 'Landing Climb','Service Ceiling','Cruise')
