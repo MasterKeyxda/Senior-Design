@@ -95,7 +95,7 @@ Wt.Excel = xlsread(filename,'G34:G39');
 cgExcel = xlsread(filename,'I34:I39'); 
 close all;
 figure()
-title('XCG Excursion Diagram')
+title('CG Excursion Diagram')
 xlabel('CG Location (% MAC)')
 ylabel('Weight (lbs)')
 hold on;
@@ -108,5 +108,5 @@ plot(xMACExcel, Wt.Excel,'b')
 plot(xMACExcel, Wt.Excel,'s', 'MarkerSize',5,...
     'MarkerEdgeColor','b',...
     'MarkerFaceColor',[0.5,0.5,0.5])
-xlim([min(xMACExcel)-10,max(xMACExcel)+21])
-ylim([35000, 98000])
+xlim('
+
