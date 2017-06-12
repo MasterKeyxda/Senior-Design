@@ -124,6 +124,8 @@ V_LOF = V_TO(end);
 fprintf('Take-Off Ground Roll Distance: %0.3f ft\n', Sg_TO(end));
 fprintf('V_{LOF}: %0.3f ft/s\n', V_LOF);
 
+% Sg_INCL = 
+
 %% Takeoff Transition - bring vehicle to the right gamma
 
 % gamma = 0.0;
@@ -340,7 +342,7 @@ plot(V_inf, P_avail);
 legend('P_{req}', 'P_{avail}', 'Location', 'Best');
 title('Aborted Landing (1 Engine Out) - Sea Level, Std. Day');
 xlabel('ft/s');
-ylabel('ft \cdot lbf');
+ylabel('ft \cdot lbf/s');
 plot([V_TD, V_TD], [min(ylim), max(P_avail)], 'linestyle', ':', 'color', 'k');
 strmax = sprintf('V_{Touchdown} = %0.2f ft/s\nRC = %0.2f fpm',V_TD, RC(sum(V_inf <= V_TD))*60);
 text(V_inf(sum(V_inf<= V_TD)), mean(ylim), strmax, 'HorizontalAlignment', 'left');
