@@ -45,7 +45,7 @@ plot(V_inf, P_avail);
 legend('P_{req}', 'P_{avail}', 'Location', 'Best');
 title('Climb Curve at 42kft (Std. Day)');
 xlabel('ft/s');
-ylabel('ft \cdot lbf');
+ylabel('ft \cdot lbf/s');
 plot([V_inf(1), V_inf(1)], [min(ylim), max(P_avail)], 'linestyle', ':', 'color', 'k');
 plot([V_RCmax, V_RCmax], [P_req(RC == max(RC)), P_avail(RC == max(RC))], 'linestyle', '--', 'color', 'k'); 
 strmax = sprintf('\tMax RC = %0.2f fpm',(max(RC)*60));
