@@ -33,6 +33,11 @@ C_r = 21.75;%3/2 * c_bar * (1+lambda)/(1 + lambda + lambda^2); % wing root chord
 C_l_deltaA = (2*C_L_alphaWing*tau*C_r) / (S*b) * ...
     ((y_out^2/2 + 2/3*(lambda-1)/b*y_out^3)-(y_in^2/2 + 2/3*...
     (lambda-1)/b*y_in^3)); % 1/rad
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 C_l = C_l_deltaA * deltaA; % aircraft roll moment coefficient
 
 V_app = 1.3*V_s;
@@ -48,6 +53,7 @@ phi_1 = I_xx / (rho*y_D^3*(S_w + S_h + S_vt)*C_D_R) * log(P_ss^2);
 P_dot = P_ss^2 / (2*phi_1); % aircraft rate of roll rate
 
 phi_des = 30; %degrees
+
 t = sqrt((2*phi_des)/(P_dot)); % time in seconds
 
 % Geometry of each aileron
@@ -56,11 +62,14 @@ b_A = y_out - y_in; % span of aileron
 c_A = 0.3*C_w; % chord of aileron
 A_A = 2*b_A*c_A; % area of both ailerons 
 
+
+
 fprintf('Time to rotate 30 degrees (s) = %0.5f \n',t)
 fprintf('Aileron Span (ft) = %0.5f \n',b_A)
 fprintf('Aileron Chord (ft) = %0.5f \n',c_A)
 fprintf('Aileron Area  (ft^2)  = %0.5f \n\n',A_A)
 
+<<<<<<< Updated upstream
 % Plot: Variations of bank angle versus time
 n = 50;
 phi2 = linspace(0,40,n);
@@ -74,6 +83,23 @@ figure
 plot(t2,phi2,'o', xx1,yy1,'r',xx2,yy2,'r')
 xlabel('time (sec)','fontsize',20)
 ylabel('\phi (deg)','fontsize',20)
+=======
+% plot
+phi_des2 = linspace(0,40,50);
+t2 = sqrt((2*phi_des2)/(P_dot));
+
+figure
+plot(t2, phi_des2)
+hold on
+x2 = linspace(0,30,1000);
+plot(t, x2,'r')
+hold on
+t3 = ones(50)*30;
+x3 = linspace(0,t,50);
+plot(x3, t3,'r')
+xlabel('time (sec)','fontsize',20)
+ylabel('\Phi (deg)','fontsize',20)
+>>>>>>> Stashed changes
 
 %% Elevator Sizing
 % Satisifes take-off angular acceleration requirement of 7 deg/s^2 for small

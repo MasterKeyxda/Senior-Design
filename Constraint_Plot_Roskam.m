@@ -10,8 +10,11 @@ constraints.CLMax = 1.6;
 constraints.CLMax_L = 1.75; % landing
 constraints.CLMax_TO = 1.5; % takeoff
 
+% N+1 Requirement for Cruise Mach Number
+req.cr_M0 = [1.6 1.8]; % [min max] vel
 %% Stall Speed (Section 3.1)
 
+atm.rho_sl = 0.0023769; % slugs/ft^3
 % Flaps UP
 constraints.Vstall_Up = 125 * 1.688; % stall speed, knots -> ft/s
 
@@ -29,6 +32,8 @@ constraints.Vstall_Crv_Down = 0.5*atm.rho_sl*(constraints.Vstall_Down^2)*constra
 constraints.Vstall_Crv = min(constraints.Vstall_Crv_Up, constraints.Vstall_Crv_Down);
 
 %% Take-off Distance Sizing (Section 3.2.3 - 3.2.4)
+% FAR 25 Requirements
+req.takeoffRun = 7000; % NASA takeoff field length of less than 7000 ft;
 
 % FAR 25 takeoff parameter (lbs/ft^2)
 TOP_25 = req.takeoffRun / 37.5; % Eqn 3.8 Roskam Pt 1
@@ -74,15 +79,15 @@ polar.CDO_TO = 0.015; % drag increment due to takeoff flaps
 polar.CD0_L = 0.065; % drag increment due to landing flaps
 polar.CDO_LG = 0.020; % drag increment due to landing gear
 polar.CDO_A = (polar.CDO_TO + polar.CDO_LG + polar.CD0_L + polar.CDO_LG)/2; 
-e.takeoff = 0.80; % takeoff efficiency factor
-e.land = 0.75; % landing efficiency factor
+e_takeoff = 0.80; % takeoff efficiency factor
+e_land = 0.75; % landing efficiency factor
 AR = 3; % aspect ratio 
 
 % FAR 25.121 (OEI) - Balked Landing --> must critical of climb requirements
 CGR = 0.024;
 CLMax_A = constraints.CLMax_L / 1.17; % Approach CLmax 
 CL_A = CLMax_A / (1.5^2); % CL for approach
-CD_A = polar.CDO_A + (CL_A^2)/(pi*e.land*AR);
+CD_A = polar.CDO_A + (CL_A^2)/(pi*e_land*AR);
 L_D.approach = CL_A/CD_A;
 % Balked Landing (T/W)_L
 constraints.landBalked = (3/2)*((1/L_D.approach) + CGR);
@@ -105,13 +110,13 @@ constraints.L_D = 7; % assumed L/D max
 constraints.thrstService = (constraints.ROC/constraints.Vcruise) + (1/constraints.L_D);
 
 % Convert thrust at service ceiling to takeoff thrust
-constraints.thrstRatio = 0.23; % Estimate; need ratio of SL thrust to cruise thrust
+constraints.thrstRatio = 0.23; % Preliminary estimate
 constraints.ceilingCurve = constraints.thrstService/constraints.thrstRatio;
 
 %% Cruise Speed Sizing (Section 3.6.4 - 3.6.5)
 
 % Zero Lift Drag Coefficient
-CD_0 = 0.0200; % Estimate
+CD_0 = 0.0200; % Preliminary estimate
 e = 0.8; % Oswald efficiency factor
 
 % Dynamic Pressure at specified cruise alt (psf)
