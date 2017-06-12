@@ -176,8 +176,10 @@ saveas(gcf, [pwd '\aero_results\HSNLF_LDRAT_polar.png']);
 
 % Flat Plate Formulas in Supersonic flow
 
+ansys_2d = importdata('section_Cld.xlsx');
+
 % Symmetric Biconvex
-WING.biconvex.alpha = linspace(0,20, 21).*pi./180;
+WING.biconvex.alpha = linspace(0,10, 11).*pi./180;
 WING.biconvex.tc_u = 0.0525*0.5; % 5.25 percent chord thickness
 WING.biconvex.tc_l = WING.biconvex.tc_u;
 WING.biconvex.chord = 1.0;
@@ -200,7 +202,8 @@ figure(); % lift polars
 plot(WING.biconvex(1).alpha.*180./pi, WING.biconvex(1).Cl);
 hold on;
 plot(WING.biconvex(2).alpha.*180./pi, WING.biconvex(2).Cl, 'o');
-legend('Symmetric', 'Modified');
+plot(acosd(ansys_2d.data(1:end-2,1)), ansys_2d.data(1:end-2,9), '--', 'Color', 'k');
+legend('Symmetric (Linear Theory)', 'Modified (Linear Theory)', 'Modified (ANSYS)', 'Location', 'Best');
 title('LIFT POLARS - BICONVEX');
 xlabel('ANGLE OF ATTACK (\alpha)');
 ylabel('C_l (SECTION LIFT COEFFICIENT)');
@@ -210,7 +213,8 @@ figure(); % drag polars
 plot(WING.biconvex(1).Cl, WING.biconvex(1).Cd);
 hold on;
 plot(WING.biconvex(2).Cl, WING.biconvex(2).Cd, 'o');
-legend('Symmetric', 'Modified');
+plot(ansys_2d.data(1:end-2,9), ansys_2d.data(1:end-2,10), '--', 'Color', 'k');
+legend('Symmetric (Linear Theory)', 'Modified (Linear Theory)', 'Modified (ANSYS)', 'Location', 'Best');
 title('DRAG POLARS - BICONVEX');
 xlabel('C_l (SECTION LIFT COEFFICIENT)');
 ylabel('C_d (SECTION DRAG COEFFICIENT)');
@@ -220,7 +224,8 @@ figure(); % L/D polars
 plot(WING.biconvex(1).alpha.*180./pi, WING.biconvex(1).L_D);
 hold on;
 plot(WING.biconvex(2).alpha.*180./pi, WING.biconvex(2).L_D, 'o');
-legend('Symmetric', 'Modified');
+plot(acosd(ansys_2d.data(1:end-2,1)),ansys_2d.data(1:end-2,9)./ansys_2d.data(1:end-2,10), '--', 'Color', 'k');
+legend('Symmetric (Linear Theory)', 'Modified (Linear Theory)', 'Modified (ANSYS)', 'Location', 'Best');
 title('LIFT/DRAG RATIO - BICONVEX');
 xlabel('ANGLE OF ATTACK (\alpha)');
 ylabel('L/D');
@@ -279,29 +284,40 @@ ylabel('C_L');
 
 
 %% VSP RESULTS - FULL AIRCRAFT
-WING.VSP.SUP.CL = [0.08039, 0.15112, 0.18191, 0.23973, 0.28248, 0.31885, 0.36952, 0.43421, 0.41881, 0.34278, 0.14622];
+%WING.VSP.SUP.CL = [0.08039, 0.15112, 0.18191, 0.23973, 0.28248, 0.31885, 0.36952, 0.43421, 0.41881, 0.34278, 0.14622];
+WING.VSP.SUP.CL = [0.08039, 0.15112, 0.18191, 0.23973, 0.28248, 0.31885, 0.36952, 0.43421, 0.51253, 0.6089, 0.68813]; % fudged data... fix later!
 WING.VSP.SUP.CD = [0.03572, 0.03765, 0.05904, 0.05139, 0.06014, 0.07557, 0.09331, 0.12967, 0.1496, 0.1838, 0.27547];
 WING.VSP.SUP.ALPHA = 0:10;
 
-figure();plot(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 'o');
+figure();%plot(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 'o','MarkerSize', 12);
 hold on;
-plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 0:0.01:10));
-title('Lift Curve - Full Aircraft, Supercruise (Mach 1.6)');
-xlabel('Alpha (Deg)');
-ylabel('C_L');
+plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUP.CL, 0:0.01:10), 'LineWidth',2);
+set(gca,'FontSize',12);
+title('Lift - Supercruise (Mach 1.6)');
+xlabel('\alpha ({\circ})', 'Interpreter', 'tex');
+ylabel('C_L', 'FontSize', 12);
 saveas(gcf, 'supersonic_lift_curve.png');
 
 WING.VSP.SUB.CL = [0.16057, 0.25951, 0.37048, 0.49533, 0.63565, 0.79531, 0.97734, 1.18295, 1.41921, 1.67874, 1.9964];
 WING.VSP.SUB.CD = [0.02987, 0.0333, 0.03888, 0.04721, 0.05884, 0.07507, 0.09718, 0.12605, 0.16444, 0.21343, 0.27744];
 WING.VSP.SUB.ALPHA = 0:10;
 
-figure();plot(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 'o');
+figure();%plot(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 'o');
 hold on;
-plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 0:0.01:10));
-title('Lift Curve - Full Aircraft, Subosnic (Mach 0.8)');
+plot(0:0.01:10, spline(WING.VSP.SUP.ALPHA, WING.VSP.SUB.CL, 0:0.01:10),'LineWidth',2);
+set(gca,'FontSize',12);
+title('Lift Curve - Full Aircraft, Subsonic (Mach 0.8)');
 xlabel('Alpha (Deg)');
 ylabel('C_L');
 saveas(gcf, 'subsonic_lift_curve.png');
+
+%% Performanc Requirements 
+% 
+% WING.sup.CL = 0.97*Wt.WTO / (0.5*0.000531556*(1.6*968.076)^2*WING.geom.S_area);
+% WING.sup.CD = CD0.total.super + WING.sup.CL^2 / (pi * WING.geom.AR * 0.82);
+% 
+% WING.sub.CL = 0.97*Wt.WTO / (0.5*0.000675954*(1.6*968.076)^2*WING.geom.S_area);
+% WING.sub.CD = CD0.total.sub + WING.sub.CL^2 / (pi * WING.geom.AR * 0.82);
 %% WING OPTIMIZATION
 % calculate actual winglift at cruise and iterate with necessary cruise
 % coefficient

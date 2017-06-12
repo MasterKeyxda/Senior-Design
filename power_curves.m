@@ -39,17 +39,19 @@ P_req = Wt.WTO .* V_inf .* CD_tot ./ C_L;
 RC = ((P_avail - P_req)./Wt.WTO);
 V_RCmax = V_inf(RC == max(RC));
 
-figure();plot(V_inf, P_req);
+figure();plot(V_inf, P_req./(10^6),'LineWidth',2);
 hold on;
-plot(V_inf, P_avail);
+plot(V_inf, P_avail./(10^6),'LineWidth',2);
+
+set(gca,'FontSize',18);
+title('Climb Curve at 42kft (Std. Day)','FontSize', 24);
+xlabel('ft/s','FontSize', 24);
+ylabel('10^6 ft \cdot lbf / s', 'FontSize', 24);
 legend('P_{req}', 'P_{avail}', 'Location', 'Best');
-title('Climb Curve at 42kft (Std. Day)');
-xlabel('ft/s');
-ylabel('ft \cdot lbf');
-plot([V_inf(1), V_inf(1)], [min(ylim), max(P_avail)], 'linestyle', ':', 'color', 'k');
-plot([V_RCmax, V_RCmax], [P_req(RC == max(RC)), P_avail(RC == max(RC))], 'linestyle', '--', 'color', 'k'); 
+plot([V_inf(1), V_inf(1)], [min(ylim), max(P_avail./(10^6))], 'linestyle', ':', 'color', 'k');
+plot([V_RCmax, V_RCmax], [P_req(RC == max(RC))./(10^6), P_avail(RC == max(RC))./(10^6)], 'linestyle', '--', 'color', 'k'); 
 strmax = sprintf('\tMax RC = %0.2f fpm',(max(RC)*60));
-text(V_inf(RC== max(RC)), P_req(RC== max(RC)), strmax, 'HorizontalAlignment', 'left');
+text(V_inf(RC== max(RC)), 0.85*max(ylim), strmax, 'HorizontalAlignment', 'center', 'FontSize', 18);
 saveas(gcf, 'climb_curve_42.png');
 
 %% Thrust v. Altitude Plots
